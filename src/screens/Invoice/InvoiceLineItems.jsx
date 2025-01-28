@@ -45,7 +45,7 @@ const InvoiceLineItems = () => {
       <table className="services-table">
         <thead>
           <tr>
-            <th>Item ID</th>
+            <th>Client ID</th>
             <th>Description</th>
             <th>Qty</th>
             <th>Price</th>

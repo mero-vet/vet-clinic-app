@@ -1,10 +1,21 @@
 /* Removed fixed max-width and center alignment in #root. */
 
+/* Prevent outer scrolling */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+}
+
 #root {
   /* Previously set max-width: 1280px; margin: 0 auto; padding: 2rem; text-align: center; */
   /* Now just let #root be flexible or use the styling from index.css */
-  padding: 0; 
+  padding: 0;
   margin: 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* The logo styles remain if you still want them */
@@ -14,9 +25,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -25,6 +38,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -43,3 +57,112 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Global font override - this will catch everything */
+* {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+/* Title bar text specific override */
+.title-bar-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-shadow: none !important;
+  font-weight: 500 !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  padding: 0 4px !important;
+}
+
+/* Specific overrides for Windows 98 UI elements */
+.title-bar,
+.window,
+.window-body,
+button,
+input,
+select,
+textarea,
+table,
+th,
+td,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+li,
+label,
+div,
+span,
+a,
+fieldset,
+legend {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-shadow: none !important;
+}
+
+/* Base text color and size */
+.window-body,
+.window-body * {
+  color: #000000;
+  font-size: 14px;
+}
+
+/* Form elements and controls */
+input,
+textarea,
+select,
+button,
+label,
+.field-label,
+.field-title {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* Placeholder and hint text */
+input::placeholder,
+textarea::placeholder,
+.field-hint,
+.hint-text {
+  color: #666666 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* Disabled states */
+input:disabled,
+textarea:disabled,
+select:disabled,
+button:disabled {
+  color: #666666 !important;
+  text-shadow: none !important;
+}
+
+/* Menu items */
+.menu-item,
+.dropdown-item,
+li {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* Keep the Windows 98 aesthetic for UI controls only */
+.title-bar-controls button {
+  font-family: inherit;
+}
+
+/* Remove any remaining text-shadow */
+* {
+  text-shadow: none !important;
+}
+
+/* Rest of your existing styles... */

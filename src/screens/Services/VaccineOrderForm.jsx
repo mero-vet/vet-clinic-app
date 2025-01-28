@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 function VaccineOrderForm() {
   const [vaccineData, setVaccineData] = useState({
+    clientId: '',
     vaccineType: '',
     desiredDate: '',
     notes: '',
@@ -25,8 +26,19 @@ function VaccineOrderForm() {
       <legend>Order Vaccine</legend>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '8px' }}>
+          <label>Client ID:&nbsp;</label>
+          <input
+            type="text"
+            name="clientId"
+            value={vaccineData.clientId}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div style={{ marginBottom: '8px' }}>
           <label>Vaccine Type:&nbsp;</label>
-          <select name="vaccineType" value={vaccineData.vaccineType} onChange={handleChange}>
+          <select name="vaccineType" value={vaccineData.vaccineType} onChange={handleChange} required>
             <option value="">-- Select a Vaccine --</option>
             <option value="rabies">Rabies</option>
             <option value="distemper">Distemper/Parvo</option>

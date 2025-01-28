@@ -69,4 +69,52 @@
 .totals {
   text-align: right;
   margin: 20px 0;
-} 
+}
+
+.patient-checkin-grid {
+  display: grid;
+  grid-template-columns: minmax(400px, 1fr) minmax(400px, 1fr) minmax(400px, 1fr);
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+
+.patient-checkin-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.middle-column {
+  order: 2;
+}
+
+.right-column {
+  order: 3;
+}
+
+@media (max-width: 1400px) {
+  .patient-checkin-grid {
+    grid-template-columns: minmax(400px, 1fr) minmax(400px, 1fr);
+  }
+
+  .right-column {
+    grid-column: 1 / -1;
+    order: 3;
+  }
+}
+
+@media (max-width: 900px) {
+  .patient-checkin-grid {
+    grid-template-columns: minmax(400px, 1fr);
+  }
+
+  .middle-column {
+    order: 3;
+  }
+
+  .right-column {
+    order: 2;
+  }
+}

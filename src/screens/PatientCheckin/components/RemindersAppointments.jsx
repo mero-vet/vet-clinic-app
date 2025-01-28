@@ -3,12 +3,12 @@ import React from 'react';
 function RemindersAppointments() {
   // In a real app, these might come from props or context
   const reminders = [
-    { date: '3/31/2021', description: 'IDEXX Ova and Parasites' },
-    { date: '5/3/2021', description: 'SNAP 4DX IN HOUSE HWT' },
+    { date: '3/31/2024', description: 'IDEXX Ova and Parasites' },
+    { date: '5/3/2024', description: 'SNAP 4DX IN HOUSE HWT' },
   ];
 
   const futureAppointments = [
-    { date: '6/28/2021', time: '08:00', reason: 'Dental' },
+    { date: '6/28/2025', time: '08:00', reason: 'Dental' },
   ];
 
   return (

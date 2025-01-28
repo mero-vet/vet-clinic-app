@@ -76,16 +76,10 @@ function App() {
       path: '/checkin',
     },
     {
-      label: 'Invoices',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/2150/2150150.png',
-      hoverText: 'Handle invoices & payments',
-      path: '/invoice',
-    },
-    {
-      label: 'Services',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/1048/1048877.png',
-      hoverText: 'Order lab tests or vaccines',
-      path: '/services',
+      label: 'Scheduler',
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/2278/2278049.png',
+      hoverText: 'View and schedule appointments',
+      path: '/scheduler',
     },
     {
       label: 'Notes',
@@ -94,10 +88,16 @@ function App() {
       path: '/notes',
     },
     {
-      label: 'Scheduler',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/747/747310.png',
-      hoverText: 'View and schedule appointments',
-      path: '/scheduler',
+      label: 'Services',
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/1048/1048877.png',
+      hoverText: 'Order lab tests or vaccines',
+      path: '/services',
+    },
+    {
+      label: 'Invoices',
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/2150/2150150.png',
+      hoverText: 'Handle invoices & payments',
+      path: '/invoice',
     },
   ];
 
@@ -108,26 +108,27 @@ function App() {
           className="window"
           style={{
             margin: '0',
-            padding: '4px',
+            padding: '0',
             width: '100%',
             maxWidth: 'none',
             height: '100%',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            overflow: 'hidden'
           }}
         >
           <div className="title-bar">
             <div className="title-bar-text">Cornerstone</div>
             <div className="title-bar-controls">
-              <button aria-label="Minimize"></button>
-              <button aria-label="Maximize"></button>
-              <button aria-label="Close"></button>
+              <button className="title-bar-button" aria-label="Minimize"></button>
+              <button className="title-bar-button" aria-label="Maximize"></button>
+              <button className="title-bar-button" aria-label="Close"></button>
             </div>
           </div>
 
           <div
             className="window-body"
             style={{
-              padding: '16px',
+              padding: '0 16px 16px 16px',
               height: 'calc(100vh - 30px)',
               boxSizing: 'border-box',
               overflow: 'auto',
@@ -140,7 +141,6 @@ function App() {
                 display: 'flex',
                 alignItems: 'center',
                 backgroundColor: '#c0c0c0',
-                border: '2px solid #404040',
                 padding: '4px',
                 marginBottom: '4px',
               }}
@@ -237,7 +237,15 @@ function App() {
                       }}
                       onClick={() => navigate(iconItem.path)}
                     >
-                      <img src={iconItem.iconUrl} alt={iconItem.label} width="24" height="24" />
+                      <img
+                        src={iconItem.iconUrl}
+                        alt={iconItem.label}
+                        width="24"
+                        height="24"
+                        style={{
+                          filter: isActive && iconItem.label === 'Scheduler' ? 'brightness(0) invert(1)' : 'none'
+                        }}
+                      />
                       {hoveredIcon === idx && (
                         <div
                           style={{

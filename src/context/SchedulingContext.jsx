@@ -5,19 +5,70 @@ import React, { createContext, useContext, useState } from 'react';
 
 const SchedulingContext = createContext();
 
+// Helper function to generate dates for 8 weeks starting from a base date
+const generateDates = () => {
+  const dates = [];
+  const startDate = new Date('2025-01-27');
+  for (let week = 0; week < 8; week++) {
+    for (let day = 0; day < 5; day++) {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(currentDate.getDate() + (week * 7) + day);
+      dates.push(currentDate.toISOString().split('T')[0]);
+    }
+  }
+  return dates;
+};
+
+// Helper function to generate appointments
+const generateInitialAppointments = () => {
+  const dates = generateDates();
+  const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+  const reasons = [
+    'Wellness Check',
+    'Vaccine Booster',
+    'Dental Cleaning',
+    'Surgery',
+    'X-Ray',
+    'Blood Work',
+    'Check-up',
+    'Grooming',
+    'Nail Trimming',
+    'Spay/Neuter Consult',
+    'Allergy Assessment',
+    'Annual Physical',
+    'Microchip Installation'
+  ];
+  const patients = ['Bella (Canine)', 'Max (Feline)', 'Rocky (Canine)', 'Luna (Feline)', 'Charlie (Canine)', 'Coco (Feline)', 'Buddy (Canine)', 'Lucy (Feline)'];
+  const staff = ['Dr. Smith', 'Dr. Adams', 'Dr. Davis', 'Dr. Wilson'];
+  // Sample client IDs
+  const clientIds = ['CL001', 'CL002', 'CL003', 'CL004', 'CL005', 'CL006', 'CL007', 'CL008'];
+
+  const appointments = [];
+  let id = 1;
+
+  dates.forEach(date => {
+    times.forEach(time => {
+      // 80% chance of having an appointment
+      if (Math.random() < 0.8) {
+        const patientIndex = Math.floor(Math.random() * patients.length);
+        appointments.push({
+          id: id++,
+          date,
+          time,
+          reason: reasons[Math.floor(Math.random() * reasons.length)],
+          patient: patients[patientIndex],
+          clientId: clientIds[patientIndex], // Match client ID to patient
+          staff: staff[Math.floor(Math.random() * staff.length)]
+        });
+      }
+    });
+  });
+
+  return appointments;
+};
+
 export const SchedulingProvider = ({ children }) => {
-  const [appointments, setAppointments] = useState([
-    // Pre-loaded appointments (80% filled for demonstration).
-    { id: 1, date: '2025-01-27', time: '09:00', reason: 'Wellness Check', patient: 'Bella (Canine)', staff: 'Dr. Smith' },
-    { id: 2, date: '2025-01-27', time: '10:00', reason: 'Vaccine Booster', patient: 'Max (Feline)', staff: 'Dr. Adams' },
-    { id: 3, date: '2025-01-28', time: '08:00', reason: 'Dental Cleaning', patient: 'Rocky (Canine)', staff: 'Dr. Smith' },
-    { id: 4, date: '2025-01-28', time: '11:00', reason: 'Ear Infection Follow-up', patient: 'Luna (Feline)', staff: 'Dr. Davis' },
-    // ... add more so it's mostly filled
-    { id: 5, date: '2025-01-29', time: '09:00', reason: 'Bloodwork', patient: 'Charlie (Canine)', staff: 'Dr. Adams' },
-    { id: 6, date: '2025-01-29', time: '10:00', reason: 'Surgery Consult', patient: 'Coco (Feline)', staff: 'Dr. Smith' },
-    { id: 7, date: '2025-01-30', time: '15:00', reason: 'Heartworm Check', patient: 'Buddy (Canine)', staff: 'Dr. Davis' },
-    { id: 8, date: '2025-01-31', time: '14:00', reason: 'Check-up', patient: 'Lucy (Feline)', staff: 'Dr. Adams' },
-  ]);
+  const [appointments, setAppointments] = useState(generateInitialAppointments());
 
   const addAppointment = (newAppt) => {
     setAppointments((prev) => [
@@ -29,8 +80,12 @@ export const SchedulingProvider = ({ children }) => {
     ]);
   };
 
+  const removeAppointment = (appointmentId) => {
+    setAppointments((prev) => prev.filter(appt => appt.id !== appointmentId));
+  };
+
   return (
-    <SchedulingContext.Provider value={{ appointments, addAppointment }}>
+    <SchedulingContext.Provider value={{ appointments, addAppointment, removeAppointment }}>
       {children}
     </SchedulingContext.Provider>
   );

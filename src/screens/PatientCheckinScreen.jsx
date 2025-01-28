@@ -95,99 +95,81 @@ const PatientCheckinScreen = () => {
           flexDirection: 'column',
           gap: '16px'
         }}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '16px',
-              width: '100%',
-              minWidth: 0
-            }}
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '16px',
-              minWidth: 0 // Prevents flex blowout
-            }}>
+          <div className="patient-checkin-grid">
+            {/* Left Column */}
+            <div className="patient-checkin-column">
               <ClientInfo formData={formData} handleInputChange={handleInputChange} />
               <PatientInfo formData={formData} handleInputChange={handleInputChange} />
             </div>
 
-            <fieldset style={{ minWidth: 0 }}>
-              <legend>Billing & Contact</legend>
-              <div className="form-row">
-                <label>Balance due:</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            {/* Middle Column */}
+            <div className="patient-checkin-column middle-column">
+              <CheckInOutButtons formData={formData} handleInputChange={handleInputChange} />
+              <ReasonForVisit formData={formData} handleInputChange={handleInputChange} />
+            </div>
+
+            {/* Right Column */}
+            <div className="patient-checkin-column right-column">
+              <fieldset>
+                <legend>Billing & Contact</legend>
+                <div className="form-row">
+                  <label>Balance due:</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <input
+                      type="text"
+                      name="balanceDue"
+                      value={formData.balanceDue}
+                      onChange={handleInputChange}
+                      style={{ width: '80px' }}
+                    />
+                    <button
+                      style={{ minWidth: '50px' }}
+                      className="windows-button"
+                      type="button"
+                    >
+                      View
+                    </button>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <label>Address:</label>
                   <input
                     type="text"
-                    name="balanceDue"
-                    value={formData.balanceDue}
+                    name="address"
+                    value={formData.address}
                     onChange={handleInputChange}
-                    style={{ width: '80px' }}
                   />
-                  <button
-                    style={{ minWidth: '50px' }}
-                    className="windows-button"
-                    type="button"
-                  >
-                    View
-                  </button>
                 </div>
-              </div>
-              <div className="form-row">
-                <label>Address:</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-row">
-                <label>City:</label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-row">
-                <label>State/prov:</label>
-                <input
-                  type="text"
-                  name="stateProv"
-                  value={formData.stateProv}
-                  onChange={handleInputChange}
-                />
-                <label>Postal code:</label>
-                <input
-                  type="text"
-                  name="postalCode"
-                  value={formData.postalCode}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </fieldset>
-
-            <CheckInOutButtons formData={formData} handleInputChange={handleInputChange} />
+                <div className="form-row">
+                  <label>City:</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-row">
+                  <label>State/prov:</label>
+                  <input
+                    type="text"
+                    name="stateProv"
+                    value={formData.stateProv}
+                    onChange={handleInputChange}
+                  />
+                  <label>Postal code:</label>
+                  <input
+                    type="text"
+                    name="postalCode"
+                    value={formData.postalCode}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </fieldset>
+              <RemindersAppointments />
+              <DocumentsList />
+            </div>
           </div>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '16px',
-              width: '100%',
-              minWidth: 0
-            }}
-          >
-            <DocumentsList />
-            <ReasonForVisit formData={formData} handleInputChange={handleInputChange} />
-          </div>
-
-          <RemindersAppointments />
         </div>
       </div>
     </div>
