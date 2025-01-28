@@ -1,11 +1,5 @@
 import React from 'react';
 
-/**
- * OrdersHistory
- * 
- * Displays past and/or current service orders for easy reference.
- * In a real app, this might fetch or subscribe to data from a context or server.
- */
 function OrdersHistory() {
   // Example placeholder data
   const orders = [

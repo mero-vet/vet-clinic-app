@@ -1,11 +1,5 @@
 import React from 'react';
 
-/**
- * ServicesCatalog
- *
- * Displays a list of available services (e.g., lab tests, vaccines).
- * In a future iteration, this could be fetched from a server or context.
- */
 function ServicesCatalog() {
   // Example placeholder data
   const availableServices = [

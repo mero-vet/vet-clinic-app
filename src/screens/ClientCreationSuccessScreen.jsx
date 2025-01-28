@@ -1,10 +1,6 @@
 import React from 'react';
 
-/**
- * ClientCreationSuccess
- * Renders a simple confirmation message indicating the client was created.
- */
-function ClientCreationSuccess() {
+function ClientCreationSuccessScreen() {
   return (
     <div style={{ marginTop: '20px', border: '1px solid #ccc', padding: '16px' }}>
       <h2>Client Created Successfully!</h2>
@@ -13,4 +9,4 @@ function ClientCreationSuccess() {
   );
 }
 
-export default ClientCreationSuccess;
+export default ClientCreationSuccessScreen;

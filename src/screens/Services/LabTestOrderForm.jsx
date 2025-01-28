@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
 
-/**
- * LabTestOrderForm
- * 
- * Allows users to specify which lab tests to order,
- * collect required info, and submit the order.
- */
 function LabTestOrderForm() {
   const [labData, setLabData] = useState({
     testType: '',
@@ -23,7 +17,6 @@ function LabTestOrderForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // In a future iteration, submit the data to context or an API.
     alert('Lab test order submitted:\n' + JSON.stringify(labData, null, 2));
   };
 
@@ -31,7 +24,6 @@ function LabTestOrderForm() {
     <fieldset style={{ margin: '10px' }}>
       <legend>Order Lab Test</legend>
       <form onSubmit={handleSubmit}>
-
         <div style={{ marginBottom: '8px' }}>
           <label>Test Type:&nbsp;</label>
           <select name="testType" value={labData.testType} onChange={handleChange}>

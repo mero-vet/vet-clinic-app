@@ -4,14 +4,15 @@ const NoteContext = createContext();
 
 export const NoteProvider = ({ children }) => {
   const [notes, setNotes] = useState([
-    // Example note structure
-    // { id: 1, content: 'Check pet vitals', createdAt: '2025-01-27T10:00:00', updatedAt: '' },
+    // Example: { id: 1, content: 'Some note', date: '2024-01-27', createdAt: '2025-01-27T10:00:00', updatedAt: '', patientId: null },
   ]);
 
-  const addNote = (content) => {
+  const addNote = (content, patientId = null, date = new Date().toISOString().split('T')[0]) => {
     const newNote = {
       id: Date.now(),
       content,
+      patientId,
+      date,
       createdAt: new Date().toISOString(),
       updatedAt: '',
     };

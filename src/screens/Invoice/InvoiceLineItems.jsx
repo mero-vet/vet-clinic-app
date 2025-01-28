@@ -30,6 +30,15 @@ const InvoiceLineItems = () => {
     }
   };
 
+  const handlePriceChange = (id, newPrice) => {
+    const parsedPrice = parseFloat(newPrice) || 0;
+    const existingItem = lineItems.find((li) => li.id === id);
+    if (existingItem) {
+      const updatedItem = { ...existingItem, price: parsedPrice };
+      updateLineItem(updatedItem);
+    }
+  };
+
   return (
     <fieldset>
       <legend>Line Items</legend>
@@ -64,16 +73,27 @@ const InvoiceLineItems = () => {
                     <input
                       type="number"
                       min="0"
+                      step="1"
                       value={item.qty}
                       onChange={(e) => handleQtyChange(item.id, e.target.value)}
                       style={{ width: '60px' }}
                     />
                   </td>
-                  <td>${item.price.toFixed(2)}</td>
                   <td>
                     <input
                       type="number"
                       min="0"
+                      step="0.01"
+                      value={item.price}
+                      onChange={(e) => handlePriceChange(item.id, e.target.value)}
+                      style={{ width: '60px' }}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
                       value={item.discount}
                       onChange={(e) =>
                         handleDiscountChange(item.id, e.target.value)

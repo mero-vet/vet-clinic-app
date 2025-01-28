@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
 
-/**
- * VaccineOrderForm
- *
- * Manages vaccine selection and scheduling.
- * Future expansions could track booster shots, lot numbers, etc.
- */
 function VaccineOrderForm() {
   const [vaccineData, setVaccineData] = useState({
     vaccineType: '',
@@ -23,7 +17,6 @@ function VaccineOrderForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // In a real implementation, we'd handle the submission logic here.
     alert('Vaccine order submitted:\n' + JSON.stringify(vaccineData, null, 2));
   };
 
@@ -31,7 +24,6 @@ function VaccineOrderForm() {
     <fieldset style={{ margin: '10px' }}>
       <legend>Order Vaccine</legend>
       <form onSubmit={handleSubmit}>
-
         <div style={{ marginBottom: '8px' }}>
           <label>Vaccine Type:&nbsp;</label>
           <select name="vaccineType" value={vaccineData.vaccineType} onChange={handleChange}>

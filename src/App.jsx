@@ -1,13 +1,26 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { PatientProvider } from './context/PatientContext';
-import PatientCheckin from './components/PatientCheckin';
-import PatientVisitList from './components/PatientVisitList';
+import { SchedulingProvider } from './context/SchedulingContext';
+
+import PatientCheckinScreen from './screens/PatientCheckinScreen';
+import ServicesScreen from './screens/ServicesScreen';
+import CreateNewClientScreen from './screens/CreateNewClientScreen';
+import InvoiceScreen from './screens/InvoiceScreen';
+import NoteScreen from './screens/NoteScreen';
+import SchedulingScreen from './screens/SchedulingScreen';
+
 import './styles/PatientForms.css';
 import './styles/WindowsClassic.css';
+import './App.css';
 
 function App() {
-  // Simple data model for menu items and sub-menu items
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [hoveredIcon, setHoveredIcon] = useState(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const menuItems = [
     {
       label: 'File',
@@ -55,212 +68,217 @@ function App() {
     },
   ];
 
-  // Track which menu is active on hover
-  const [activeMenu, setActiveMenu] = useState(null);
-
-  // Hard-coded icons and their labels (updated first icon URL)
   const iconData = [
     {
-      label: 'Appointments',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/4288/4288956.png', // different version
-      hoverText: 'Manage appointments',
+      label: 'Check-In/Out',
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/4315/4315445.png',
+      hoverText: 'Check patients in or out',
+      path: '/checkin',
     },
     {
       label: 'Invoices',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/3416/3416377.png',
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/2150/2150150.png',
       hoverText: 'Handle invoices & payments',
+      path: '/invoice',
     },
     {
-      label: 'Patient Records',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/2462/2462719.png',
-      hoverText: 'View or edit patient records',
-    },
-    {
-      label: 'Lab Orders',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/2991/2991133.png',
-      hoverText: 'Create or update lab orders',
-    },
-    {
-      label: 'Pharmacy',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/2630/2630054.png',
-      hoverText: 'Access pharmacy interface',
-    },
-    {
-      label: 'Payments',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/929/929422.png',
-      hoverText: 'Process client payments',
-    },
-    {
-      label: 'Check-In/Out',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/1828/1828959.png',
-      hoverText: 'Check patients in or out',
+      label: 'Services',
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/1048/1048877.png',
+      hoverText: 'Order lab tests or vaccines',
+      path: '/services',
     },
     {
       label: 'Notes',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png',
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/3075/3075908.png',
       hoverText: 'Create or read notes',
+      path: '/notes',
     },
     {
-      label: 'Reminders',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/2830/2830308.png',
-      hoverText: 'Manage reminders',
-    },
-    {
-      label: 'Reports',
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/3416/3416021.png',
-      hoverText: 'Generate various reports',
+      label: 'Scheduler',
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/747/747310.png',
+      hoverText: 'View and schedule appointments',
+      path: '/scheduler',
     },
   ];
 
   return (
     <PatientProvider>
-      {/* Parent Window (Windows Classic style) */}
-      <div
-        className="window"
-        style={{
-          margin: '0', // remove auto centering
-          padding: '4px', // minimal overall padding
-          width: '100%',
-          maxWidth: 'none',
-        }}
-      >
-        <div className="title-bar">
-          <div className="title-bar-text">Cornerstone</div>
-          <div className="title-bar-controls">
-            <button aria-label="Minimize"></button>
-            <button aria-label="Maximize"></button>
-            <button aria-label="Close"></button>
-          </div>
-        </div>
+      <SchedulingProvider>
         <div
-          className="window-body"
+          className="window"
           style={{
-            padding: '4px', // minimal padding
+            margin: '0',
+            padding: '4px',
+            width: '100%',
+            maxWidth: 'none',
+            height: '100%',
+            boxSizing: 'border-box'
           }}
         >
-          {/* Main menu bar */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              backgroundColor: '#c0c0c0',
-              border: '2px solid #404040',
-              padding: '4px',
-              marginBottom: '4px',
-            }}
-          >
-            <ul
-              style={{
-                display: 'flex',
-                listStyle: 'none',
-                gap: '10px',
-                margin: 0,
-                padding: 0,
-                position: 'relative',
-              }}
-            >
-              {menuItems.map((menu, idx) => (
-                <li
-                  key={idx}
-                  style={{
-                    position: 'relative',
-                    padding: '0 6px',
-                    cursor: 'pointer',
-                    color: 'black', // updated text color
-                  }}
-                  onMouseEnter={() => setActiveMenu(idx)}
-                  onMouseLeave={() => setActiveMenu(null)}
-                >
-                  {menu.label}
-                  {activeMenu === idx && (
-                    <ul
-                      style={{
-                        position: 'absolute',
-                        top: '100%',
-                        left: 0,
-                        backgroundColor: '#c0c0c0',
-                        border: '2px solid #404040',
-                        listStyle: 'none',
-                        padding: '4px 0',
-                        margin: 0,
-                        minWidth: '120px',
-                        zIndex: 10,
-                      }}
-                    >
-                      {menu.subItems.map((sub, sIdx) => (
-                        <li
-                          key={sIdx}
-                          style={{
-                            padding: '4px 8px',
-                            color: 'black', // sub-menu text color
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                          }}
-                          onMouseDown={(e) => {
-                            // No real action, just a placeholder
-                            e.stopPropagation();
-                          }}
-                        >
-                          {sub}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
+          <div className="title-bar">
+            <div className="title-bar-text">Cornerstone</div>
+            <div className="title-bar-controls">
+              <button aria-label="Minimize"></button>
+              <button aria-label="Maximize"></button>
+              <button aria-label="Close"></button>
+            </div>
           </div>
 
-          {/* Icon bar with 10 placeholders */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-            {iconData.map((iconItem, idx) => (
-              <button
-                key={idx}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  backgroundColor: '#ffffff',
-                  border: '2px solid #404040',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#eee';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#ffffff';
-                }}
-                title={iconItem.hoverText || iconItem.label}
-              >
-                <img
-                  src={iconItem.iconUrl}
-                  alt={iconItem.label}
-                  style={{ width: '20px', height: '20px' }}
-                />
-              </button>
-            ))}
-          </div>
-
-          {/* Nested "window-body" where the routes display */}
           <div
             className="window-body"
             style={{
-              padding: '4px',
+              padding: '16px',
+              height: 'calc(100vh - 30px)',
+              boxSizing: 'border-box',
+              overflow: 'auto',
+              backgroundColor: '#c0c0c0'
             }}
           >
-            <Router>
-              <Routes>
-                <Route path="/" element={<PatientCheckin />} />
-                <Route path="/visit-list" element={<PatientVisitList />} />
-              </Routes>
-            </Router>
+            {/* Main menu bar */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: '#c0c0c0',
+                border: '2px solid #404040',
+                padding: '4px',
+                marginBottom: '4px',
+              }}
+            >
+              <ul
+                style={{
+                  display: 'flex',
+                  listStyle: 'none',
+                  gap: '10px',
+                  margin: 0,
+                  padding: 0,
+                  position: 'relative',
+                }}
+              >
+                {menuItems.map((menu, idx) => (
+                  <li
+                    key={idx}
+                    style={{
+                      position: 'relative',
+                      padding: '0 6px',
+                      cursor: 'pointer',
+                      color: 'black',
+                    }}
+                    onMouseEnter={() => setActiveMenu(idx)}
+                    onMouseLeave={() => setActiveMenu(null)}
+                  >
+                    {menu.label}
+                    {activeMenu === idx && (
+                      <ul
+                        style={{
+                          position: 'absolute',
+                          top: '100%',
+                          left: 0,
+                          backgroundColor: '#c0c0c0',
+                          border: '2px solid #404040',
+                          listStyle: 'none',
+                          padding: '4px 0',
+                          margin: 0,
+                          minWidth: '120px',
+                          zIndex: 10,
+                        }}
+                      >
+                        {menu.subItems.map((sub, sIdx) => (
+                          <li
+                            key={sIdx}
+                            style={{
+                              padding: '4px 8px',
+                              color: 'black',
+                              cursor: 'pointer',
+                              whiteSpace: 'nowrap',
+                            }}
+                            onMouseDown={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            {sub}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Icon bar */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+              {iconData.map((iconItem, idx) => {
+                const isActive = location.pathname === iconItem.path;
+                return (
+                  <div
+                    key={idx}
+                    style={{ position: 'relative' }}
+                    onMouseEnter={() => setHoveredIcon(idx)}
+                    onMouseLeave={() => setHoveredIcon(null)}
+                  >
+                    <button
+                      className="icon-button"
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        backgroundColor: isActive ? '#000080' : '#ffffff',
+                        border: '2px solid',
+                        borderColor: isActive
+                          ? '#404040 #dfdfdf #dfdfdf #404040'
+                          : '#dfdfdf #404040 #404040 #dfdfdf',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        padding: '4px',
+                        color: isActive ? '#ffffff' : '#000000',
+                      }}
+                      onClick={() => navigate(iconItem.path)}
+                    >
+                      <img src={iconItem.iconUrl} alt={iconItem.label} width="24" height="24" />
+                      {hoveredIcon === idx && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '45px',
+                            left: '0',
+                            padding: '4px 8px',
+                            backgroundColor: '#fffed2',
+                            border: '1px solid #404040',
+                            zIndex: 9999,
+                            fontSize: '12px',
+                            whiteSpace: 'nowrap',
+                            pointerEvents: 'none',
+                            boxShadow: '2px 2px 5px rgba(0,0,0,0.2)',
+                            color: '#000000',
+                            minWidth: 'max-content',
+                            textAlign: 'left'
+                          }}
+                        >
+                          {iconItem.hoverText}
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Routes */}
+            <Routes>
+              <Route path="/" element={<PatientCheckinScreen />} />
+              <Route path="/checkin" element={<PatientCheckinScreen />} />
+              <Route path="/services" element={<ServicesScreen />} />
+              <Route path="/invoice" element={<InvoiceScreen />} />
+              <Route path="/create-client" element={<CreateNewClientScreen />} />
+              <Route path="/notes" element={<NoteScreen />} />
+              <Route path="/scheduler" element={<SchedulingScreen />} />
+            </Routes>
           </div>
         </div>
-      </div>
+      </SchedulingProvider>
     </PatientProvider>
   );
 }

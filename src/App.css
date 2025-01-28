@@ -1,10 +1,13 @@
+/* Removed fixed max-width and center alignment in #root. */
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  /* Previously set max-width: 1280px; margin: 0 auto; padding: 2rem; text-align: center; */
+  /* Now just let #root be flexible or use the styling from index.css */
+  padding: 0; 
+  margin: 0;
 }
 
+/* The logo styles remain if you still want them */
 .logo {
   height: 6em;
   padding: 1.5em;

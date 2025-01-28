@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { useInvoice } from '../../context/InvoiceContext';
 
-/**
- * InvoiceSearchBar
- * Mimics searching or adding an item to the invoice by ID or description.
- */
 const InvoiceSearchBar = () => {
   const { addLineItem } = useInvoice();
   const [searchValue, setSearchValue] = useState('');

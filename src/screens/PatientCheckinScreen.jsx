@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import '../styles/WindowsClassic.css';
 import '../styles/PatientForms.css';
 
-import ClientInfo from './ClientInfo';
-import PatientInfo from './PatientInfo';
-import ReasonForVisit from './ReasonForVisit';
-import DocumentsList from './DocumentsList';
-import RemindersAppointments from './RemindersAppointments';
-import CheckInOutButtons from './CheckInOutButtons';
+import ClientInfo from './PatientCheckin/components/ClientInfo';
+import PatientInfo from './PatientCheckin/components/PatientInfo';
+import ReasonForVisit from './PatientCheckin/components/ReasonForVisit';
+import DocumentsList from './PatientCheckin/components/DocumentsList';
+import RemindersAppointments from './PatientCheckin/components/RemindersAppointments';
+import CheckInOutButtons from './PatientCheckin/components/CheckInOutButtons';
 
-const PatientCheckin = () => {
+const PatientCheckinScreen = () => {
   const [formData, setFormData] = useState({
     // Client Info
     clientId: '',
@@ -78,8 +78,8 @@ const PatientCheckin = () => {
   };
 
   return (
-    <div className="windows-classic" style={{ padding: '4px' }}>
-      <div className="window" style={{ margin: '0', padding: '4px' }}>
+    <div className="windows-classic" style={{ minHeight: '100vh' }}>
+      <div className="window" style={{ margin: '0', display: 'flex', flexDirection: 'column' }}>
         <div className="title-bar">
           <div className="title-bar-text">Patient Check-in/out</div>
           <div className="title-bar-controls">
@@ -89,15 +89,32 @@ const PatientCheckin = () => {
           </div>
         </div>
 
-        <div className="window-body" style={{ padding: '6px' }}>
-          {/* Adjusted columns for a snug fit */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 0.8fr', gap: '8px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="window-body" style={{
+          padding: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px'
+        }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '16px',
+              width: '100%',
+              minWidth: 0
+            }}
+          >
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+              minWidth: 0 // Prevents flex blowout
+            }}>
               <ClientInfo formData={formData} handleInputChange={handleInputChange} />
               <PatientInfo formData={formData} handleInputChange={handleInputChange} />
             </div>
 
-            <fieldset>
+            <fieldset style={{ minWidth: 0 }}>
               <legend>Billing & Contact</legend>
               <div className="form-row">
                 <label>Balance due:</label>
@@ -157,13 +174,19 @@ const PatientCheckin = () => {
             <CheckInOutButtons formData={formData} handleInputChange={handleInputChange} />
           </div>
 
-          {/* Middle row: Patient docs (left) + Reason for Visit (right) */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '8px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '16px',
+              width: '100%',
+              minWidth: 0
+            }}
+          >
             <DocumentsList />
             <ReasonForVisit formData={formData} handleInputChange={handleInputChange} />
           </div>
 
-          {/* Bottom row: Reminders & Future Appointments */}
           <RemindersAppointments />
         </div>
       </div>
@@ -171,4 +194,4 @@ const PatientCheckin = () => {
   );
 };
 
-export default PatientCheckin;
+export default PatientCheckinScreen;

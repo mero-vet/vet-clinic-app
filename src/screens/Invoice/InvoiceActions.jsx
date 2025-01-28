@@ -1,10 +1,5 @@
 import React from 'react';
 
-/**
- * InvoiceActions
- * Placeholder actions for completing or managing the invoice.
- * (No real functionality at this stage)
- */
 const InvoiceActions = () => {
   const handleSaveDraft = () => {
     alert('Invoice draft saved (placeholder)');

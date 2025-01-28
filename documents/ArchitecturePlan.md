@@ -1,6 +1,6 @@
 # Cornerstone UI Build-Out Plan
 
-This document outlines the plan for the top menu, the 10 icons, and the general architecture to replicate a “Cornerstone”-style front-end environment. Everything is front-end only (no real backend/database).
+This document outlines the plan for the top menu, the icon bar, and the general architecture to replicate a “Cornerstone”-style front-end environment. All remains front-end only (no real backend/database).
 
 ---
 
@@ -20,80 +20,97 @@ This document outlines the plan for the top menu, the 10 icons, and the general 
 - **Window**  
 - **Help**  
 
-Each menu item has a drop-down sub-menu that appears on hover. For now, these sub-menu items are placeholders and do not perform any action.
+Each menu item has a drop-down sub-menu that appears on hover. Currently, these sub-menu items are placeholders and do not perform any real action.
 
-### Row of 10 Icons
+### Row of Icons
 
-Below are the 10 icons we’re featuring, each potentially mapping to its own screen or function:
+We have at least five icons that tie directly to the new screens:
 
-1. **Appointments**  
-   - Opens a scheduling or calendar view to manage appointments.  
+1. **Check-In/Out** — Leads to the Patient Check-In screen.  
+2. **Invoices** — Leads to the Invoice screen for billing, payments, etc.  
+3. **Services** — Opens the services screen for lab/vaccine ordering.  
+4. **Notes** — Opens the note-taking screen.  
+5. **Visit List** — Navigates to the Patient Visit List screen.  
 
-2. **Invoices**  
-   - Displays invoice creation, editing, and payment interfaces.  
-
-3. **Patient Records**  
-   - Navigates to patient record management or summary.  
-
-4. **Lab Orders**  
-   - Offers a form/UI for ordering lab tests.  
-
-5. **Pharmacy**  
-   - Opens a medication prescribing interface or pharmacy management UI.  
-
-6. **Payments**  
-   - Handles various payment options, transaction logs, or receipts.  
-
-7. **Check-In/Out**  
-   - Manages patient arrivals and departures, plus staff check-in/out if needed.  
-
-8. **Notes**  
-   - Displays or creates new notes pertaining to patients or general tasks.  
-
-9. **Reminders**  
-   - Sets or views reminders for follow-up visits, vaccinations, etc.  
-
-10. **Reports**  
-   - Accesses different report types, analytics, or daily summaries.  
-
-All are placeholders now, but each icon can route to a distinct component/page as the project evolves.
+Additional icons can be added or retired as needed.
 
 ---
 
 ## 2. Project Architecture
 
 1. **UI-Only Approach**  
-   - All data is stored in React state or local objects.  
-   - No backend or API calls are involved.
+   - All data is stored in React state or context.  
+   - No backend or API calls aside from mock or local data.  
 
 2. **Routing**  
    - React Router handles page navigation.  
-   - `/` for Patient Check-In by default, plus other routes (e.g., `/visit-list`).  
-   - Each icon (Appointments, Invoices, etc.) may eventually have its own path or screen.
+   - We have routes for `/checkin`, `/visit-list`, `/services`, `/invoice`, `/create-client`, and `/notes`.  
+   - Default `/` also goes to the Check-In screen.
 
 3. **Context/State Management**  
-   - `PatientContext` (already existing) for patient data.  
-   - Potential additional contexts for scheduling, inventory, etc. as needed.
+   - `PatientContext` for patient data.  
+   - `InvoiceContext` for invoices.  
+   - `NoteContext` for notes.  
+   - `SchedulingContext` (future) for appointments.  
 
-4. **Components**  
-   - **Main Menu & Icon Bar**: Implemented in `App.jsx` with Windows Classic styling.  
-   - **Screen Components**: Each icon can load a specialized component.  
-   - **Shared Styles**: `WindowsClassic.css` & `PatientForms.css`.
+4. **Components vs. Screens**  
+   - **Screens** live under `src/screens`:  
+     - **PatientCheckinScreen** (was `PatientCheckin.jsx`)  
+     - **ServicesScreen** (was `ServicesMain.jsx`)  
+     - **CreateNewClientScreen** (was `CreateNewClient.jsx`)  
+     - **ClientCreationSuccessScreen** (was `ClientCreationSuccess.jsx`)  
+     - **InvoiceScreen** (was `InvoiceMain.jsx`)  
+     - **NoteScreen** (was `NoteTaking.jsx`)  
 
-5. **Documents Folder**  
-   - Holds design docs, architecture proposals, and step-by-step build guides.
+   - **Reusable Components** remain in `src/components`. Examples include:  
+     - `ClientInfo`, `PatientInfo`, `ReasonForVisit`, `DocumentsList`, `RemindersAppointments`  
+     - `CheckInOutButtons`, `NewClientForm`, `Scheduling/*`, `invoicing/*`, etc.
 
 ---
 
-## 3. Step-by-Step Implementation Plan
+## 3. Detailed Screen List
 
-1. **Create Windows Classic Parent Window** – *Done*: Top-level window with “Cornerstone” title, minimize/max/close.  
-2. **Add Dropdown Menus** – *Done*: Hover-based drop-down menus for the top bar.  
-3. **Implement 10 Icon Bar** – *Done*: Real icon images with placeholders for future screens.  
-4. **Route Configuration** – Continue expanding `App.jsx` with `Routes` for each new screen.  
-5. **Screen Components** – Build out the functionality for each icon step by step.  
-6. **Expand Context or Redux** – As new features require global state.  
-7. **Refine UI/UX** – Revisit styling, reorganize layout for better user experience.  
-8. **Documentation** – Update this plan and detail every new feature as it’s developed.
+Below is a breakdown of each screen and the components it relies on:
 
-We will keep everything modular and consistent with the Windows Classic theme while adding new features over time.
+1. **PatientCheckinScreen**  
+   - Includes `ClientInfo`, `PatientInfo`, `ReasonForVisit`, `DocumentsList`, `RemindersAppointments`, `CheckInOutButtons`.
+
+2. **ServicesScreen**  
+   - Integrates `ServicesCatalog`, `LabTestOrderForm`, `VaccineOrderForm`, and `OrdersHistory` (all from `src/components`).
+
+3. **CreateNewClientScreen**  
+   - Embeds `NewClientForm`; also shows `ClientCreationSuccessScreen` conditionally.
+
+4. **ClientCreationSuccessScreen**  
+   - Simple success confirmation message once a new client is created.
+
+5. **InvoiceScreen**  
+   - Provides invoice creation via `InvoiceSearchBar`, `InvoiceLineItems`, `InvoiceTotals`, and `InvoiceActions`.
+
+6. **NoteScreen**  
+   - Uses `NoteContext`, plus `AddNoteForm` and `NoteList` for note-taking.
+
+---
+
+## 4. Additional Components Needed
+
+- **SchedulingScreen** (Future) — We may create a dedicated screen for scheduling appointments, leveraging `CalendarView`, `AppointmentList`, `NewAppointmentForm`.  
+- **(Optional) PaymentScreen** — If we want a separate screen specifically for payments.  
+
+---
+
+## 5. Components or Icons Potentially Retired
+
+- Certain older icons (e.g., “Pharmacy,” “Reports”) might be removed if not in active use.  
+- If a new screen is not planned, the corresponding icon can be hidden or repurposed.
+
+---
+
+## 6. Implementation Steps
+
+1. **Refactor**: Move/rename large container components (screens) into `src/screens`.  
+2. **Update Imports**: In `App.jsx`, reference new screen paths and define appropriate routes.  
+3. **Cleanup**: Possibly remove or repurpose icons and placeholders if not needed.  
+4. **Expand**: Add new screens or contexts as features (e.g., scheduling) are fully built out.
+
+This plan ensures a clear separation between **screens** (top-level pages) and **reusable components**, making the Cornerstone UI more manageable and scalable.
