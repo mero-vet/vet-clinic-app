@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 function LabTestOrderForm() {
   const [labData, setLabData] = useState({
     clientId: '',
+    patientId: '',
     testType: '',
     additionalNotes: '',
     collectionDate: '',
@@ -26,15 +27,27 @@ function LabTestOrderForm() {
     <fieldset style={{ margin: '10px', padding: '8px 12px' }}>
       <legend>Order Lab Test</legend>
       <form onSubmit={handleSubmit} style={{ margin: 0 }}>
-        <div style={{ marginBottom: '8px' }}>
-          <label>Client ID:&nbsp;</label>
-          <input
-            type="text"
-            name="clientId"
-            value={labData.clientId}
-            onChange={handleChange}
-            required
-          />
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
+          <div>
+            <label>Client ID:&nbsp;</label>
+            <input
+              type="text"
+              name="clientId"
+              value={labData.clientId}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Patient ID:&nbsp;</label>
+            <input
+              type="text"
+              name="patientId"
+              value={labData.patientId}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
         <div style={{ marginBottom: '8px' }}>

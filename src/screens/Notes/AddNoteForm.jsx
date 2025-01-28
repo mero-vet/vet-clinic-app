@@ -6,14 +6,15 @@ function AddNoteForm() {
   const [noteContent, setNoteContent] = useState('');
   const [noteDate, setNoteDate] = useState(new Date().toISOString().split('T')[0]);
   const [clientId, setClientId] = useState('');
+  const [patientId, setPatientId] = useState('');
   const { addNote } = useNotes();
   const { currentPatient } = usePatient();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!noteContent.trim() || !clientId.trim()) return;
+    if (!noteContent.trim() || !clientId.trim() || !patientId.trim()) return;
 
-    addNote(noteContent, clientId, noteDate);
+    addNote(noteContent, clientId, patientId, noteDate);
     setNoteContent('');
   };
 
@@ -21,21 +22,39 @@ function AddNoteForm() {
     <fieldset style={{ marginBottom: '15px', color: '#000000' }}>
       <legend>Add New Note</legend>
       <form onSubmit={handleSubmit}>
-        <div className="form-row" style={{ marginBottom: '8px' }}>
-          <label style={{ minWidth: '80px', fontSize: '12px' }}>Client ID:</label>
-          <input
-            type="text"
-            value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
-            required
-            style={{
-              fontFamily: '"MS Sans Serif", Tahoma, sans-serif',
-              fontSize: '12px',
-              padding: '4px',
-              border: '2px solid',
-              borderColor: '#404040 #dfdfdf #dfdfdf #404040'
-            }}
-          />
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
+          <div className="form-row">
+            <label style={{ minWidth: '80px', fontSize: '12px' }}>Client ID:</label>
+            <input
+              type="text"
+              value={clientId}
+              onChange={(e) => setClientId(e.target.value)}
+              required
+              style={{
+                fontFamily: '"MS Sans Serif", Tahoma, sans-serif',
+                fontSize: '12px',
+                padding: '4px',
+                border: '2px solid',
+                borderColor: '#404040 #dfdfdf #dfdfdf #404040'
+              }}
+            />
+          </div>
+          <div className="form-row">
+            <label style={{ minWidth: '80px', fontSize: '12px' }}>Patient ID:</label>
+            <input
+              type="text"
+              value={patientId}
+              onChange={(e) => setPatientId(e.target.value)}
+              required
+              style={{
+                fontFamily: '"MS Sans Serif", Tahoma, sans-serif',
+                fontSize: '12px',
+                padding: '4px',
+                border: '2px solid',
+                borderColor: '#404040 #dfdfdf #dfdfdf #404040'
+              }}
+            />
+          </div>
         </div>
         <div className="form-row" style={{ marginBottom: '8px' }}>
           <label style={{ minWidth: '80px', fontSize: '12px' }}>Date:</label>

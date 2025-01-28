@@ -46,6 +46,7 @@ const InvoiceLineItems = () => {
         <thead>
           <tr>
             <th>Client ID</th>
+            <th>Patient ID</th>
             <th>Description</th>
             <th>Qty</th>
             <th>Price</th>

@@ -5,6 +5,7 @@ const InvoiceSearchBar = () => {
   const { addLineItem } = useInvoice();
   const [searchData, setSearchData] = useState({
     clientId: '',
+    patientId: '',
     invoiceNumber: '',
     date: new Date().toISOString().split('T')[0]
   });
@@ -18,11 +19,12 @@ const InvoiceSearchBar = () => {
   };
 
   const handleAddItem = () => {
-    if (searchData.clientId.trim()) {
+    if (searchData.clientId.trim() && searchData.patientId.trim()) {
       // In real scenario, you'd fetch or lookup item data
       // Here we'll just add a placeholder item
       const newItem = {
         id: searchData.clientId.trim(),
+        patientId: searchData.patientId.trim(),
         description: `Item ${searchData.clientId.trim()}`,
         qty: 1,
         price: 50.0,
@@ -32,6 +34,7 @@ const InvoiceSearchBar = () => {
       addLineItem(newItem);
       setSearchData({
         clientId: '',
+        patientId: '',
         invoiceNumber: '',
         date: new Date().toISOString().split('T')[0]
       });
@@ -48,6 +51,17 @@ const InvoiceSearchBar = () => {
             type="text"
             name="clientId"
             value={searchData.clientId}
+            onChange={handleChange}
+            required
+            style={{ width: '120px' }}
+          />
+        </div>
+        <div>
+          <label>Patient ID:&nbsp;</label>
+          <input
+            type="text"
+            name="patientId"
+            value={searchData.patientId}
             onChange={handleChange}
             required
             style={{ width: '120px' }}

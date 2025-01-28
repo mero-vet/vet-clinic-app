@@ -19,6 +19,7 @@ function SchedulingScreen() {
     reason: '',
     patient: '',
     clientId: '',
+    patientId: '',
     staff: '',
   });
 
@@ -46,7 +47,7 @@ function SchedulingScreen() {
     } else {
       setSelectedSlot({ day, time });
       setSelectedAppointment(null);
-      setFormData({ date: day, time: time, reason: '', patient: '', clientId: '', staff: '' });
+      setFormData({ date: day, time: time, reason: '', patient: '', clientId: '', patientId: '', staff: '' });
     }
   };
 
@@ -170,9 +171,15 @@ function SchedulingScreen() {
           {selectedAppointment && (
             <div style={{ marginTop: '20px', border: '1px solid #ccc', padding: '8px' }}>
               <h3>Appointment Details for {selectedAppointment.date} at {selectedAppointment.time}</h3>
-              <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'inline-block', width: '80px', fontWeight: 'bold' }}>Client ID:</label>
-                <span>{selectedAppointment.clientId}</span>
+              <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
+                <div>
+                  <label style={{ display: 'inline-block', width: '80px', fontWeight: 'bold' }}>Client ID:</label>
+                  <span>{selectedAppointment.clientId}</span>
+                </div>
+                <div>
+                  <label style={{ display: 'inline-block', width: '80px', fontWeight: 'bold' }}>Patient ID:</label>
+                  <span>{selectedAppointment.patientId}</span>
+                </div>
               </div>
               <div style={{ marginBottom: '8px' }}>
                 <label style={{ display: 'inline-block', width: '80px', fontWeight: 'bold' }}>Reason:</label>
@@ -220,15 +227,27 @@ function SchedulingScreen() {
             <div style={{ marginTop: '20px', border: '1px solid #ccc', padding: '8px' }}>
               <h3>Schedule Appointment for {selectedSlot.day} at {selectedSlot.time}</h3>
               <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '8px' }}>
-                  <label style={{ display: 'inline-block', width: '80px' }}>Client ID:</label>
-                  <input
-                    type="text"
-                    name="clientId"
-                    value={formData.clientId}
-                    onChange={handleInputChange}
-                    required
-                  />
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
+                  <div>
+                    <label style={{ display: 'inline-block', width: '80px' }}>Client ID:</label>
+                    <input
+                      type="text"
+                      name="clientId"
+                      value={formData.clientId}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'inline-block', width: '80px' }}>Patient ID:</label>
+                    <input
+                      type="text"
+                      name="patientId"
+                      value={formData.patientId}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
                 </div>
                 <div style={{ marginBottom: '8px' }}>
                   <label style={{ display: 'inline-block', width: '80px' }}>Reason:</label>
