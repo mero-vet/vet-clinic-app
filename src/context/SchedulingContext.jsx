@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // A simple context for scheduling appointments.
 // We'll assume each appointment has { id, date, time, reason, patient, staff }.
@@ -68,7 +68,15 @@ const generateInitialAppointments = () => {
 };
 
 export const SchedulingProvider = ({ children }) => {
-  const [appointments, setAppointments] = useState(generateInitialAppointments());
+  const [appointments, setAppointments] = useState(() => {
+    const savedAppointments = localStorage.getItem('sessionAppointments');
+    return savedAppointments ? JSON.parse(savedAppointments) : generateInitialAppointments();
+  });
+
+  // Update localStorage whenever appointments change
+  useEffect(() => {
+    localStorage.setItem('sessionAppointments', JSON.stringify(appointments));
+  }, [appointments]);
 
   const addAppointment = (newAppt) => {
     setAppointments((prev) => [
@@ -84,8 +92,18 @@ export const SchedulingProvider = ({ children }) => {
     setAppointments((prev) => prev.filter(appt => appt.id !== appointmentId));
   };
 
+  const clearAppointments = () => {
+    setAppointments(generateInitialAppointments());
+    localStorage.removeItem('sessionAppointments');
+  };
+
   return (
-    <SchedulingContext.Provider value={{ appointments, addAppointment, removeAppointment }}>
+    <SchedulingContext.Provider value={{
+      appointments,
+      addAppointment,
+      removeAppointment,
+      clearAppointments
+    }}>
       {children}
     </SchedulingContext.Provider>
   );
