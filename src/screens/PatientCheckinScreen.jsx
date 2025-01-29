@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import '../styles/WindowsClassic.css';
 import '../styles/PatientForms.css';
+import { usePatient } from '../context/PatientContext';
 
 import ClientInfo from './PatientCheckin/components/ClientInfo';
 import PatientInfo from './PatientCheckin/components/PatientInfo';
@@ -10,67 +11,23 @@ import RemindersAppointments from './PatientCheckin/components/RemindersAppointm
 import CheckInOutButtons from './PatientCheckin/components/CheckInOutButtons';
 
 const PatientCheckinScreen = () => {
-  const [formData, setFormData] = useState({
-    // Client Info
-    clientId: '',
-    clientFirstName: '',
-    clientLastName: '',
-    clientEmail: '',
-    emailDeclined: false,
-    phoneHome: '',
-    phoneExt: '',
-    phoneDeclined: false,
+  const { patientData, setPatientData, setMockPatientData } = usePatient();
 
-    // Billing & Contact
-    balanceDue: '',
-    address: '',
-    city: '',
-    stateProv: '',
-    postalCode: '',
-
-    // Patient Info
-    patientId: '',
-    patientName: '',
-    species: '',
-    sex: '',
-    breed: '',
-    birthDate: '',
-    ageYears: '',
-    ageMonths: '',
-    ageDays: '',
-    weightDate: '',
-    weight: '',
-    weightLbs: '',
-    additionalNotes: '',
-    alertNotes: '',
-
-    // Reason for Visit
-    primaryReason: '',
-    secondaryReason: '',
-    room: '',
-    visitType: 'Outpatient',
-    status: '',
-    ward: '',
-    cage: '',
-    rdvmName: '',
-    referralRecheck: false,
-
-    // Check-In / Staff Info
-    staffId: '',
-    checkedInBy: '',
-    checkInDate: '',
-    checkOutDate: '',
-  });
+  useEffect(() => {
+    // For demo purposes, set mock data when the component mounts
+    // In a real app, this would be replaced with actual patient data fetching
+    setMockPatientData();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, type, value, checked } = e.target;
     if (type === 'checkbox') {
-      setFormData((prev) => ({
+      setPatientData((prev) => ({
         ...prev,
         [name]: checked,
       }));
     } else {
-      setFormData((prev) => ({
+      setPatientData((prev) => ({
         ...prev,
         [name]: value,
       }));
@@ -98,14 +55,14 @@ const PatientCheckinScreen = () => {
           <div className="patient-checkin-grid">
             {/* Left Column */}
             <div className="patient-checkin-column">
-              <ClientInfo formData={formData} handleInputChange={handleInputChange} />
-              <PatientInfo formData={formData} handleInputChange={handleInputChange} />
+              <ClientInfo formData={patientData} handleInputChange={handleInputChange} />
+              <PatientInfo formData={patientData} handleInputChange={handleInputChange} />
             </div>
 
             {/* Middle Column */}
             <div className="patient-checkin-column middle-column">
-              <CheckInOutButtons formData={formData} handleInputChange={handleInputChange} />
-              <ReasonForVisit formData={formData} handleInputChange={handleInputChange} />
+              <CheckInOutButtons formData={patientData} handleInputChange={handleInputChange} />
+              <ReasonForVisit formData={patientData} handleInputChange={handleInputChange} />
             </div>
 
             {/* Right Column */}
@@ -118,7 +75,7 @@ const PatientCheckinScreen = () => {
                     <input
                       type="text"
                       name="balanceDue"
-                      value={formData.balanceDue}
+                      value={patientData.balanceDue}
                       onChange={handleInputChange}
                       style={{ width: '80px' }}
                     />
@@ -136,7 +93,7 @@ const PatientCheckinScreen = () => {
                   <input
                     type="text"
                     name="address"
-                    value={formData.address}
+                    value={patientData.address}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -145,7 +102,7 @@ const PatientCheckinScreen = () => {
                   <input
                     type="text"
                     name="city"
-                    value={formData.city}
+                    value={patientData.city}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -154,14 +111,14 @@ const PatientCheckinScreen = () => {
                   <input
                     type="text"
                     name="stateProv"
-                    value={formData.stateProv}
+                    value={patientData.stateProv}
                     onChange={handleInputChange}
                   />
                   <label>Postal code:</label>
                   <input
                     type="text"
                     name="postalCode"
-                    value={formData.postalCode}
+                    value={patientData.postalCode}
                     onChange={handleInputChange}
                   />
                 </div>
