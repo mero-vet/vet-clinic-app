@@ -2,7 +2,7 @@ import React from 'react';
 import { useInvoice } from '../../context/InvoiceContext';
 
 const InvoiceLineItems = () => {
-  const { lineItems, removeLineItem, updateLineItem } = useInvoice();
+  const { lineItems, removeLineItem, updateLineItem, clientId, patientId } = useInvoice();
 
   const handleFocus = (e) => {
     e.target.select();
@@ -70,6 +70,12 @@ const InvoiceLineItems = () => {
   return (
     <fieldset>
       <legend>Line Items</legend>
+      <div style={{ marginBottom: '16px' }}>
+        <div style={{ display: 'flex', gap: '20px' }}>
+          <div><strong>Client ID:</strong> {clientId || 'Not selected'}</div>
+          <div><strong>Patient ID:</strong> {patientId || 'Not selected'}</div>
+        </div>
+      </div>
       <table className="services-table">
         <thead>
           <tr>

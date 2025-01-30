@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useInvoice } from '../../context/InvoiceContext';
 
 const InvoiceSearchBar = () => {
-  const { addLineItem } = useInvoice();
+  const { addLineItem, updateClientId, updatePatientId } = useInvoice();
   const [searchData, setSearchData] = useState({
     clientId: '',
     patientId: '',
-    invoiceNumber: '',
+    itemDescription: '',
     date: new Date().toISOString().split('T')[0]
   });
 
@@ -16,28 +16,26 @@ const InvoiceSearchBar = () => {
       ...prev,
       [name]: value
     }));
+
+    // Update client and patient IDs in context
+    if (name === 'clientId') {
+      updateClientId(value);
+    } else if (name === 'patientId') {
+      updatePatientId(value);
+    }
   };
 
   const handleAddItem = () => {
-    if (searchData.clientId.trim() && searchData.patientId.trim()) {
-      // In real scenario, you'd fetch or lookup item data
-      // Here we'll just add a placeholder item
+    if (searchData.itemDescription.trim()) {
       const newItem = {
-        id: searchData.clientId.trim(),
-        patientId: searchData.patientId.trim(),
-        description: `Item ${searchData.clientId.trim()}`,
-        qty: 1,
-        price: 50.0,
-        discount: 0,
-        tax: false
+        description: searchData.itemDescription.trim()
       };
       addLineItem(newItem);
-      setSearchData({
-        clientId: '',
-        patientId: '',
-        invoiceNumber: '',
-        date: new Date().toISOString().split('T')[0]
-      });
+      // Only clear the item description, keep the client and patient IDs
+      setSearchData(prev => ({
+        ...prev,
+        itemDescription: ''
+      }));
     }
   };
 
@@ -68,13 +66,13 @@ const InvoiceSearchBar = () => {
           />
         </div>
         <div>
-          <label>Item:&nbsp;</label>
+          <label>Item Description:&nbsp;</label>
           <input
             type="text"
-            name="invoiceNumber"
-            value={searchData.invoiceNumber}
+            name="itemDescription"
+            value={searchData.itemDescription}
             onChange={handleChange}
-            style={{ width: '120px' }}
+            style={{ width: '200px' }}
           />
         </div>
         <div>
@@ -87,8 +85,12 @@ const InvoiceSearchBar = () => {
           />
         </div>
       </div>
-      <button className="windows-button" onClick={handleAddItem}>
-        Add
+      <button
+        className="windows-button"
+        onClick={handleAddItem}
+        disabled={!searchData.clientId || !searchData.patientId || !searchData.itemDescription}
+      >
+        Add Item
       </button>
     </fieldset>
   );
