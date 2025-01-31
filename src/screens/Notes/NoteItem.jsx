@@ -28,6 +28,8 @@ function NoteItem({ note }) {
             rows="4"
             value={tempContent}
             onChange={(e) => setTempContent(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            onClick={(e) => e.target.select()}
             style={{
               width: '100%',
               marginBottom: '8px',

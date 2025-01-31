@@ -29,6 +29,8 @@ function AddNoteForm() {
               type="text"
               value={clientId}
               onChange={(e) => setClientId(e.target.value)}
+              onFocus={(e) => e.target.select()}
+              onClick={(e) => e.target.select()}
               required
               style={{
                 fontFamily: '"MS Sans Serif", Tahoma, sans-serif',
@@ -45,6 +47,8 @@ function AddNoteForm() {
               type="text"
               value={patientId}
               onChange={(e) => setPatientId(e.target.value)}
+              onFocus={(e) => e.target.select()}
+              onClick={(e) => e.target.select()}
               required
               style={{
                 fontFamily: '"MS Sans Serif", Tahoma, sans-serif',
@@ -62,6 +66,12 @@ function AddNoteForm() {
             type="date"
             value={noteDate}
             onChange={(e) => setNoteDate(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            onClick={(e) => e.target.select()}
+            onMouseUp={(e) => {
+              e.preventDefault();
+              e.target.select();
+            }}
             style={{
               fontFamily: '"MS Sans Serif", Tahoma, sans-serif',
               fontSize: '12px',
@@ -76,6 +86,8 @@ function AddNoteForm() {
             rows="4"
             value={noteContent}
             onChange={(e) => setNoteContent(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            onClick={(e) => e.target.select()}
             style={{
               width: '100%',
               boxSizing: 'border-box',
