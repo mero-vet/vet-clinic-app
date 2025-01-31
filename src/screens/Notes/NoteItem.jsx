@@ -18,7 +18,9 @@ function NoteItem({ note }) {
       padding: '8px',
       marginBottom: '8px',
       backgroundColor: '#ffffff',
-      color: '#000000'
+      color: '#000000',
+      height: 'auto',
+      minHeight: 'fit-content'
     }}>
       {isEditing ? (
         <>
@@ -33,7 +35,9 @@ function NoteItem({ note }) {
               fontSize: '12px',
               padding: '4px',
               border: '2px solid',
-              borderColor: '#404040 #dfdfdf #dfdfdf #404040'
+              borderColor: '#404040 #dfdfdf #dfdfdf #404040',
+              minHeight: '100px',
+              resize: 'vertical'
             }}
           />
           <div style={{ textAlign: 'right' }}>
@@ -51,7 +55,15 @@ function NoteItem({ note }) {
             <span>Date: {note.date}</span>
             {note.updatedAt && <span>Last updated: {new Date(note.updatedAt).toLocaleString()}</span>}
           </div>
-          <p style={{ margin: '0 0 8px 0', fontSize: '12px' }}>{note.content}</p>
+          <p style={{
+            margin: '0 0 8px 0',
+            fontSize: '12px',
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word',
+            height: 'auto',
+            minHeight: 'fit-content',
+            overflow: 'visible'
+          }}>{note.content}</p>
           <div style={{ textAlign: 'right' }}>
             <button className="windows-button" onClick={() => setIsEditing(true)} style={{ marginRight: '5px' }}>
               Edit

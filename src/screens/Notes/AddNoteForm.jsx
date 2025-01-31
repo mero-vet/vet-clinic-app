@@ -84,7 +84,9 @@ function AddNoteForm() {
               padding: '4px',
               border: '2px solid',
               borderColor: '#404040 #dfdfdf #dfdfdf #404040',
-              resize: 'vertical'
+              resize: 'vertical',
+              whiteSpace: 'pre-wrap',
+              minHeight: '100px'
             }}
             placeholder="Enter your note here..."
           />
