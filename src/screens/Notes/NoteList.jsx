@@ -12,10 +12,15 @@ function NoteList() {
     ? notes.filter((n) => n.patientId === currentPatient.id)
     : notes;
 
+  // Sort notes by creation date, most recent first
+  const sortedNotes = [...filteredNotes].sort((a, b) =>
+    new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
   return (
     <fieldset style={{ color: '#000000' }}>
       <legend>Existing Notes</legend>
-      {!filteredNotes || filteredNotes.length === 0 ? (
+      {!sortedNotes || sortedNotes.length === 0 ? (
         <p style={{ margin: '8px 0', fontSize: '12px', color: '#666' }}>No notes yet.</p>
       ) : (
         <div style={{
@@ -24,7 +29,7 @@ function NoteList() {
           padding: '4px',
           backgroundColor: '#ffffff'
         }}>
-          {filteredNotes.map((note) => (
+          {sortedNotes.map((note) => (
             <NoteItem key={note.id} note={note} />
           ))}
         </div>

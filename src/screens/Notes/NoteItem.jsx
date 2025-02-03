@@ -54,7 +54,7 @@ function NoteItem({ note }) {
       ) : (
         <>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', color: '#666' }}>
-            <span>Date: {note.date}</span>
+            <span>Created: {new Date(note.createdAt).toLocaleString()}</span>
             {note.updatedAt && <span>Last updated: {new Date(note.updatedAt).toLocaleString()}</span>}
           </div>
           <p style={{
