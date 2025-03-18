@@ -36,6 +36,7 @@ function LabTestOrderForm() {
               value={labData.clientId}
               onChange={handleChange}
               required
+              style={{ width: '50%' }}
             />
           </div>
           <div>
@@ -46,6 +47,7 @@ function LabTestOrderForm() {
               value={labData.patientId}
               onChange={handleChange}
               required
+              style={{ width: '50%' }}
             />
           </div>
         </div>
