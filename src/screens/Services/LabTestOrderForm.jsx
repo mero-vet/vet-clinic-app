@@ -27,29 +27,25 @@ function LabTestOrderForm() {
     <fieldset style={{ margin: '10px', padding: '8px 12px' }}>
       <legend>Order Lab Test</legend>
       <form onSubmit={handleSubmit} style={{ margin: 0 }}>
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
-          <div>
-            <label>Client ID:&nbsp;</label>
-            <input
-              type="text"
-              name="clientId"
-              value={labData.clientId}
-              onChange={handleChange}
-              required
-              style={{ width: '50%' }}
-            />
-          </div>
-          <div>
-            <label>Patient ID:&nbsp;</label>
-            <input
-              type="text"
-              name="patientId"
-              value={labData.patientId}
-              onChange={handleChange}
-              required
-              style={{ width: '50%' }}
-            />
-          </div>
+        <div style={{ marginBottom: '8px' }}>
+          <label>Client ID:&nbsp;</label>
+          <input
+            type="text"
+            name="clientId"
+            value={labData.clientId}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div style={{ marginBottom: '8px' }}>
+          <label>Patient ID:&nbsp;</label>
+          <input
+            type="text"
+            name="patientId"
+            value={labData.patientId}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div style={{ marginBottom: '8px' }}>
