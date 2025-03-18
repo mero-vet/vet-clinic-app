@@ -106,7 +106,7 @@ export const PatientProvider = ({ children }) => {
 
       staffId: 'S101',
       checkedInBy: 'Jessica Smith',
-      checkInDate: '2025-01-29T09:00',
+      checkInDate: '2024-03-18T09:00',
       checkOutDate: '',
     });
   };

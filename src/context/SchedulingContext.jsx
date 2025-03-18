@@ -8,8 +8,8 @@ const SchedulingContext = createContext();
 // Helper function to generate dates for 8 weeks starting from a base date
 const generateDates = () => {
   const dates = [];
-  const startDate = new Date('2025-01-27');
-  for (let week = 0; week < 8; week++) {
+  const startDate = new Date('2024-03-17');
+  for (let week = 0; week < 6; week++) {
     for (let day = 0; day < 5; day++) {
       const currentDate = new Date(startDate);
       currentDate.setDate(currentDate.getDate() + (week * 7) + day);
