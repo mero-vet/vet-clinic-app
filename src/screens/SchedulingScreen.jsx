@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useScheduling } from '../context/SchedulingContext';
 import '../styles/WindowsClassic.css';
 import '../styles/PatientForms.css';
@@ -9,7 +9,7 @@ import '../styles/PatientForms.css';
  * Allows booking a slot if it's not taken and navigating forward in time.
  */
 function SchedulingScreen() {
-  const { appointments, addAppointment, removeAppointment } = useScheduling();
+  const { appointments, addAppointment, removeAppointment, clearAppointments } = useScheduling();
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -22,6 +22,23 @@ function SchedulingScreen() {
     patientId: '',
     staff: '',
   });
+
+  // Force clean all storage on first load
+  useEffect(() => {
+    // Clear all appointment data and reset to current dates
+    clearAppointments();
+
+    // Log current date computation for debugging
+    const today = new Date();
+    console.log('Today:', today.toISOString());
+    const currentDay = today.getDay();
+    const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay;
+    console.log('Monday offset:', mondayOffset);
+
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() + mondayOffset);
+    console.log('Computed start date:', startDate.toISOString());
+  }, [clearAppointments]);
 
   // Generate the days for the current week based on the offset
   const days = useMemo(() => {
@@ -79,7 +96,7 @@ function SchedulingScreen() {
   };
 
   return (
-    <div className="windows-classic">
+    <div className="windows-classic" key={days[0]}>
       <div className="window" style={{ margin: '0' }}>
         <div className="title-bar">
           <div className="title-bar-text">Scheduling</div>
@@ -92,10 +109,27 @@ function SchedulingScreen() {
 
         <div className="window-body" style={{ padding: '16px' }}>
           <h2>Weekly Calendar</h2>
+          {/* Debug info - remove after fixing */}
+          <p style={{ fontSize: '12px', color: 'gray' }}>Debug - Week starts: {days[0]}</p>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <p>Click on an open slot to schedule a new appointment.</p>
             <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => {
+                  // Force refresh appointments
+                  clearAppointments();
+                  setCurrentWeekOffset(0);
+                }}
+                style={{
+                  backgroundColor: '#808080',
+                  color: '#ffffff',
+                  border: '1px solid #404040',
+                  padding: '0 8px'
+                }}
+              >
+                Refresh
+              </button>
               <button
                 onClick={() => setCurrentWeekOffset(prev => Math.max(0, prev - 1))}
                 disabled={currentWeekOffset === 0}
@@ -127,9 +161,18 @@ function SchedulingScreen() {
             <thead>
               <tr>
                 <th style={{ border: '1px solid #ccc', width: '80px' }}>Time</th>
-                {days.map((day) => (
-                  <th key={day} style={{ border: '1px solid #ccc' }}>{day}</th>
-                ))}
+                {days.map((day) => {
+                  // Format date to show day of week and month/day
+                  const date = new Date(day);
+                  const options = { weekday: 'short', month: 'short', day: 'numeric' };
+                  const formattedDate = date.toLocaleDateString('en-US', options);
+
+                  return (
+                    <th key={day} style={{ border: '1px solid #ccc' }}>
+                      {formattedDate}
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody>

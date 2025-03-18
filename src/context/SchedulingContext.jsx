@@ -9,12 +9,14 @@ const SchedulingContext = createContext();
 const generateDates = () => {
   const dates = [];
 
-  // Get current date
+  // Get current date and log it for debugging
   const today = new Date();
+  console.log('SchedulingContext - Today:', today.toISOString());
 
   // Find the Monday of the current week
   const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
   const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay; // If Sunday, go back 6 days, otherwise find previous Monday
+  console.log('SchedulingContext - Monday offset:', mondayOffset);
 
   // Create a new date object for current week's Monday
   const startDate = new Date(today);
@@ -23,7 +25,7 @@ const generateDates = () => {
   // Reset time to 00:00:00 to avoid any time-related issues
   startDate.setHours(0, 0, 0, 0);
 
-  console.log('Calendar start date:', startDate.toISOString().split('T')[0]);
+  console.log('SchedulingContext - Calendar start date:', startDate.toISOString());
 
   for (let week = 0; week < 6; week++) {
     for (let day = 0; day < 5; day++) {
@@ -32,6 +34,10 @@ const generateDates = () => {
       dates.push(currentDate.toISOString().split('T')[0]);
     }
   }
+
+  // Log first week's dates for debugging
+  console.log('SchedulingContext - First week dates:', dates.slice(0, 5));
+
   return dates;
 };
 
