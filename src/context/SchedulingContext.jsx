@@ -10,33 +10,32 @@ const generateDates = () => {
   const dates = [];
 
   // Get current date and log it for debugging
-  const today = new Date();
-  console.log('SchedulingContext - Today:', today.toISOString());
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // Reset time to midnight
+
+  console.log('SchedulingContext - Raw date object:', now);
+  console.log('SchedulingContext - Today:', now.toISOString(), 'Day of week:', now.getDay());
 
   // Find the Monday of the current week
-  const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
-  const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay; // If Sunday, go back 6 days, otherwise find previous Monday
-  console.log('SchedulingContext - Monday offset:', mondayOffset);
+  let mondayDate = new Date(now);
+  const daysSinceMonday = now.getDay() === 0 ? 6 : now.getDay() - 1;
+  mondayDate.setDate(now.getDate() - daysSinceMonday);
 
-  // Create a new date object for current week's Monday
-  const startDate = new Date(today);
-  startDate.setDate(today.getDate() + mondayOffset);
+  console.log('SchedulingContext - This week\'s Monday:', mondayDate.toISOString());
 
-  // Reset time to 00:00:00 to avoid any time-related issues
-  startDate.setHours(0, 0, 0, 0);
-
-  console.log('SchedulingContext - Calendar start date:', startDate.toISOString());
-
+  // Generate 6 weeks of dates
   for (let week = 0; week < 6; week++) {
-    for (let day = 0; day < 5; day++) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + (week * 7) + day);
-      dates.push(currentDate.toISOString().split('T')[0]);
+    for (let day = 0; day < 5; day++) { // Monday to Friday
+      const currentDate = new Date(mondayDate);
+      currentDate.setDate(mondayDate.getDate() + (week * 7) + day);
+      const dateString = currentDate.toISOString().split('T')[0];
+      dates.push(dateString);
     }
   }
 
-  // Log first week's dates for debugging
-  console.log('SchedulingContext - First week dates:', dates.slice(0, 5));
+  // Debug info
+  console.log('SchedulingContext - First 5 dates:', dates.slice(0, 5));
+  console.log('SchedulingContext - Last 5 dates:', dates.slice(-5));
 
   return dates;
 };
@@ -90,8 +89,19 @@ const generateInitialAppointments = () => {
 };
 
 export const SchedulingProvider = ({ children }) => {
-  // Don't check localStorage, always generate new appointments
-  const [appointments, setAppointments] = useState(generateInitialAppointments);
+  // Create a ref to detect if this is the first render
+  const isFirstRender = React.useRef(true);
+
+  // Always generate fresh appointments on component mount
+  const [appointments, setAppointments] = useState([]);
+
+  // Initialize appointments on first render
+  useEffect(() => {
+    if (isFirstRender.current) {
+      setAppointments(generateInitialAppointments());
+      isFirstRender.current = false;
+    }
+  }, []);
 
   const addAppointment = (newAppt) => {
     setAppointments((prev) => [
@@ -108,6 +118,7 @@ export const SchedulingProvider = ({ children }) => {
   };
 
   const clearAppointments = () => {
+    // Force regenerate new appointments with current dates
     setAppointments(generateInitialAppointments());
   };
 

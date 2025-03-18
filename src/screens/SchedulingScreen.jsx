@@ -22,6 +22,8 @@ function SchedulingScreen() {
     patientId: '',
     staff: '',
   });
+  // State to force re-render
+  const [forceRenderKey, setForceRenderKey] = useState(Date.now());
 
   // Force clean all storage on first load
   useEffect(() => {
@@ -30,6 +32,7 @@ function SchedulingScreen() {
 
     // Log current date computation for debugging
     const today = new Date();
+    console.log('Component mount. Today:', today.toISOString());
     console.log('Today:', today.toISOString());
     const currentDay = today.getDay();
     const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay;
@@ -43,20 +46,29 @@ function SchedulingScreen() {
   // Generate the days for the current week based on the offset
   const days = useMemo(() => {
     // Get current date
-    const today = new Date();
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Reset time to midnight
+
+    console.log('SchedulingScreen - Raw date object:', now);
+    console.log('SchedulingScreen - Today:', now.toISOString(), 'Day of week:', now.getDay());
 
     // Find the Monday of the current week
-    const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
-    const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay; // If Sunday, go back 6 days, otherwise find Monday of current week
+    let mondayDate = new Date(now);
+    const daysSinceMonday = now.getDay() === 0 ? 6 : now.getDay() - 1;
+    mondayDate.setDate(now.getDate() - daysSinceMonday);
 
-    // Create a new date object for current week's Monday
-    const startDate = new Date(today);
-    startDate.setDate(today.getDate() + mondayOffset + (currentWeekOffset * 7));
+    // Add the week offset to get to the requested week
+    mondayDate.setDate(mondayDate.getDate() + (currentWeekOffset * 7));
 
+    console.log('SchedulingScreen - Displayed week\'s Monday:', mondayDate.toISOString());
+
+    // Generate dates for the week (Monday-Friday)
     return Array.from({ length: 5 }).map((_, index) => {
-      const date = new Date(startDate);
-      date.setDate(date.getDate() + index);
-      return date.toISOString().split('T')[0];
+      const date = new Date(mondayDate);
+      date.setDate(mondayDate.getDate() + index);
+      const dateString = date.toISOString().split('T')[0];
+      console.log(`SchedulingScreen - Day ${index + 1}:`, dateString);
+      return dateString;
     });
   }, [currentWeekOffset]);
 
@@ -96,7 +108,7 @@ function SchedulingScreen() {
   };
 
   return (
-    <div className="windows-classic" key={days[0]}>
+    <div className="windows-classic" key={`scheduler-${forceRenderKey}-${days[0]}`}>
       <div className="window" style={{ margin: '0' }}>
         <div className="title-bar">
           <div className="title-bar-text">Scheduling</div>
@@ -117,9 +129,10 @@ function SchedulingScreen() {
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 onClick={() => {
-                  // Force refresh appointments
+                  // Force refresh appointments and remount component
                   clearAppointments();
                   setCurrentWeekOffset(0);
+                  setForceRenderKey(Date.now());
                 }}
                 style={{
                   backgroundColor: '#808080',
@@ -128,7 +141,7 @@ function SchedulingScreen() {
                   padding: '0 8px'
                 }}
               >
-                Refresh
+                Reset Calendar
               </button>
               <button
                 onClick={() => setCurrentWeekOffset(prev => Math.max(0, prev - 1))}
