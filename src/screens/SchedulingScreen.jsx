@@ -25,8 +25,16 @@ function SchedulingScreen() {
 
   // Generate the days for the current week based on the offset
   const days = useMemo(() => {
-    const startDate = new Date('2024-03-17'); // Monday, March 17, 2024
-    startDate.setDate(startDate.getDate() + (currentWeekOffset * 7));
+    // Get current date
+    const today = new Date();
+
+    // Find the Monday of the current week
+    const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
+    const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay; // If Sunday, go back 6 days, otherwise find Monday of current week
+
+    // Create a new date object for current week's Monday
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() + mondayOffset + (currentWeekOffset * 7));
 
     return Array.from({ length: 5 }).map((_, index) => {
       const date = new Date(startDate);

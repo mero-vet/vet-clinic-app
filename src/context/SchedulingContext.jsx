@@ -5,10 +5,26 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const SchedulingContext = createContext();
 
-// Helper function to generate dates for 8 weeks starting from a base date
+// Helper function to generate dates for 6 weeks starting from current week's Monday
 const generateDates = () => {
   const dates = [];
-  const startDate = new Date('2024-03-17');
+
+  // Get current date
+  const today = new Date();
+
+  // Find the Monday of the current week
+  const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
+  const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay; // If Sunday, go back 6 days, otherwise find previous Monday
+
+  // Create a new date object for current week's Monday
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() + mondayOffset);
+
+  // Reset time to 00:00:00 to avoid any time-related issues
+  startDate.setHours(0, 0, 0, 0);
+
+  console.log('Calendar start date:', startDate.toISOString().split('T')[0]);
+
   for (let week = 0; week < 6; week++) {
     for (let day = 0; day < 5; day++) {
       const currentDate = new Date(startDate);
@@ -68,18 +84,8 @@ const generateInitialAppointments = () => {
 };
 
 export const SchedulingProvider = ({ children }) => {
-  // Force clear localStorage on initial load to refresh appointments
-  localStorage.removeItem('sessionAppointments');
-
-  const [appointments, setAppointments] = useState(() => {
-    const savedAppointments = localStorage.getItem('sessionAppointments');
-    return savedAppointments ? JSON.parse(savedAppointments) : generateInitialAppointments();
-  });
-
-  // Update localStorage whenever appointments change
-  useEffect(() => {
-    localStorage.setItem('sessionAppointments', JSON.stringify(appointments));
-  }, [appointments]);
+  // Don't check localStorage, always generate new appointments
+  const [appointments, setAppointments] = useState(generateInitialAppointments);
 
   const addAppointment = (newAppt) => {
     setAppointments((prev) => [
@@ -97,7 +103,6 @@ export const SchedulingProvider = ({ children }) => {
 
   const clearAppointments = () => {
     setAppointments(generateInitialAppointments());
-    localStorage.removeItem('sessionAppointments');
   };
 
   return (
