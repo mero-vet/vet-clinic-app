@@ -68,6 +68,9 @@ const generateInitialAppointments = () => {
 };
 
 export const SchedulingProvider = ({ children }) => {
+  // Force clear localStorage on initial load to refresh appointments
+  localStorage.removeItem('sessionAppointments');
+
   const [appointments, setAppointments] = useState(() => {
     const savedAppointments = localStorage.getItem('sessionAppointments');
     return savedAppointments ? JSON.parse(savedAppointments) : generateInitialAppointments();
