@@ -1,0 +1,209 @@
+/* PIMS Themes CSS Variables */
+
+:root {
+    /* Default theme variables - will be overridden by PIMSProvider */
+    --primary-color: #000080;
+    --secondary-color: #c0c0c0;
+    --background-color: #c0c0c0;
+    --text-color: #000000;
+    --border-color: #808080;
+    --highlight-color: #0000ff;
+    --font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+    --font-size: 12px;
+    --border-radius: 0;
+}
+
+/* Cornerstone Specific Styles */
+.pims-cornerstone {
+    --title-bar-color: #000080;
+    --title-bar-text-color: #FFFFFF;
+    --menu-bg-color: #c0c0c0;
+    --menu-text-color: #000000;
+    --button-bg: #c0c0c0;
+    --button-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff;
+    --button-active-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #ffffff;
+}
+
+/* Avimark Specific Styles */
+.pims-avimark {
+    --title-bar-color: #A70000;
+    --title-bar-text-color: #FFFFFF;
+    --menu-bg-color: #F0F0F0;
+    --menu-text-color: #000000;
+    --ribbon-bg-color: #A70000;
+    --ribbon-text-color: #FFFFFF;
+    --button-bg: #F0F0F0;
+    --button-hover-bg: #E0E0E0;
+    --button-active-bg: #D0D0D0;
+}
+
+/* EasyVet Specific Styles */
+.pims-easyvet {
+    --title-bar-color: #4CAF50;
+    --title-bar-text-color: #FFFFFF;
+    --menu-bg-color: #FFFFFF;
+    --menu-text-color: #424242;
+    --card-bg-color: #FFFFFF;
+    --card-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --button-bg: #4CAF50;
+    --button-text-color: #FFFFFF;
+    --button-hover-bg: #66BB6A;
+    --button-active-bg: #43A047;
+    --bottom-nav-bg: #FFFFFF;
+    --bottom-nav-active: #4CAF50;
+}
+
+/* IntraVet Specific Styles */
+.pims-intravet {
+    --title-bar-color: #1565C0;
+    --title-bar-text-color: #FFFFFF;
+    --menu-bg-color: #F5F5F5;
+    --menu-text-color: #333333;
+    --tree-menu-bg: #F5F5F5;
+    --tree-menu-active: #1565C0;
+    --tree-menu-active-bg: #1565C0;
+    --tree-menu-active-text: #FFFFFF;
+    --button-bg: linear-gradient(to bottom, #2196F3, #1565C0);
+    --button-text-color: #FFFFFF;
+    --button-hover-bg: linear-gradient(to bottom, #42A5F5, #1976D2);
+    --tab-active-color: #FF8F00;
+    --tab-active-indicator: 3px solid #FF8F00;
+    --background-color: #F5F5F5;
+}
+
+/* Covetrus Pulse Specific Styles */
+.pims-covetrus {
+    --title-bar-color: #6200EA;
+    --title-bar-text-color: #FFFFFF;
+    --menu-bg-color: #FFFFFF;
+    --menu-text-color: #212121;
+    --mega-menu-bg: #FFFFFF;
+    --mega-menu-header: #6200EA;
+    --card-bg-color: #FFFFFF;
+    --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    --button-bg: #6200EA;
+    --button-text-color: #FFFFFF;
+    --button-hover-bg: #7E57C2;
+    --floating-button-bg: #6200EA;
+    --floating-button-shadow: 0 4px 10px rgba(98, 0, 234, 0.3);
+}
+
+/* Layout-specific styles */
+
+/* Windows Classic Layout */
+.layout-windows-classic .title-bar {
+    background-color: var(--title-bar-color);
+    color: var(--title-bar-text-color);
+}
+
+.layout-windows-classic .menu-bar {
+    background-color: var(--menu-bg-color);
+    color: var(--menu-text-color);
+}
+
+.layout-windows-classic button {
+    box-shadow: var(--button-shadow);
+}
+
+.layout-windows-classic button:active {
+    box-shadow: var(--button-active-shadow);
+}
+
+/* Ribbon Layout */
+.layout-ribbon .ribbon {
+    background-color: var(--ribbon-bg-color);
+    color: var(--ribbon-text-color);
+}
+
+.layout-ribbon button {
+    background-color: var(--button-bg);
+}
+
+.layout-ribbon button:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.layout-ribbon button:active {
+    background-color: var(--button-active-bg);
+}
+
+/* Card-based Layout */
+.layout-card-based .card {
+    background-color: var(--card-bg-color);
+    box-shadow: var(--card-shadow);
+    border-radius: var(--border-radius);
+}
+
+.layout-card-based button {
+    background-color: var(--button-bg);
+    color: var(--button-text-color);
+    border-radius: var(--border-radius);
+}
+
+.layout-card-based button:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.layout-card-based .bottom-nav {
+    background-color: var(--bottom-nav-bg);
+}
+
+.layout-card-based .bottom-nav-item.active {
+    color: var(--bottom-nav-active);
+}
+
+/* Tree-Tabs Layout */
+.layout-tree-tabs .tree-menu {
+    background-color: var(--tree-menu-bg);
+}
+
+.layout-tree-tabs .tree-menu-item.active {
+    background-color: var(--tree-menu-active);
+    color: var(--tree-menu-active-text);
+}
+
+.layout-tree-tabs button {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    border-radius: var(--border-radius);
+}
+
+.layout-tree-tabs button:hover {
+    background: var(--button-hover-bg);
+}
+
+.layout-tree-tabs .tab.active {
+    color: var(--tab-active-color);
+    border-bottom: var(--tab-active-indicator);
+}
+
+/* Modern SaaS Layout */
+.layout-modern-saas .mega-menu {
+    background-color: var(--mega-menu-bg);
+}
+
+.layout-modern-saas .mega-menu-header {
+    color: var(--mega-menu-header);
+}
+
+.layout-modern-saas .card {
+    background-color: var(--card-bg-color);
+    box-shadow: var(--card-shadow);
+    border-radius: var(--border-radius);
+}
+
+.layout-modern-saas button {
+    background-color: var(--button-bg);
+    color: var(--button-text-color);
+    border-radius: var(--border-radius);
+}
+
+.layout-modern-saas button:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.layout-modern-saas .floating-button {
+    background-color: var(--floating-button-bg);
+    box-shadow: var(--floating-button-shadow);
+    border-radius: 50%;
+}

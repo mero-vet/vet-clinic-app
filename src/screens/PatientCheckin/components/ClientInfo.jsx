@@ -1,21 +1,32 @@
 import React from 'react';
 
-function ClientInfo({ formData, handleInputChange }) {
-  return (
-    <fieldset>
-      <legend>Client Information</legend>
+function ClientInfo({ formData, handleInputChange, styles = {} }) {
+  // Default styles if none are provided
+  const defaultStyles = {
+    fieldset: {},
+    legend: {},
+    formRow: { display: 'flex', alignItems: 'center', marginBottom: '10px' },
+    input: {}
+  };
 
-      <div className="form-row">
+  const s = styles || defaultStyles;
+
+  return (
+    <fieldset style={s.fieldset}>
+      <legend style={s.legend}>Client Information</legend>
+
+      <div style={s.formRow}>
         <label>Client ID:</label>
         <input
           type="text"
           name="clientId"
           value={formData.clientId}
           onChange={handleInputChange}
+          style={s.input}
         />
       </div>
 
-      <div className="form-row">
+      <div style={s.formRow}>
         <label>First:</label>
         <div style={{ display: 'flex', gap: '5px', flex: 1 }}>
           <input
@@ -23,6 +34,7 @@ function ClientInfo({ formData, handleInputChange }) {
             name="clientFirstName"
             value={formData.clientFirstName}
             onChange={handleInputChange}
+            style={s.input}
           />
           <label style={{ minWidth: 'auto' }}>Last:</label>
           <input
@@ -30,11 +42,12 @@ function ClientInfo({ formData, handleInputChange }) {
             name="clientLastName"
             value={formData.clientLastName}
             onChange={handleInputChange}
+            style={s.input}
           />
         </div>
       </div>
 
-      <div className="form-row">
+      <div style={s.formRow}>
         <label>Email:</label>
         <div style={{ display: 'flex', gap: '5px', flex: 1, alignItems: 'center' }}>
           <input
@@ -42,8 +55,9 @@ function ClientInfo({ formData, handleInputChange }) {
             name="clientEmail"
             value={formData.clientEmail}
             onChange={handleInputChange}
+            style={s.input}
           />
-          <label style={{ fontSize: '12px', minWidth: 'auto' }}>
+          <label style={{ fontSize: s.input?.fontSize || '12px', minWidth: 'auto' }}>
             <input
               type="checkbox"
               name="emailDeclined"
@@ -55,7 +69,7 @@ function ClientInfo({ formData, handleInputChange }) {
         </div>
       </div>
 
-      <div className="form-row">
+      <div style={s.formRow}>
         <label>Phone(s):</label>
         <div style={{ display: 'flex', gap: '5px', flex: 1, alignItems: 'center' }}>
           <input
@@ -64,16 +78,17 @@ function ClientInfo({ formData, handleInputChange }) {
             value={formData.phoneHome}
             onChange={handleInputChange}
             placeholder="(xxx)xxx-xxxx"
+            style={s.input}
           />
-          <label style={{ fontSize: '12px', minWidth: 'auto' }}>Ext:</label>
+          <label style={{ fontSize: s.input?.fontSize || '12px', minWidth: 'auto' }}>Ext:</label>
           <input
             type="text"
             name="phoneExt"
             value={formData.phoneExt}
             onChange={handleInputChange}
-            style={{ width: '50px' }}
+            style={{ width: '50px', ...s.input }}
           />
-          <label style={{ fontSize: '12px', minWidth: 'auto' }}>
+          <label style={{ fontSize: s.input?.fontSize || '12px', minWidth: 'auto' }}>
             <input
               type="checkbox"
               name="phoneDeclined"

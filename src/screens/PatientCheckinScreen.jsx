@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
-import '../styles/WindowsClassic.css';
+import React, { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import '../styles/PatientForms.css';
 import { usePatient } from '../context/PatientContext';
+import { usePIMS } from '../context/PIMSContext';
+import PIMSScreenWrapper from '../components/PIMSScreenWrapper';
 
 import ClientInfo from './PatientCheckin/components/ClientInfo';
 import PatientInfo from './PatientCheckin/components/PatientInfo';
@@ -12,12 +14,17 @@ import CheckInOutButtons from './PatientCheckin/components/CheckInOutButtons';
 
 const PatientCheckinScreen = () => {
   const { patientData, setPatientData, setMockPatientData } = usePatient();
+  const { config, currentPIMS } = usePIMS();
+  const location = useLocation();
+  const dataInitialized = useRef(false);
 
   useEffect(() => {
-    // For demo purposes, set mock data when the component mounts
-    // In a real app, this would be replaced with actual patient data fetching
-    setMockPatientData();
-  }, []);
+    // Only set mock data once when the component first mounts
+    if (!dataInitialized.current) {
+      setMockPatientData();
+      dataInitialized.current = true;
+    }
+  }, [setMockPatientData]);
 
   const handleInputChange = (e) => {
     const { name, type, value, checked } = e.target;
@@ -34,102 +41,384 @@ const PatientCheckinScreen = () => {
     }
   };
 
+  // Get PIMS-specific patient check-in styling
+  const getPIMSSpecificStyles = () => {
+    const pimsName = config.name.toLowerCase();
+
+    switch (pimsName) {
+      case 'cornerstone':
+        return {
+          grid: {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '10px',
+            height: '100%',
+          },
+          column: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px'
+          },
+          fieldset: {
+            marginBottom: '15px',
+            padding: '8px',
+            border: '2px inset #d0d0d0',
+          },
+          legend: {
+            fontSize: '12px',
+            fontWeight: 'bold',
+          },
+          formRow: {
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '6px',
+          },
+          input: {
+            border: '2px inset #d0d0d0',
+            padding: '3px',
+            fontSize: '12px',
+          },
+          button: {
+            backgroundColor: '#c0c0c0',
+            border: '2px outset #ffffff',
+            boxShadow: 'inset -1px -1px #0a0a0a, inset 1px 1px #ffffff',
+            padding: '3px 10px',
+            fontSize: '12px',
+            cursor: 'pointer',
+          }
+        };
+
+      case 'avimark':
+        return {
+          grid: {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '15px',
+            height: '100%',
+          },
+          column: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '15px'
+          },
+          fieldset: {
+            marginBottom: '20px',
+            padding: '10px',
+            border: '1px solid #cccccc',
+            borderRadius: '2px',
+          },
+          legend: {
+            fontSize: '13px',
+            fontWeight: 'bold',
+            color: '#A70000',
+          },
+          formRow: {
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '8px',
+          },
+          input: {
+            border: '1px solid #cccccc',
+            padding: '5px',
+            fontSize: '13px',
+            borderRadius: '2px',
+          },
+          button: {
+            backgroundColor: '#A70000',
+            color: 'white',
+            border: 'none',
+            padding: '5px 12px',
+            fontSize: '13px',
+            cursor: 'pointer',
+            borderRadius: '2px',
+          }
+        };
+
+      case 'easyvet':
+        return {
+          grid: {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '20px',
+            height: '100%',
+          },
+          column: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px'
+          },
+          fieldset: {
+            marginBottom: '24px',
+            padding: '16px',
+            border: '1px solid #E0E0E0',
+            borderRadius: '8px',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+          },
+          legend: {
+            fontSize: '16px',
+            fontWeight: '500',
+            color: '#4CAF50',
+            padding: '0 8px',
+          },
+          formRow: {
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '12px',
+          },
+          input: {
+            border: '1px solid #E0E0E0',
+            padding: '8px 12px',
+            fontSize: '14px',
+            borderRadius: '4px',
+          },
+          button: {
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            padding: '8px 16px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            borderRadius: '4px',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          }
+        };
+
+      case 'intravet':
+        return {
+          grid: {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '15px',
+            height: '100%',
+          },
+          column: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '15px'
+          },
+          fieldset: {
+            marginBottom: '20px',
+            padding: '15px',
+            border: '1px solid #BBBBBB',
+            borderRadius: '3px',
+          },
+          legend: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#1565C0',
+            padding: '0 5px',
+          },
+          formRow: {
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '10px',
+          },
+          input: {
+            border: '1px solid #BBBBBB',
+            padding: '6px 10px',
+            fontSize: '13px',
+            borderRadius: '3px',
+          },
+          button: {
+            background: 'linear-gradient(to bottom, #2196F3, #1565C0)',
+            color: 'white',
+            border: 'none',
+            padding: '6px 14px',
+            fontSize: '13px',
+            cursor: 'pointer',
+            borderRadius: '3px',
+          }
+        };
+
+      case 'covetrus pulse':
+        return {
+          grid: {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '24px',
+            height: '100%',
+          },
+          column: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px'
+          },
+          fieldset: {
+            marginBottom: '28px',
+            padding: '20px',
+            border: '1px solid #E0E0E0',
+            borderRadius: '12px',
+            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
+          },
+          legend: {
+            fontSize: '16px',
+            fontWeight: '600',
+            color: '#6200EA',
+            padding: '0 10px',
+          },
+          formRow: {
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '16px',
+          },
+          input: {
+            border: '1px solid #E0E0E0',
+            padding: '10px 14px',
+            fontSize: '14px',
+            borderRadius: '8px',
+          },
+          button: {
+            backgroundColor: '#6200EA',
+            color: 'white',
+            border: 'none',
+            padding: '10px 20px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            borderRadius: '8px',
+            boxShadow: '0 3px 8px rgba(98, 0, 234, 0.2)',
+          }
+        };
+
+      default:
+        return {
+          grid: {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '15px',
+            height: '100%',
+          },
+          column: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '15px'
+          },
+          fieldset: {
+            marginBottom: '20px',
+            padding: '10px',
+            border: '1px solid #ccc',
+          },
+          legend: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+          },
+          formRow: {
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '10px',
+          },
+          input: {
+            border: '1px solid #ccc',
+            padding: '5px',
+            fontSize: '14px',
+          },
+          button: {
+            padding: '5px 10px',
+            fontSize: '14px',
+            cursor: 'pointer',
+          }
+        };
+    }
+  };
+
+  const styles = getPIMSSpecificStyles();
+
   return (
-    <div className="windows-classic" style={{ minHeight: '100vh' }}>
-      <div className="window" style={{ margin: '0', display: 'flex', flexDirection: 'column' }}>
-        <div className="title-bar">
-          <div className="title-bar-text">Patient Check-in/out</div>
-          <div className="title-bar-controls">
-            <button aria-label="Minimize"></button>
-            <button aria-label="Maximize"></button>
-            <button aria-label="Close"></button>
-          </div>
+    <PIMSScreenWrapper title={config.screenLabels.checkin}>
+      <div style={styles.grid}>
+        {/* Left Column */}
+        <div style={styles.column}>
+          <ClientInfo
+            formData={patientData}
+            handleInputChange={handleInputChange}
+            styles={styles}
+          />
+          <PatientInfo
+            formData={patientData}
+            handleInputChange={handleInputChange}
+            styles={styles}
+          />
         </div>
 
-        <div className="window-body" style={{
-          padding: '16px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px'
-        }}>
-          <div className="patient-checkin-grid">
-            {/* Left Column */}
-            <div className="patient-checkin-column">
-              <ClientInfo formData={patientData} handleInputChange={handleInputChange} />
-              <PatientInfo formData={patientData} handleInputChange={handleInputChange} />
-            </div>
+        {/* Middle Column */}
+        <div style={styles.column}>
+          <CheckInOutButtons
+            formData={patientData}
+            handleInputChange={handleInputChange}
+            styles={styles}
+          />
+          <ReasonForVisit
+            formData={patientData}
+            handleInputChange={handleInputChange}
+            styles={styles}
+          />
+        </div>
 
-            {/* Middle Column */}
-            <div className="patient-checkin-column middle-column">
-              <CheckInOutButtons formData={patientData} handleInputChange={handleInputChange} />
-              <ReasonForVisit formData={patientData} handleInputChange={handleInputChange} />
+        {/* Right Column */}
+        <div style={styles.column}>
+          <fieldset style={styles.fieldset}>
+            <legend style={styles.legend}>Billing & Contact</legend>
+            <div style={styles.formRow}>
+              <label>Balance due:</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <input
+                  type="text"
+                  name="balanceDue"
+                  value={patientData.balanceDue}
+                  onChange={handleInputChange}
+                  style={{ width: '80px', ...styles.input }}
+                />
+                <button
+                  style={{ minWidth: '50px', ...styles.button }}
+                  type="button"
+                >
+                  View
+                </button>
+              </div>
             </div>
-
-            {/* Right Column */}
-            <div className="patient-checkin-column right-column">
-              <fieldset>
-                <legend>Billing & Contact</legend>
-                <div className="form-row">
-                  <label>Balance due:</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <input
-                      type="text"
-                      name="balanceDue"
-                      value={patientData.balanceDue}
-                      onChange={handleInputChange}
-                      style={{ width: '80px' }}
-                    />
-                    <button
-                      style={{ minWidth: '50px' }}
-                      className="windows-button"
-                      type="button"
-                    >
-                      View
-                    </button>
-                  </div>
-                </div>
-                <div className="form-row">
-                  <label>Address:</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={patientData.address}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-row">
-                  <label>City:</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={patientData.city}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-row">
-                  <label>State/prov:</label>
-                  <input
-                    type="text"
-                    name="stateProv"
-                    value={patientData.stateProv}
-                    onChange={handleInputChange}
-                  />
-                  <label>Postal code:</label>
-                  <input
-                    type="text"
-                    name="postalCode"
-                    value={patientData.postalCode}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </fieldset>
-              <RemindersAppointments />
-              <DocumentsList />
+            <div style={styles.formRow}>
+              <label>Address:</label>
+              <input
+                type="text"
+                name="address"
+                value={patientData.address}
+                onChange={handleInputChange}
+                style={styles.input}
+              />
             </div>
-          </div>
+            <div style={styles.formRow}>
+              <label>City:</label>
+              <input
+                type="text"
+                name="city"
+                value={patientData.city}
+                onChange={handleInputChange}
+                style={styles.input}
+              />
+            </div>
+            <div style={styles.formRow}>
+              <label>State/prov:</label>
+              <input
+                type="text"
+                name="stateProv"
+                value={patientData.stateProv}
+                onChange={handleInputChange}
+                style={{ ...styles.input, width: '60px' }}
+              />
+              <label style={{ marginLeft: '5px' }}>Postal code:</label>
+              <input
+                type="text"
+                name="postalCode"
+                value={patientData.postalCode}
+                onChange={handleInputChange}
+                style={{ ...styles.input, width: '80px' }}
+              />
+            </div>
+          </fieldset>
+          <RemindersAppointments styles={styles} />
+          <DocumentsList styles={styles} />
         </div>
       </div>
-    </div>
+    </PIMSScreenWrapper>
   );
 };
 

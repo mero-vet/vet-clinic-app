@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useRef, useCallback } from 'react';
 
 const PatientContext = createContext();
 
@@ -62,54 +62,63 @@ export const PatientProvider = ({ children }) => {
     checkOutDate: '',
   });
 
-  // Function to set mock data for testing/demo
-  const setMockPatientData = () => {
-    setPatientData({
-      clientId: 'C1001',
-      clientFirstName: 'Remy',
-      clientLastName: 'Olson',
-      clientEmail: 'remy@joinmero.com',
-      emailDeclined: false,
-      phoneHome: '(415) 200-6597',
-      phoneExt: '',
-      phoneDeclined: false,
+  // Use a ref to track if mock data has been set to prevent infinite loops
+  const mockDataSet = useRef(false);
 
-      balanceDue: '250.00',
-      address: '4317 SE Clinton St',
-      city: 'Portland',
-      stateProv: 'OR',
-      postalCode: '97206',
+  // Wrap setMockPatientData in useCallback to ensure its reference stability
+  const setMockPatientData = useCallback(() => {
+    // Only set the mock data if it hasn't been set already
+    if (!mockDataSet.current) {
+      setPatientData({
+        clientId: 'C1001',
+        clientFirstName: 'Remy',
+        clientLastName: 'Olson',
+        clientEmail: 'remy@joinmero.com',
+        emailDeclined: false,
+        phoneHome: '(415) 200-6597',
+        phoneExt: '',
+        phoneDeclined: false,
 
-      patientId: 'P2001',
-      patientName: 'Wilson',
-      species: 'Canine',
-      sex: 'Male',
-      breed: 'German Shepherd mix',
-      birthDate: '2021-02-12',
-      ageYears: '3',
-      ageMonths: '11',
-      ageDays: '20',
-      weightDate: '2024-12-15',
-      weight: '69.5',
-      additionalNotes: 'Friendly, good with other dogs',
-      alertNotes: 'Bad response to rimadyl',
+        balanceDue: '250.00',
+        address: '4317 SE Clinton St',
+        city: 'Portland',
+        stateProv: 'OR',
+        postalCode: '97206',
 
-      primaryReason: 'Annual Checkup',
-      secondaryReason: 'Vaccine Update',
-      room: 'Exam 3',
-      visitType: 'Outpatient',
-      status: 'Checked In',
-      ward: '',
-      cage: '',
-      rdvmName: 'Dr. Williams',
-      referralRecheck: false,
+        patientId: 'P2001',
+        patientName: 'Wilson',
+        species: 'Canine',
+        sex: 'Male',
+        breed: 'German Shepherd mix',
+        birthDate: '2021-02-12',
+        ageYears: '3',
+        ageMonths: '11',
+        ageDays: '20',
+        weightDate: '2024-12-15',
+        weight: '69.5',
+        additionalNotes: 'Friendly, good with other dogs',
+        alertNotes: 'Bad response to rimadyl',
 
-      staffId: 'S101',
-      checkedInBy: 'Jessica Smith',
-      checkInDate: '2024-03-18T09:00',
-      checkOutDate: '',
-    });
-  };
+        primaryReason: 'Annual Checkup',
+        secondaryReason: 'Vaccine Update',
+        room: 'Exam 3',
+        visitType: 'Outpatient',
+        status: 'Checked In',
+        ward: '',
+        cage: '',
+        rdvmName: 'Dr. Williams',
+        referralRecheck: false,
+
+        staffId: 'S101',
+        checkedInBy: 'Jessica Smith',
+        checkInDate: '2024-03-18T09:00',
+        checkOutDate: '',
+      });
+
+      // Mark that mock data has been set
+      mockDataSet.current = true;
+    }
+  }, []); // Empty dependency array ensures this function doesn't change
 
   return (
     <PatientContext.Provider value={{ patientData, setPatientData, setMockPatientData }}>

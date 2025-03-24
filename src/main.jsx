@@ -9,28 +9,32 @@ import { InventoryProvider } from './context/InventoryContext'
 import { CommunicationsProvider } from './context/CommunicationsContext'
 import { PharmacyProvider } from './context/PharmacyContext'
 import { ReportsProvider } from './context/ReportsContext'
+import { PIMSProvider } from './context/PIMSContext'
 import '98.css'
 import './index.css'
+import './styles/pimsThemes.css'
 
 const root = createRoot(document.getElementById('root'))
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <PatientProvider>
-        <SchedulingProvider>
-          <MedicalRecordsProvider>
-            <InventoryProvider>
-              <CommunicationsProvider>
-                <PharmacyProvider>
-                  <ReportsProvider>
-                    <App />
-                  </ReportsProvider>
-                </PharmacyProvider>
-              </CommunicationsProvider>
-            </InventoryProvider>
-          </MedicalRecordsProvider>
-        </SchedulingProvider>
-      </PatientProvider>
+      <PIMSProvider>
+        <PatientProvider>
+          <SchedulingProvider>
+            <MedicalRecordsProvider>
+              <InventoryProvider>
+                <CommunicationsProvider>
+                  <PharmacyProvider>
+                    <ReportsProvider>
+                      <App />
+                    </ReportsProvider>
+                  </PharmacyProvider>
+                </CommunicationsProvider>
+              </InventoryProvider>
+            </MedicalRecordsProvider>
+          </SchedulingProvider>
+        </PatientProvider>
+      </PIMSProvider>
     </BrowserRouter>
   </React.StrictMode>
 )
