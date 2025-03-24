@@ -165,4 +165,21 @@ li {
   text-shadow: none !important;
 }
 
+/* Ensure icons inherit their parent's color */
+.icon-button svg {
+  fill: currentColor;
+  stroke: currentColor;
+  color: inherit;
+}
+
+.icon-button:active svg {
+  transform: scale(0.95);
+}
+
+.icon-button.active svg {
+  fill: white;
+  stroke: white;
+  color: white;
+}
+
 /* Rest of your existing styles... */
