@@ -1,12 +1,13 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useScheduling } from '../context/SchedulingContext';
 import '../styles/WindowsClassic.css';
 import '../styles/PatientForms.css';
 
 /**
  * SchedulingScreen
- * Displays a simple weekly calendar (Mon-Fri, 8am-5pm).
- * Allows booking a slot if it's not taken and navigating forward in time.
+ * Displays a weekly calendar starting from current week.
+ * Past dates and weekends are grayed out.
+ * Allows viewing up to 5 weeks in the future.
  */
 function SchedulingScreen() {
   const { appointments, addAppointment, removeAppointment, clearAppointments } = useScheduling();
@@ -22,59 +23,61 @@ function SchedulingScreen() {
     patientId: '',
     staff: '',
   });
-  // State to force re-render
-  const [forceRenderKey, setForceRenderKey] = useState(Date.now());
-
-  // Force clean all storage on first load
-  useEffect(() => {
-    // Clear all appointment data and reset to current dates
-    clearAppointments();
-
-    // Log current date computation for debugging
-    const today = new Date();
-    console.log('Component mount. Today:', today.toISOString());
-    console.log('Today:', today.toISOString());
-    const currentDay = today.getDay();
-    const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay;
-    console.log('Monday offset:', mondayOffset);
-
-    const startDate = new Date(today);
-    startDate.setDate(today.getDate() + mondayOffset);
-    console.log('Computed start date:', startDate.toISOString());
-  }, [clearAppointments]);
 
   // Generate the days for the current week based on the offset
   const days = useMemo(() => {
-    // Get current date
-    const now = new Date();
-    now.setHours(0, 0, 0, 0); // Reset time to midnight
+    // Get the current date
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    console.log('SchedulingScreen - Raw date object:', now);
-    console.log('SchedulingScreen - Today:', now.toISOString(), 'Day of week:', now.getDay());
-
-    // Find the Monday of the current week
-    let mondayDate = new Date(now);
-    const daysSinceMonday = now.getDay() === 0 ? 6 : now.getDay() - 1;
-    mondayDate.setDate(now.getDate() - daysSinceMonday);
+    // Find the most recent Monday (or today if it's Monday)
+    const currentMonday = new Date(today);
+    const dayOfWeek = today.getDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // If Sunday, go back 6 days, otherwise find last Monday
+    currentMonday.setDate(today.getDate() + diff);
 
     // Add the week offset to get to the requested week
-    mondayDate.setDate(mondayDate.getDate() + (currentWeekOffset * 7));
+    const baseDate = new Date(currentMonday);
+    baseDate.setDate(baseDate.getDate() + (currentWeekOffset * 7));
 
-    console.log('SchedulingScreen - Displayed week\'s Monday:', mondayDate.toISOString());
-
-    // Generate dates for the week (Monday-Friday)
-    return Array.from({ length: 5 }).map((_, index) => {
-      const date = new Date(mondayDate);
-      date.setDate(mondayDate.getDate() + index);
+    // Generate days for the week (all 7 days)
+    return Array.from({ length: 7 }).map((_, index) => {
+      const date = new Date(baseDate);
+      date.setDate(baseDate.getDate() + index);
       const dateString = date.toISOString().split('T')[0];
-      console.log(`SchedulingScreen - Day ${index + 1}:`, dateString);
       return dateString;
     });
   }, [currentWeekOffset]);
 
   const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
+  // Helper to check if a date is a weekend
+  const isWeekend = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDay(); // 0 is Sunday, 6 is Saturday
+    return day === 0 || day === 6;
+  };
+
+  // Helper to check if a date is in the past or today
+  const isPastDate = (dateString) => {
+    const today = new Date();
+    // Set today to start of day for comparison
+    today.setHours(0, 0, 0, 0);
+
+    const date = new Date(dateString);
+    // Set the date to start of day for fair comparison
+    date.setHours(0, 0, 0, 0);
+
+    // Return true if the date is strictly less than tomorrow
+    return date < new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  };
+
   const handleSlotClick = (day, time) => {
+    // Don't allow booking on weekends or past dates
+    if (isWeekend(day) || isPastDate(day)) {
+      return;
+    }
+
     const existingAppt = appointments.find(
       (appt) => appt.date === day && appt.time === time
     );
@@ -108,7 +111,7 @@ function SchedulingScreen() {
   };
 
   return (
-    <div className="windows-classic" key={`scheduler-${forceRenderKey}-${days[0]}`}>
+    <div className="windows-classic">
       <div className="window" style={{ margin: '0' }}>
         <div className="title-bar">
           <div className="title-bar-text">Scheduling</div>
@@ -120,19 +123,15 @@ function SchedulingScreen() {
         </div>
 
         <div className="window-body" style={{ padding: '16px' }}>
-          <h2>Weekly Calendar</h2>
-          {/* Debug info - remove after fixing */}
-          <p style={{ fontSize: '12px', color: 'gray' }}>Debug - Week starts: {days[0]}</p>
-
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <p>Click on an open slot to schedule a new appointment.</p>
+            <p>Click on an open slot to schedule a new appointment. Past dates and weekends are unavailable.</p>
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 onClick={() => {
-                  // Force refresh appointments and remount component
                   clearAppointments();
                   setCurrentWeekOffset(0);
-                  setForceRenderKey(Date.now());
+                  setSelectedSlot(null);
+                  setSelectedAppointment(null);
                 }}
                 style={{
                   backgroundColor: '#808080',
@@ -157,9 +156,11 @@ function SchedulingScreen() {
                 ←
               </button>
               <button
-                onClick={() => setCurrentWeekOffset(prev => prev + 1)}
+                onClick={() => setCurrentWeekOffset(prev => prev < 5 ? prev + 1 : prev)}
+                disabled={currentWeekOffset >= 5}
                 style={{
                   width: '32px',
+                  cursor: currentWeekOffset >= 5 ? 'not-allowed' : 'pointer',
                   backgroundColor: '#808080',
                   color: '#ffffff',
                   border: '1px solid #404040'
@@ -179,9 +180,17 @@ function SchedulingScreen() {
                   const date = new Date(day);
                   const options = { weekday: 'short', month: 'short', day: 'numeric' };
                   const formattedDate = date.toLocaleDateString('en-US', options);
+                  const weekend = isWeekend(day);
+                  const pastDate = isPastDate(day);
 
                   return (
-                    <th key={day} style={{ border: '1px solid #ccc' }}>
+                    <th
+                      key={day}
+                      style={{
+                        border: '1px solid #ccc',
+                        backgroundColor: weekend || pastDate ? '#e0e0e0' : 'transparent'
+                      }}
+                    >
                       {formattedDate}
                     </th>
                   );
@@ -193,17 +202,22 @@ function SchedulingScreen() {
                 <tr key={timeStr}>
                   <td style={{ border: '1px solid #ccc', padding: '4px', whiteSpace: 'nowrap' }}>{timeStr}</td>
                   {days.map((day) => {
+                    const weekend = isWeekend(day);
+                    const pastDate = isPastDate(day);
                     const foundAppt = appointments.find(
                       (appt) => appt.date === day && appt.time === timeStr
                     );
+
                     return (
                       <td
                         key={day + timeStr}
                         style={{
                           border: '1px solid #ccc',
                           padding: '4px',
-                          backgroundColor: foundAppt ? '#ffd9d9' : '#d9ffd9',
-                          cursor: foundAppt ? 'not-allowed' : 'pointer',
+                          backgroundColor: weekend || pastDate
+                            ? '#e0e0e0'
+                            : foundAppt ? '#ffd9d9' : '#d9ffd9',
+                          cursor: weekend || pastDate ? 'not-allowed' : 'pointer',
                           wordBreak: 'break-word',
                           whiteSpace: 'normal',
                           minHeight: '40px',
@@ -211,7 +225,7 @@ function SchedulingScreen() {
                           verticalAlign: 'top',
                           overflow: 'hidden',
                           maxWidth: '0',
-                          width: '20%'
+                          width: '14.28%' // 1/7 of the table width
                         }}
                         onClick={() => handleSlotClick(day, timeStr)}
                       >
@@ -220,9 +234,13 @@ function SchedulingScreen() {
                           overflowWrap: 'break-word',
                           width: '100%'
                         }}>
-                          {foundAppt
-                            ? `${foundAppt.reason} - ${foundAppt.patient}`
-                            : 'Available'}
+                          {weekend
+                            ? 'Weekend - Closed'
+                            : pastDate
+                              ? 'Past Date - Unavailable'
+                              : foundAppt
+                                ? `${foundAppt.reason} - ${foundAppt.patient}`
+                                : 'Available'}
                         </div>
                       </td>
                     );
@@ -258,7 +276,7 @@ function SchedulingScreen() {
                 <span>{selectedAppointment.staff}</span>
               </div>
               <button
-                type="button"
+                onClick={handleCancelAppointment}
                 style={{
                   backgroundColor: '#c0c0c0',
                   border: '2px solid',
@@ -266,52 +284,33 @@ function SchedulingScreen() {
                   padding: '4px 10px',
                   color: '#000000'
                 }}
-                onClick={handleCancelAppointment}
               >
                 Cancel Appointment
-              </button>
-              <button
-                type="button"
-                style={{
-                  marginLeft: '10px',
-                  backgroundColor: '#c0c0c0',
-                  border: '2px solid',
-                  borderColor: '#dfdfdf #404040 #404040 #dfdfdf',
-                  padding: '4px 10px',
-                  color: '#000000'
-                }}
-                onClick={() => setSelectedAppointment(null)}
-              >
-                Close
               </button>
             </div>
           )}
 
-          {selectedSlot && !selectedAppointment && (
+          {selectedSlot && (
             <div style={{ marginTop: '20px', border: '1px solid #ccc', padding: '8px' }}>
-              <h3>Schedule Appointment for {selectedSlot.day} at {selectedSlot.time}</h3>
+              <h3>Book New Appointment for {selectedSlot.day} at {selectedSlot.time}</h3>
               <form onSubmit={handleSubmit}>
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
-                  <div>
-                    <label style={{ display: 'inline-block', width: '80px' }}>Client ID:</label>
-                    <input
-                      type="text"
-                      name="clientId"
-                      value={formData.clientId}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'inline-block', width: '80px' }}>Patient ID:</label>
-                    <input
-                      type="text"
-                      name="patientId"
-                      value={formData.patientId}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <label style={{ display: 'inline-block', width: '80px' }}>Client ID:</label>
+                  <input
+                    type="text"
+                    name="clientId"
+                    value={formData.clientId}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <label style={{ display: 'inline-block', width: '80px' }}>Patient ID:</label>
+                  <input
+                    type="text"
+                    name="patientId"
+                    value={formData.patientId}
+                    onChange={handleInputChange}
+                  />
                 </div>
                 <div style={{ marginBottom: '8px' }}>
                   <label style={{ display: 'inline-block', width: '80px' }}>Reason:</label>
@@ -370,7 +369,6 @@ function SchedulingScreen() {
               </form>
             </div>
           )}
-
         </div>
       </div>
     </div>

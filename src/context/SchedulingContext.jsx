@@ -1,48 +1,35 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 // A simple context for scheduling appointments.
 // We'll assume each appointment has { id, date, time, reason, patient, staff }.
 
 const SchedulingContext = createContext();
 
-// Helper function to generate dates for 6 weeks starting from current week's Monday
-const generateDates = () => {
+// Helper function to generate dates for multiple weeks
+const generateDates = (startDate, weeksToGenerate = 6) => {
   const dates = [];
 
-  // Get current date and log it for debugging
-  const now = new Date();
-  now.setHours(0, 0, 0, 0); // Reset time to midnight
+  // Parse the startDate string to a Date object
+  const baseDate = new Date(startDate);
 
-  console.log('SchedulingContext - Raw date object:', now);
-  console.log('SchedulingContext - Today:', now.toISOString(), 'Day of week:', now.getDay());
-
-  // Find the Monday of the current week
-  let mondayDate = new Date(now);
-  const daysSinceMonday = now.getDay() === 0 ? 6 : now.getDay() - 1;
-  mondayDate.setDate(now.getDate() - daysSinceMonday);
-
-  console.log('SchedulingContext - This week\'s Monday:', mondayDate.toISOString());
-
-  // Generate 6 weeks of dates
-  for (let week = 0; week < 6; week++) {
-    for (let day = 0; day < 5; day++) { // Monday to Friday
-      const currentDate = new Date(mondayDate);
-      currentDate.setDate(mondayDate.getDate() + (week * 7) + day);
+  // Generate weeks of dates (all 7 days of the week)
+  for (let week = 0; week < weeksToGenerate; week++) {
+    for (let day = 0; day < 7; day++) { // Monday to Sunday (0-6)
+      // Calculate date by adding days to the base date
+      const currentDate = new Date(baseDate);
+      currentDate.setDate(baseDate.getDate() + (week * 7) + day);
       const dateString = currentDate.toISOString().split('T')[0];
       dates.push(dateString);
     }
   }
 
-  // Debug info
-  console.log('SchedulingContext - First 5 dates:', dates.slice(0, 5));
-  console.log('SchedulingContext - Last 5 dates:', dates.slice(-5));
-
   return dates;
 };
 
-// Helper function to generate appointments
-const generateInitialAppointments = () => {
-  const dates = generateDates();
+// Helper function to generate random appointments with 80% of slots filled
+const generateRandomAppointments = () => {
+  // Monday, March 17, 2025 as base date
+  const dates = generateDates('2025-03-17', 6);
   const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
   const reasons = [
     'Wellness Check',
@@ -50,58 +37,50 @@ const generateInitialAppointments = () => {
     'Dental Cleaning',
     'Surgery',
     'X-Ray',
-    'Blood Work',
-    'Check-up',
-    'Grooming',
-    'Nail Trimming',
-    'Spay/Neuter Consult',
-    'Allergy Assessment',
-    'Annual Physical',
-    'Microchip Installation'
+    'Blood Work'
   ];
-  const patients = ['Bella (Canine)', 'Max (Feline)', 'Rocky (Canine)', 'Luna (Feline)', 'Charlie (Canine)', 'Coco (Feline)', 'Buddy (Canine)', 'Lucy (Feline)'];
+  const patients = ['Bella (Canine)', 'Max (Feline)', 'Rocky (Canine)', 'Luna (Feline)'];
   const staff = ['Dr. Smith', 'Dr. Adams', 'Dr. Davis', 'Dr. Wilson'];
-  // Sample client IDs
-  const clientIds = ['CL001', 'CL002', 'CL003', 'CL004', 'CL005', 'CL006', 'CL007', 'CL008'];
+  const clientIds = ['CL001', 'CL002', 'CL003', 'CL004'];
 
   const appointments = [];
   let id = 1;
 
+  // Generate appointments with 80% probability for each slot on weekdays only
   dates.forEach(date => {
-    times.forEach(time => {
-      // 80% chance of having an appointment
-      if (Math.random() < 0.8) {
-        const patientIndex = Math.floor(Math.random() * patients.length);
-        appointments.push({
-          id: id++,
-          date,
-          time,
-          reason: reasons[Math.floor(Math.random() * reasons.length)],
-          patient: patients[patientIndex],
-          clientId: clientIds[patientIndex], // Match client ID to patient
-          staff: staff[Math.floor(Math.random() * staff.length)]
-        });
-      }
-    });
+    // Skip weekends for appointment generation
+    const dayOfWeek = new Date(date).getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // 0 = Sunday, 6 = Saturday
+
+    if (!isWeekend) {
+      times.forEach(time => {
+        // 80% chance of having an appointment (slot not available)
+        if (Math.random() < 0.8) {
+          const patientIndex = Math.floor(Math.random() * patients.length);
+
+          appointments.push({
+            id: id++,
+            date,
+            time,
+            reason: reasons[Math.floor(Math.random() * reasons.length)],
+            patient: patients[patientIndex],
+            clientId: clientIds[patientIndex],
+            staff: staff[Math.floor(Math.random() * staff.length)]
+          });
+        }
+      });
+    }
   });
 
   return appointments;
 };
 
+// Generate appointments once on module load
+const INITIAL_APPOINTMENTS = generateRandomAppointments();
+
 export const SchedulingProvider = ({ children }) => {
-  // Create a ref to detect if this is the first render
-  const isFirstRender = React.useRef(true);
-
-  // Always generate fresh appointments on component mount
-  const [appointments, setAppointments] = useState([]);
-
-  // Initialize appointments on first render
-  useEffect(() => {
-    if (isFirstRender.current) {
-      setAppointments(generateInitialAppointments());
-      isFirstRender.current = false;
-    }
-  }, []);
+  // Start with the fixed set of appointments
+  const [appointments, setAppointments] = useState(INITIAL_APPOINTMENTS);
 
   const addAppointment = (newAppt) => {
     setAppointments((prev) => [
@@ -118,8 +97,8 @@ export const SchedulingProvider = ({ children }) => {
   };
 
   const clearAppointments = () => {
-    // Force regenerate new appointments with current dates
-    setAppointments(generateInitialAppointments());
+    // Reset to the original appointments
+    setAppointments(INITIAL_APPOINTMENTS);
   };
 
   return (
