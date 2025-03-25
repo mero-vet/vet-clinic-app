@@ -10,57 +10,23 @@ import { createPIMSUrl } from '../../../utils/urlUtils';
 
 const CornerstoneLayout = ({ children }) => {
     const { config } = usePIMS();
-    const [activeMenu, setActiveMenu] = useState(null);
     const [hoveredIcon, setHoveredIcon] = useState(null);
 
     const navigate = useNavigate();
     const location = useLocation();
 
     const menuItems = [
-        {
-            label: 'File',
-            subItems: ['Open (Coming Soon)', 'Close (Coming Soon)', 'Exit (Coming Soon)'],
-        },
-        {
-            label: 'Edit',
-            subItems: ['Undo (Coming Soon)', 'Redo (Coming Soon)', 'Preferences (Coming Soon)'],
-        },
-        {
-            label: 'Activities',
-            subItems: ['Activity A (Coming Soon)', 'Activity B (Coming Soon)', 'Activity C (Coming Soon)'],
-        },
-        {
-            label: 'Lists',
-            subItems: ['List 1 (Coming Soon)', 'List 2 (Coming Soon)', 'List 3 (Coming Soon)'],
-        },
-        {
-            label: 'Controls',
-            subItems: ['Control 1 (Coming Soon)', 'Control 2 (Coming Soon)', 'Control 3 (Coming Soon)'],
-        },
-        {
-            label: 'Inventory',
-            subItems: ['Stock Items (Coming Soon)', 'Reorder (Coming Soon)', 'Vendors (Coming Soon)'],
-        },
-        {
-            label: 'Tools',
-            subItems: ['Tool A (Coming Soon)', 'Tool B (Coming Soon)', 'Tool C (Coming Soon)'],
-        },
-        {
-            label: 'Reports',
-            subItems: ['Daily Report (Coming Soon)', 'Monthly Report (Coming Soon)', 'Yearly Report (Coming Soon)'],
-        },
-        {
-            label: 'Web Links',
-            subItems: ['Link A (Coming Soon)', 'Link B (Coming Soon)', 'Link C (Coming Soon)'],
-        },
-        {
-            label: 'Window',
-            subItems: ['Cascade (Coming Soon)', 'Tile (Coming Soon)', 'Close All (Coming Soon)'],
-        },
-        {
-            label: 'Help',
-            subItems: ['Help Contents (Coming Soon)', 'About (Coming Soon)', 'Check for Updates (Coming Soon)'],
-        },
+        { label: 'File', enabled: true },
+        { label: 'Edit', enabled: true },
+        { label: 'Activities', enabled: true },
+        { label: 'Lists', enabled: true },
+        { label: 'Controls', enabled: true },
+        { label: 'Inventory', enabled: true },
+        { label: 'Tools', enabled: true },
+        { label: 'Reports', enabled: true },
+        { label: 'Web Links', enabled: true },
+        { label: 'Window', enabled: true },
+        { label: 'Help', enabled: true }
     ];
 
     const iconData = [
@@ -197,64 +163,33 @@ const CornerstoneLayout = ({ children }) => {
                             alignItems: 'center',
                             padding: '4px',
                             marginBottom: '4px',
+                            backgroundColor: 'var(--menu-bg-color)',
+                            borderBottom: '1px solid var(--border-color)'
                         }}
                     >
                         <ul
                             style={{
                                 display: 'flex',
                                 listStyle: 'none',
-                                gap: '10px',
+                                gap: '2px',
                                 margin: 0,
-                                padding: 0,
-                                position: 'relative',
+                                padding: 0
                             }}
                         >
                             {menuItems.map((menu, idx) => (
                                 <li
                                     key={idx}
                                     style={{
-                                        position: 'relative',
-                                        padding: '0 6px',
-                                        cursor: 'pointer',
-                                        color: 'var(--text-color)',
+                                        padding: '2px 8px',
+                                        cursor: menu.enabled ? 'pointer' : 'default',
+                                        color: menu.enabled ? 'var(--text-color)' : 'var(--text-color-disabled)',
+                                        backgroundColor: 'var(--button-bg)',
+                                        border: '1px solid var(--border-color)',
+                                        boxShadow: 'var(--button-shadow)',
+                                        opacity: menu.enabled ? 1 : 0.6
                                     }}
-                                    onMouseEnter={() => setActiveMenu(idx)}
-                                    onMouseLeave={() => setActiveMenu(null)}
                                 >
                                     {menu.label}
-                                    {activeMenu === idx && (
-                                        <ul
-                                            style={{
-                                                position: 'absolute',
-                                                top: '100%',
-                                                left: 0,
-                                                backgroundColor: 'var(--background-color)',
-                                                border: '2px solid var(--border-color)',
-                                                listStyle: 'none',
-                                                padding: '4px 0',
-                                                margin: 0,
-                                                minWidth: '120px',
-                                                zIndex: 10,
-                                            }}
-                                        >
-                                            {menu.subItems.map((sub, sIdx) => (
-                                                <li
-                                                    key={sIdx}
-                                                    style={{
-                                                        padding: '4px 8px',
-                                                        color: 'var(--text-color)',
-                                                        cursor: 'pointer',
-                                                        whiteSpace: 'nowrap',
-                                                    }}
-                                                    onMouseDown={(e) => {
-                                                        e.stopPropagation();
-                                                    }}
-                                                >
-                                                    {sub}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
                                 </li>
                             ))}
                         </ul>
