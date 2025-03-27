@@ -20,8 +20,9 @@
     --menu-bg-color: #c0c0c0;
     --menu-text-color: #000000;
     --button-bg: #c0c0c0;
-    --button-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff;
-    --button-active-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #ffffff;
+    --button-shadow: inset -2px -2px #808080, inset 2px 2px #ffffff;
+    --button-hover-bg: #d0d0d0;
+    --button-active-shadow: inset 2px 2px #808080, inset -2px -2px #ffffff;
 }
 
 /* Avimark Specific Styles */

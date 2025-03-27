@@ -185,7 +185,6 @@ const CornerstoneLayout = ({ children }) => {
                                         color: menu.enabled ? 'var(--text-color)' : 'var(--text-color-disabled)',
                                         backgroundColor: 'var(--button-bg)',
                                         border: '1px solid var(--border-color)',
-                                        boxShadow: 'var(--button-shadow)',
                                         opacity: menu.enabled ? 1 : 0.6
                                     }}
                                 >
@@ -216,14 +215,36 @@ const CornerstoneLayout = ({ children }) => {
                                 key={index}
                                 className={`icon-container ${isActive(item.path) ? 'active' : ''}`}
                                 onClick={() => handleNavigate(item.path)}
-                                onMouseEnter={() => setHoveredIcon(index)}
-                                onMouseLeave={() => setHoveredIcon(null)}
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    padding: '6px',
+                                    cursor: 'pointer',
+                                    backgroundColor: 'var(--button-bg)',
+                                    border: '2px outset #ffffff',
+                                    boxShadow: 'var(--button-shadow)',
+                                    transition: 'background-color 0.1s',
+                                    userSelect: 'none',
+                                    minWidth: '60px'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'var(--button-hover-bg)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'var(--button-bg)';
+                                }}
+                                onMouseDown={(e) => {
+                                    e.currentTarget.style.boxShadow = 'var(--button-active-shadow)';
+                                    e.currentTarget.style.border = '2px inset #ffffff';
+                                }}
+                                onMouseUp={(e) => {
+                                    e.currentTarget.style.boxShadow = 'var(--button-shadow)';
+                                    e.currentTarget.style.border = '2px outset #ffffff';
+                                }}
                             >
-                                <item.icon className="icon" />
-                                <span className="icon-label">{item.label}</span>
-                                {hoveredIcon === index && (
-                                    <div className="icon-tooltip">{item.hoverText}</div>
-                                )}
+                                <item.icon className="icon" style={{ fontSize: '18px', marginBottom: '3px' }} />
+                                <span className="icon-label" style={{ fontSize: '11px', textAlign: 'center' }}>{item.label}</span>
                             </div>
                         ))}
                     </div>
