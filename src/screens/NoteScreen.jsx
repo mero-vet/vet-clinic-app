@@ -2,32 +2,24 @@ import React from 'react';
 import { NoteProvider } from './Notes/NoteContext';
 import AddNoteForm from './Notes/AddNoteForm';
 import NoteList from './Notes/NoteList';
-import '../styles/WindowsClassic.css';
-import '../styles/PatientForms.css';
+import PIMSScreenWrapper from '../components/PIMSScreenWrapper';
+import { usePIMS } from '../context/PIMSContext';
 
 /**
  * NoteScreen
  * Wraps everything in a NoteProvider. Uses AddNoteForm and NoteList.
  */
 function NoteScreen() {
+  const { config } = usePIMS();
+
   return (
     <NoteProvider>
-      <div className="windows-classic">
-        <div className="window" style={{ margin: '0' }}>
-          <div className="title-bar">
-            <div className="title-bar-text">Notes</div>
-            <div className="title-bar-controls">
-              <button aria-label="Minimize"></button>
-              <button aria-label="Maximize"></button>
-              <button aria-label="Close"></button>
-            </div>
-          </div>
-          <div className="window-body" style={{ padding: '16px' }}>
-            <AddNoteForm />
-            <NoteList />
-          </div>
+      <PIMSScreenWrapper title={config.screenLabels.notes}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-start' }}>
+          <AddNoteForm />
+          <NoteList />
         </div>
-      </div>
+      </PIMSScreenWrapper>
     </NoteProvider>
   );
 }

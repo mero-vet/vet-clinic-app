@@ -74,12 +74,12 @@ const IntraVetLayout = ({ children }) => {
 
     const [expandedMenus, setExpandedMenus] = useState({
         patients: true,
-        scheduling: false,
-        medical: false,
-        financial: false,
-        inventory: false,
-        communications: false,
-        reports: false
+        scheduling: true,
+        medical: true,
+        financial: true,
+        inventory: true,
+        communications: true,
+        reports: true
     });
 
     // Flag to indicate if we're handling navigation internally

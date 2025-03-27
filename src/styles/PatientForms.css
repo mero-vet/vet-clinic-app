@@ -73,17 +73,18 @@
 
 .patient-checkin-grid {
   display: grid;
-  grid-template-columns: minmax(400px, 1fr) minmax(400px, 1fr) minmax(400px, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 16px;
   width: 100%;
-  min-width: 0;
+  overflow-x: auto;
+  padding: 16px;
 }
 
 .patient-checkin-column {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-width: 0;
+  min-width: 350px;
 }
 
 .middle-column {
@@ -94,9 +95,9 @@
   order: 3;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1600px) {
   .patient-checkin-grid {
-    grid-template-columns: minmax(400px, 1fr) minmax(400px, 1fr);
+    grid-template-columns: repeat(2, minmax(350px, 1fr));
   }
 
   .right-column {
@@ -105,16 +106,17 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1050px) {
   .patient-checkin-grid {
-    grid-template-columns: minmax(400px, 1fr);
+    grid-template-columns: minmax(350px, 1fr);
+    padding: 8px;
   }
 
   .middle-column {
-    order: 3;
+    order: 2;
   }
 
   .right-column {
-    order: 2;
+    order: 3;
   }
 }

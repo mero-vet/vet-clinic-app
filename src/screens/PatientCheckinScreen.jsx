@@ -324,9 +324,9 @@ const PatientCheckinScreen = () => {
 
   return (
     <PIMSScreenWrapper title={config.screenLabels.checkin}>
-      <div style={styles.grid}>
+      <div className="patient-checkin-grid">
         {/* Left Column */}
-        <div style={styles.column}>
+        <div className="patient-checkin-column">
           <ClientInfo
             formData={patientData}
             handleInputChange={handleInputChange}
@@ -340,7 +340,7 @@ const PatientCheckinScreen = () => {
         </div>
 
         {/* Middle Column */}
-        <div style={styles.column}>
+        <div className="patient-checkin-column middle-column">
           <CheckInOutButtons
             formData={patientData}
             handleInputChange={handleInputChange}
@@ -354,7 +354,7 @@ const PatientCheckinScreen = () => {
         </div>
 
         {/* Right Column */}
-        <div style={styles.column}>
+        <div className="patient-checkin-column right-column">
           <fieldset style={styles.fieldset}>
             <legend style={styles.legend}>Billing & Contact</legend>
             <div style={styles.formRow}>
