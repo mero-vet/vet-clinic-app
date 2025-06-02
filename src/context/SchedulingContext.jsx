@@ -2,6 +2,12 @@ import React, { createContext, useContext, useState } from 'react';
 
 // A simple context for scheduling appointments.
 // We'll assume each appointment has { id, date, time, reason, patient, staff }.
+// 
+// IMPORTANT: Schedule is randomized on every page refresh!
+// - 80% of weekday slots are filled with random appointments
+// - Pet names, species, and procedures are randomly selected
+// - Mix of dogs (60%), cats (35%), and other animals (5%)
+// - This creates a realistic-looking schedule for testing AI agents
 
 const SchedulingContext = createContext();
 
@@ -30,21 +36,74 @@ const generateDates = (startDate, weeksToGenerate = 6) => {
 const generateRandomAppointments = () => {
   // Monday, March 17, 2025 as base date
   const dates = generateDates('2025-03-17', 6);
-  const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+  // Mix of 30-minute and 1-hour slots for more realistic scheduling
+  const times = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'];
   const reasons = [
-    'Wellness Check',
+    'Annual Wellness Exam',
     'Vaccine Booster',
     'Dental Cleaning',
-    'Surgery',
-    'X-Ray',
-    'Blood Work'
+    'Spay/Neuter Surgery',
+    'Digital X-Ray',
+    'Blood Test - CBC',
+    'Urinalysis',
+    'Heartworm Test',
+    'Sick Visit - Vomiting',
+    'Sick Visit - Limping',
+    'Mass Removal',
+    'Dental Extractions',
+    'Microchipping',
+    'Skin Condition',
+    'Ear Infection',
+    'Eye Examination',
+    'Post-Surgery Recheck',
+    'Senior Wellness Exam',
+    'Puppy/Kitten Visit',
+    'Nail Trim'
   ];
-  const patients = ['Bella (Canine)', 'Max (Feline)', 'Rocky (Canine)', 'Luna (Feline)'];
-  const staff = ['Dr. Smith', 'Dr. Adams', 'Dr. Davis', 'Dr. Wilson'];
-  const clientIds = ['CL001', 'CL002', 'CL003', 'CL004'];
+  
+  const dogNames = ['Max', 'Bella', 'Charlie', 'Lucy', 'Cooper', 'Bailey', 'Daisy', 'Rocky', 'Sadie', 'Duke', 'Molly', 'Tucker', 'Bear', 'Maggie', 'Oliver', 'Zoey', 'Buddy', 'Lily', 'Jack', 'Sophie'];
+  const catNames = ['Luna', 'Milo', 'Simba', 'Chloe', 'Leo', 'Kitty', 'Smokey', 'Shadow', 'Tiger', 'Oreo', 'Coco', 'Felix', 'Jasper', 'Mittens', 'Oscar', 'Pepper', 'Sam', 'Princess', 'Chester', 'Misty'];
+  const otherNames = ['Nibbles', 'Thumper', 'Snowball', 'Patches', 'Cinnamon'];
+  
+  const species = ['Canine', 'Feline', 'Rabbit', 'Guinea Pig', 'Ferret'];
+  const speciesDistribution = [0.6, 0.35, 0.03, 0.01, 0.01]; // 60% dogs, 35% cats, 5% other
+  
+  const staff = ['Dr. Patterson', 'Dr. Lee', 'Dr. Williams', 'Dr. Rodriguez', 'Dr. Johnson', 'Dr. Smith', 'Dr. Davis'];
+  
+  // Generate more diverse client IDs
+  const generateClientId = () => `CL${String(Math.floor(Math.random() * 9000) + 1000)}`;
 
   const appointments = [];
   let id = 1;
+
+  // Helper function to get a random species based on distribution
+  const getRandomSpecies = () => {
+    const rand = Math.random();
+    let cumulative = 0;
+    for (let i = 0; i < species.length; i++) {
+      cumulative += speciesDistribution[i];
+      if (rand < cumulative) {
+        return species[i];
+      }
+    }
+    return species[0]; // fallback to Canine
+  };
+
+  // Helper function to get a random pet name based on species
+  const getRandomPetName = (speciesType) => {
+    let namePool;
+    switch (speciesType) {
+      case 'Canine':
+        namePool = dogNames;
+        break;
+      case 'Feline':
+        namePool = catNames;
+        break;
+      default:
+        namePool = otherNames;
+    }
+    return namePool[Math.floor(Math.random() * namePool.length)];
+  };
 
   // Generate appointments with 80% probability for each slot on weekdays only
   dates.forEach(date => {
@@ -56,16 +115,20 @@ const generateRandomAppointments = () => {
       times.forEach(time => {
         // 80% chance of having an appointment (slot not available)
         if (Math.random() < 0.8) {
-          const patientIndex = Math.floor(Math.random() * patients.length);
+          const selectedSpecies = getRandomSpecies();
+          const petName = getRandomPetName(selectedSpecies);
+          const selectedReason = reasons[Math.floor(Math.random() * reasons.length)];
+          const selectedStaff = staff[Math.floor(Math.random() * staff.length)];
 
           appointments.push({
             id: id++,
             date,
             time,
-            reason: reasons[Math.floor(Math.random() * reasons.length)],
-            patient: patients[patientIndex],
-            clientId: clientIds[patientIndex],
-            staff: staff[Math.floor(Math.random() * staff.length)]
+            reason: selectedReason,
+            patient: `${petName} (${selectedSpecies})`,
+            clientId: generateClientId(),
+            patientId: `P${String(Math.floor(Math.random() * 9000) + 1000)}`,
+            staff: selectedStaff
           });
         }
       });
@@ -75,12 +138,9 @@ const generateRandomAppointments = () => {
   return appointments;
 };
 
-// Generate appointments once on module load
-const INITIAL_APPOINTMENTS = generateRandomAppointments();
-
 export const SchedulingProvider = ({ children }) => {
-  // Start with the fixed set of appointments
-  const [appointments, setAppointments] = useState(INITIAL_APPOINTMENTS);
+  // Generate fresh appointments on every mount (page refresh)
+  const [appointments, setAppointments] = useState(() => generateRandomAppointments());
 
   const addAppointment = (newAppt) => {
     setAppointments((prev) => [
@@ -97,8 +157,8 @@ export const SchedulingProvider = ({ children }) => {
   };
 
   const clearAppointments = () => {
-    // Reset to the original appointments
-    setAppointments(INITIAL_APPOINTMENTS);
+    // Generate fresh random appointments
+    setAppointments(generateRandomAppointments());
   };
 
   return (
