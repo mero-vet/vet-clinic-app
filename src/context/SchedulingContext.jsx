@@ -16,11 +16,11 @@ const generateDates = (startDate, weeksToGenerate = 6) => {
   const dates = [];
 
   // Parse the startDate string to a Date object
-  const baseDate = new Date(startDate);
+  const baseDate = new Date(startDate + 'T00:00:00'); // Ensure consistent parsing
 
   // Generate weeks of dates (all 7 days of the week)
   for (let week = 0; week < weeksToGenerate; week++) {
-    for (let day = 0; day < 7; day++) { // Monday to Sunday (0-6)
+    for (let day = 0; day < 7; day++) {
       // Calculate date by adding days to the base date
       const currentDate = new Date(baseDate);
       currentDate.setDate(baseDate.getDate() + (week * 7) + day);
@@ -34,8 +34,13 @@ const generateDates = (startDate, weeksToGenerate = 6) => {
 
 // Helper function to generate random appointments with 80% of slots filled
 const generateRandomAppointments = () => {
-  // Monday, March 17, 2025 as base date
-  const dates = generateDates('2025-03-17', 6);
+  // Start from tomorrow
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0); // Reset time to start of day
+  const tomorrowString = tomorrow.toISOString().split('T')[0];
+  
+  const dates = generateDates(tomorrowString, 6);
   // Mix of 30-minute and 1-hour slots for more realistic scheduling
   const times = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'];
   const reasons = [
