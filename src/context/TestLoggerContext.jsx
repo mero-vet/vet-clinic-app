@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { testDefinitions } from '../tests/testDefinitions';
 import throttle from 'lodash.throttle';
+import html2canvas from 'html2canvas';
 
 // Context
 const TestLoggerContext = createContext();
@@ -41,23 +42,44 @@ export const TestLoggerProvider = ({ children }) => {
   const [logs, setLogs] = useState([]);
   const startTimeRef = useRef(null);
 
-  const logEvent = useCallback((type, details) => {
+  const captureScreenshot = useCallback(async () => {
+    if (!startTimeRef.current) return null;
+    try {
+      const canvas = await html2canvas(document.body, { useCORS: true, logging: false, scale: 0.5 });
+      return canvas.toDataURL('image/jpeg', 0.6);
+    } catch (err) {
+      console.warn('screenshot failed', err);
+      return null;
+    }
+  }, []);
+
+  const logEvent = useCallback(async (type, details) => {
     if (!startTimeRef.current) return;
-    setLogs(prev => [
-      ...prev,
-      {
-        timestamp: Date.now() - startTimeRef.current, // relative ms
-        type,
-        testId: activeTest?.id ?? null,
-        ...details,
-      },
-    ]);
-  }, [activeTest]);
+    const baseRecord = {
+      timestamp: Date.now() - startTimeRef.current,
+      type,
+      testId: activeTest?.id ?? null,
+      ...details,
+    };
+
+    let record = baseRecord;
+
+    if (type === 'click' || type === 'keydown') {
+      const shot = await captureScreenshot();
+      if (shot) {
+        record = { ...baseRecord, screenshot: shot };
+      }
+    }
+
+    setLogs(prev => [...prev, record]);
+  }, [activeTest, captureScreenshot]);
 
   const clickListener = useCallback(
     e => {
       logEvent('click', {
         selector: getElementSelector(e.target),
+        x: e.clientX,
+        y: e.clientY,
       });
     },
     [logEvent],
