@@ -74,9 +74,13 @@ const TestManager = ({ embedded = false }) => {
   return (
     <div style={containerStyle}>
       <div style={{ fontWeight: 'bold', marginBottom: 8 }}>Test Manager</div>
-      <div style={{ fontSize: 12, marginBottom: 8, color: '#555' }}>
-        1. Select scenario ➜ 2. Start Test ➜ 3. Run agent ➜ 4. End Test & Download ➜ 5. View Replay
-      </div>
+      <ol style={{ fontSize: 12, marginBottom: 8, color: '#555', lineHeight: '1.3', paddingLeft: 16 }}>
+        <li>Select a scenario from the drop-down.</li>
+        <li>Click <strong>Copy Agent Prompt</strong> and paste it into your agent UI.</li>
+        <li>Click <strong>Start Test</strong> then let the agent perform the workflow.</li>
+        <li>When the agent is finished, click <strong>End Test & Download Logs</strong> to save the log file.</li>
+        <li>(Optional) Click <strong>View Replay</strong> to watch a step-by-step playback.</li>
+      </ol>
       <label style={{ display: 'block', marginBottom: 4 }}>
         Scenario:
         <select
