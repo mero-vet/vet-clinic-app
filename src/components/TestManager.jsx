@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTestLogger } from '../context/TestLoggerContext';
 import { testDefinitions } from '../tests/testDefinitions';
+import { useNavigate } from 'react-router-dom';
 
 const panelStyle = {
   position: 'fixed',
@@ -20,37 +21,43 @@ const panelStyle = {
 const TestManager = () => {
   const { activeTest, startTest, endTest, logs } = useTestLogger();
   const [selectedId, setSelectedId] = useState(testDefinitions[0]?.id || '');
+  const navigate = useNavigate();
+  const [lastEnded, setLastEnded] = useState(null);
 
   const handleStart = () => {
     startTest(selectedId);
   };
 
-  const handleEnd = () => {
+  const handleEnd = async () => {
     const result = endTest();
     if (result) {
-      const { url, filename, evaluation } = result;
+      const { url, filename, evaluation, payload } = result;
       const link = document.createElement('a');
       link.href = url;
       link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      // Revoke later
       setTimeout(() => URL.revokeObjectURL(url), 5000);
 
+      sessionStorage.setItem('latestReplay', payload);
+      setLastEnded({ evaluation });
       if (evaluation.result !== 'unknown') {
-        alert(
-          `Test Result: ${evaluation.result}\n` +
-            `Criteria Met: ${evaluation.criteriaMet}\n` +
-            `Criteria Failed: ${evaluation.criteriaFailed}`,
-        );
+        alert(`Test Result: ${evaluation.result}\nCriteria Met: ${evaluation.criteriaMet}\nCriteria Failed: ${evaluation.criteriaFailed}`);
       }
     }
+  };
+
+  const openReplay = () => {
+    navigate('/replay');
   };
 
   return (
     <div style={panelStyle}>
       <div style={{ fontWeight: 'bold', marginBottom: 8 }}>Test Manager</div>
+      <div style={{ fontSize: 12, marginBottom: 8, color: '#555' }}>
+        1. Select scenario ➜ 2. Start Test ➜ 3. Run agent ➜ 4. End Test & Download ➜ 5. View Replay
+      </div>
       <label style={{ display: 'block', marginBottom: 4 }}>
         Scenario:
         <select
@@ -76,6 +83,11 @@ const TestManager = () => {
           <button style={{ marginTop: 4, width: '100%' }} onClick={handleEnd}>
             End Test & Download Logs
           </button>
+          {lastEnded && (
+            <button style={{ marginTop: 4, width: '100%' }} onClick={openReplay}>
+              View Replay
+            </button>
+          )}
         </>
       )}
     </div>

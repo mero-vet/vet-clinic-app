@@ -54,6 +54,18 @@ function ReplayViewer() {
     return () => clearTimeout(playRef.current);
   }, [playing, currentIndex, logData]);
 
+  useEffect(() => {
+    const stored = sessionStorage.getItem('latestReplay');
+    if (stored && !logData) {
+      try {
+        const json = JSON.parse(stored);
+        if (json.logs) {
+          setLogData(json);
+        }
+      } catch {}
+    }
+  }, []);
+
   const logsWithShots = logData?.logs.filter(l => l.screenshot) || [];
   const currentShot = logsWithShots[currentIndex]?.screenshot;
 

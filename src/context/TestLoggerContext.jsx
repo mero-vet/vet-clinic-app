@@ -193,7 +193,7 @@ export const TestLoggerProvider = ({ children }) => {
     setLogs([]);
     startTimeRef.current = null;
 
-    return { url, filename, evaluation };
+    return { url, filename, evaluation, payload: JSON.stringify(logPayload) };
   }, [activeTest, logs, evaluateSuccessCriteria]);
 
   const value = {
