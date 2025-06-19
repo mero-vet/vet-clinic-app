@@ -17,6 +17,7 @@ import ReportsScreen from './screens/ReportsScreen';
 import FeatureNotEnabledScreen from './screens/FeatureNotEnabledScreen';
 import DoctorExamScreen from './screens/DoctorExam/DoctorExamScreen';
 import DiagnosticsScreen from './screens/DiagnosticsScreen';
+import ReplayViewer from './components/ReplayViewer';
 
 // Import Layout Manager
 import LayoutManager from './components/LayoutManager';
@@ -80,6 +81,9 @@ function App() {
               <Route path={`/${pims}/reports`} element={<ReportsScreen key={`${pims}-reports`} />} />
             </React.Fragment>
           ))}
+
+          {/* Special routes */}
+          <Route path="/replay" element={<ReplayViewer />} />
 
           {/* Catch-all route for non-implemented features */}
           <Route path="*" element={<FeatureNotEnabledScreen />} />
