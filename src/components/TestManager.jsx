@@ -3,7 +3,7 @@ import { useTestLogger } from '../context/TestLoggerContext';
 import { testDefinitions } from '../tests/testDefinitions';
 import { useNavigate } from 'react-router-dom';
 
-const panelStyle = {
+const floatingPanelStyle = {
   position: 'fixed',
   bottom: 20,
   right: 20,
@@ -15,10 +15,10 @@ const panelStyle = {
   width: 260,
   fontFamily: 'sans-serif',
   fontSize: 14,
-  boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+  boxShadow: '0 2px 6px rgba(0,0,0,0.2)'
 };
 
-const TestManager = () => {
+const TestManager = ({ embedded = false }) => {
   const { activeTest, startTest, endTest, logs } = useTestLogger();
   const [selectedId, setSelectedId] = useState(testDefinitions[0]?.id || '');
   const navigate = useNavigate();
@@ -26,6 +26,15 @@ const TestManager = () => {
 
   const handleStart = () => {
     startTest(selectedId);
+  };
+
+  const handleCopyPrompt = () => {
+    const def = testDefinitions.find(t => t.id === selectedId);
+    if (def?.agentPrompt) {
+      navigator.clipboard.writeText(def.agentPrompt).then(() => {
+        alert('Agent prompt copied to clipboard');
+      });
+    }
   };
 
   const handleEnd = async () => {
@@ -52,8 +61,10 @@ const TestManager = () => {
     navigate('/replay');
   };
 
+  const containerStyle = embedded ? { padding: 0, width: '100%' } : floatingPanelStyle;
+
   return (
-    <div style={panelStyle}>
+    <div style={containerStyle}>
       <div style={{ fontWeight: 'bold', marginBottom: 8 }}>Test Manager</div>
       <div style={{ fontSize: 12, marginBottom: 8, color: '#555' }}>
         1. Select scenario ➜ 2. Start Test ➜ 3. Run agent ➜ 4. End Test & Download ➜ 5. View Replay
@@ -74,9 +85,14 @@ const TestManager = () => {
         </select>
       </label>
       {!activeTest ? (
-        <button style={{ marginTop: 8, width: '100%' }} onClick={handleStart}>
-          Start Test
-        </button>
+        <>
+          <button style={{ marginTop: 8, width: '100%' }} onClick={handleCopyPrompt}>
+            Copy Agent Prompt
+          </button>
+          <button style={{ marginTop: 4, width: '100%' }} onClick={handleStart}>
+            Start Test
+          </button>
+        </>
       ) : (
         <>
           <div style={{ marginTop: 8 }}>Logs captured: {logs.length}</div>

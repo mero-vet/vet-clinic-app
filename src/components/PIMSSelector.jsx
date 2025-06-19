@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { usePIMS } from '../context/PIMSContext';
 import pimsConfigurations from '../config/pimsConfigurations';
 import { MdSettings, MdClose } from 'react-icons/md';
+import TestManager from './TestManager';
 
 const PIMSSelector = () => {
     const { currentPIMS, switchPIMS } = usePIMS();
@@ -72,6 +73,12 @@ const PIMSSelector = () => {
                             </option>
                         ))}
                     </select>
+
+                    {/* Divider */}
+                    <hr style={{ margin: '10px 0' }} />
+
+                    {/* Embedded Test Manager */}
+                    <TestManager embedded />
                 </>
             ) : (
                 <MdSettings

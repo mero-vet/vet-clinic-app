@@ -9,6 +9,7 @@ export const testDefinitions = [
       { type: 'selector', selector: 'h2' },
       { type: 'selector', selector: 'form', mustExist: false },
     ],
+    agentPrompt: `Hello VetAssist, we have a brand new client named Sarah Johnson bringing in two pets (Bella – Golden Retriever, Max – German Shepherd). Please register Sarah as a new client, then create patient records for Bella (DOB 03/2019, spayed female) and Max (DOB 08/2018, neutered male). Ensure duplicate detection is run and all mandatory fields are completed. Let me know once registration is finished.`
   },
   {
     id: 'workflow-2',
@@ -20,6 +21,7 @@ export const testDefinitions = [
       { type: 'selector', selector: 'table' },
       { type: 'selector', selector: 'button.windows-button' },
     ],
+    agentPrompt: `Hi VetAssist, please schedule a 30-minute wellness exam for Sammy (DOMESTIC SH, feline) with Dr. Smith next Tuesday at 10 AM. Confirm the appointment via SMS to owner Alex Morgan and email a reminder 24 hours before. Let me know when it's booked.`
   },
   {
     id: 'workflow-3',
@@ -30,6 +32,7 @@ export const testDefinitions = [
       { type: 'selector', selector: '.patient-checkin-column' },
       { type: 'url-contains', value: '/' },
     ],
+    agentPrompt: `Hi VetAssist, Wilson has just arrived for his appointment. Please begin the check-in process: confirm his client information, capture his weight, complete triage notes and assign him to an exam room. Let me know when he is ready for the doctor.`
   },
   {
     id: 'workflow-4',
@@ -40,6 +43,7 @@ export const testDefinitions = [
       { type: 'selector', selector: '.title-bar-text' },
       { type: 'selector', selector: '.windows-button' },
     ],
+    agentPrompt: `VetAssist, open Wilson's medical record and create a new SOAP note for today's wellness visit. Use the canine wellness template, document normal findings, prescribe monthly heart-worm prevention, and finalize the note.`
   },
   {
     id: 'workflow-5',
@@ -51,6 +55,7 @@ export const testDefinitions = [
       { type: 'selector', selector: '.title-bar-text' },
       { type: 'selector', selector: 'fieldset legend' },
     ],
+    agentPrompt: `VetAssist, for Wilson please order a CBC/chemistry panel and thoracic radiographs. Generate the lab requisition and attach the orders to his record.`
   },
   {
     id: 'workflow-6',
@@ -62,6 +67,7 @@ export const testDefinitions = [
       { type: 'selector', selector: 'table.services-table' },
       { type: 'selector', selector: 'legend' },
     ],
+    agentPrompt: `VetAssist, build a treatment plan for Bella's hip dysplasia: include hip radiographs, joint supplements, and a 6-session laser therapy package. Generate an estimate and present it for owner approval.`
   },
   {
     id: 'workflow-7',
@@ -72,6 +78,7 @@ export const testDefinitions = [
       { type: 'selector', selector: '.title-bar-text' },
       { type: 'selector', selector: 'table.windows-table' },
     ],
+    agentPrompt: `VetAssist, dispense Apoquel 5.4 mg tablets for Sammy: 1 tablet twice daily for 14 days with 2 refills. Deduct inventory, print the prescription label and record lot & expiry.`
   },
   {
     id: 'workflow-8',
@@ -83,6 +90,7 @@ export const testDefinitions = [
       { type: 'selector', selector: '.title-bar-text' },
       { type: 'selector', selector: 'legend' },
     ],
+    agentPrompt: `VetAssist, finalize today's charges for Max, apply his 10 % senior discount, collect $150 by credit card and place the remaining $50 on account. Email the paid receipt to owner Michael Chen.`
   },
   {
     id: 'workflow-9',
@@ -93,6 +101,7 @@ export const testDefinitions = [
       { type: 'selector', selector: '.title-bar-text' },
       { type: 'selector', selector: 'table.windows-table' },
     ],
+    agentPrompt: `VetAssist, generate vaccine reminders for all patients due next month, batch send the email reminders, and show me the send-status report.`
   },
   {
     id: 'workflow-10',
@@ -104,6 +113,7 @@ export const testDefinitions = [
       { type: 'selector', selector: '.title-bar-text' },
       { type: 'selector', selector: 'table.windows-table' },
     ],
+    agentPrompt: `VetAssist, run end-of-day: close all open invoices, count the cash drawer (expected $520), adjust inventory for dispensed items, and email the daily financial & productivity reports to management.`
   },
 ];
 
