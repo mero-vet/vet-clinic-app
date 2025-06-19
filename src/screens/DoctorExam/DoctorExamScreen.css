@@ -1,0 +1,183 @@
+.doctor-exam-screen {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.exam-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.patient-info h1 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.patient-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.patient-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #0066cc;
+}
+
+.patient-meta {
+  color: #666;
+}
+
+.visit-type {
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.exam-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.auto-save-status {
+  color: #28a745;
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+.template-btn,
+.save-btn,
+.finalize-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.template-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.save-btn {
+  background: #007bff;
+  color: white;
+}
+
+.finalize-btn {
+  background: #28a745;
+  color: white;
+}
+
+.finalize-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.exam-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 20px;
+  background: #f0f0f0;
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+.tab.active {
+  background: white;
+  color: #0066cc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tab:hover:not(.active) {
+  color: #333;
+}
+
+.exam-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  min-height: 500px;
+  position: relative;
+}
+
+.exam-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #ddd;
+}
+
+.order-diagnostics-btn {
+  padding: 10px 20px;
+  background: #17a2b8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.navigation-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.back-btn,
+.next-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.back-btn {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.next-btn {
+  background: #0066cc;
+  color: white;
+}
+
+.next-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  font-size: 18px;
+  color: #666;
+}

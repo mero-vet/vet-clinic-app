@@ -1,0 +1,264 @@
+.consent-forms {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.consent-forms h3 {
+  margin: 0 0 1.5rem 0;
+  color: var(--text-primary);
+  font-size: 1.125rem;
+}
+
+.consent-list {
+  margin-bottom: 1.5rem;
+}
+
+.consent-item {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+
+.consent-item:hover {
+  border-color: var(--border-color);
+}
+
+.consent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.consent-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.consent-checkbox input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+.consent-title {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+}
+
+.required {
+  color: #dc2626;
+  margin-left: 0.25rem;
+}
+
+.signature-btn {
+  padding: 0.375rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.signature-btn:hover {
+  background: var(--primary-hover);
+}
+
+.signature-btn.signed {
+  background: #10b981;
+}
+
+.signature-btn.signed:hover {
+  background: #059669;
+}
+
+.consent-description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.emergency-limit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.emergency-limit label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.limit-input {
+  width: 100px;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  text-align: right;
+}
+
+.limit-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Signature Modal */
+.signature-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.signature-content {
+  background: var(--bg-primary);
+  border-radius: 8px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.signature-content h4 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+}
+
+.signature-pad {
+  width: 100%;
+  height: 200px;
+  border: 2px dashed var(--border-color);
+  border-radius: 4px;
+  background: white;
+  margin-bottom: 1rem;
+  cursor: crosshair;
+  position: relative;
+}
+
+.signature-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-secondary);
+  font-style: italic;
+  pointer-events: none;
+}
+
+.signature-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.signature-actions button {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.signature-actions button:first-child {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.signature-actions button:first-child:hover {
+  background: var(--bg-secondary);
+}
+
+.signature-actions .save-btn {
+  background: var(--primary-color);
+  color: white;
+}
+
+.signature-actions .save-btn:hover {
+  background: var(--primary-hover);
+}
+
+/* Summary and Actions */
+.consent-summary {
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.required-note {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.incomplete-warning {
+  margin: 0.5rem 0 0 0;
+  color: #dc2626;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.consent-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}

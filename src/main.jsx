@@ -10,6 +10,7 @@ import { CommunicationsProvider } from './context/CommunicationsContext'
 import { PharmacyProvider } from './context/PharmacyContext'
 import { ReportsProvider } from './context/ReportsContext'
 import { PIMSProvider } from './context/PIMSContext'
+import { CheckInProvider } from './context/CheckInContext'
 import '98.css'
 import './index.css'
 import './styles/pimsThemes.css'
@@ -21,17 +22,19 @@ root.render(
       <PIMSProvider>
         <PatientProvider>
           <SchedulingProvider>
-            <MedicalRecordsProvider>
-              <InventoryProvider>
-                <CommunicationsProvider>
-                  <PharmacyProvider>
-                    <ReportsProvider>
-                      <App />
-                    </ReportsProvider>
-                  </PharmacyProvider>
-                </CommunicationsProvider>
-              </InventoryProvider>
-            </MedicalRecordsProvider>
+            <CheckInProvider>
+              <MedicalRecordsProvider>
+                <InventoryProvider>
+                  <CommunicationsProvider>
+                    <PharmacyProvider>
+                      <ReportsProvider>
+                        <App />
+                      </ReportsProvider>
+                    </PharmacyProvider>
+                  </CommunicationsProvider>
+                </InventoryProvider>
+              </MedicalRecordsProvider>
+            </CheckInProvider>
           </SchedulingProvider>
         </PatientProvider>
       </PIMSProvider>

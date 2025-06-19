@@ -1,0 +1,239 @@
+.diagnostics-screen {
+  padding: 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.diagnostics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.patient-info h1 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.patient-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.patient-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #0066cc;
+}
+
+.patient-meta {
+  color: #666;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.back-btn {
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.back-btn:hover {
+  background: #e0e0e0;
+}
+
+.diagnostics-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 20px;
+  background: #f0f0f0;
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+.tab.active {
+  background: white;
+  color: #0066cc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tab:hover:not(.active) {
+  color: #333;
+}
+
+.diagnostics-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 600px;
+}
+
+.order-interface {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  height: 100%;
+}
+
+.test-selection {
+  padding: 20px;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  max-height: 800px;
+}
+
+.selection-header {
+  margin-bottom: 20px;
+}
+
+.selection-header h2 {
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+.selection-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0066cc;
+}
+
+.category-filter {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+.panel-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.recommended-panels {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.recommended-panels h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.panels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.panel-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+  text-align: center;
+  transition: box-shadow 0.2s;
+}
+
+.panel-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.panel-card h4 {
+  margin: 0 0 10px 0;
+  color: #0066cc;
+  font-size: 14px;
+}
+
+.panel-tests {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.panel-price {
+  margin: 5px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.panel-savings {
+  margin: 0 0 10px 0;
+  color: #28a745;
+  font-size: 13px;
+}
+
+.select-panel-btn {
+  width: 100%;
+  padding: 6px 12px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+.select-panel-btn:hover {
+  background: #0052a3;
+}
+
+.order-summary {
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  font-size: 18px;
+  color: #666;
+}

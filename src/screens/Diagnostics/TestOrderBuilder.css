@@ -1,0 +1,280 @@
+.test-order-builder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.test-order-builder h2 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.empty-order {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-order p {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+.help-text {
+  font-size: 14px;
+  color: #999;
+}
+
+.order-priority {
+  margin-bottom: 20px;
+}
+
+.order-priority label {
+  display: block;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.priority-options {
+  display: flex;
+  gap: 10px;
+}
+
+.priority-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.priority-option:hover {
+  border-color: #0066cc;
+}
+
+.priority-option.selected {
+  background: #e7f3ff;
+  border-color: #0066cc;
+}
+
+.priority-option input {
+  margin-right: 8px;
+}
+
+.priority-option span {
+  font-size: 14px;
+  color: #333;
+}
+
+.selected-tests {
+  margin-bottom: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.selected-tests h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.test-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.test-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.test-info {
+  flex: 1;
+}
+
+.test-name {
+  display: block;
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.test-meta {
+  display: block;
+  color: #666;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.test-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.test-price {
+  color: #0066cc;
+  font-weight: 500;
+}
+
+.remove-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: #dc3545;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition: background-color 0.2s;
+}
+
+.remove-btn:hover {
+  background: #c82333;
+}
+
+.sample-requirements {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.sample-requirements h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 14px;
+}
+
+.sample-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sample-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.sample-type {
+  color: #333;
+  font-weight: 500;
+}
+
+.sample-details {
+  color: #666;
+}
+
+.order-options {
+  margin-bottom: 15px;
+}
+
+.fasting-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.order-notes {
+  margin-bottom: 20px;
+}
+
+.order-notes label {
+  display: block;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.order-notes textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.order-notes textarea:focus {
+  outline: none;
+  border-color: #0066cc;
+}
+
+.order-total {
+  padding: 15px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.total-row.estimate {
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  font-weight: 500;
+}
+
+.total-amount {
+  color: #0066cc;
+  font-size: 18px;
+}
+
+.order-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.submit-order-btn,
+.save-draft-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-order-btn {
+  background: #28a745;
+  color: white;
+}
+
+.submit-order-btn:hover {
+  background: #218838;
+}
+
+.save-draft-btn {
+  background: white;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.save-draft-btn:hover {
+  background: #f0f0f0;
+}

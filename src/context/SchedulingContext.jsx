@@ -1,13 +1,9 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import schedulingService from '../services/SchedulingService';
+import { appointmentTypes, businessHours } from '../utils/appointmentRules';
 
-// A simple context for scheduling appointments.
-// We'll assume each appointment has { id, date, time, reason, patient, staff }.
-// 
-// IMPORTANT: Schedule is randomized on every page refresh!
-// - 80% of weekday slots are filled with random appointments
-// - Pet names, species, and procedures are randomly selected
-// - Mix of dogs (60%), cats (35%), and other animals (5%)
-// - This creates a realistic-looking schedule for testing AI agents
+// Enhanced scheduling context with full appointment management features
+// Integrates with SchedulingService for business logic and validation
 
 const SchedulingContext = createContext();
 
@@ -146,33 +142,275 @@ const generateRandomAppointments = () => {
 export const SchedulingProvider = ({ children }) => {
   // Generate fresh appointments on every mount (page refresh)
   const [appointments, setAppointments] = useState(() => generateRandomAppointments());
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedProvider, setSelectedProvider] = useState('P001'); // Default to Dr. Patterson
+  const [viewMode, setViewMode] = useState('week'); // 'day', 'week', 'month'
+  const [confirmationDialog, setConfirmationDialog] = useState(null);
+  const [waitlistEntries, setWaitlistEntries] = useState([]);
+  const [blockedTimes, setBlockedTimes] = useState([]);
 
-  const addAppointment = (newAppt) => {
-    setAppointments((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        ...newAppt,
-      },
-    ]);
-  };
+  // Initialize service with existing appointments
+  useEffect(() => {
+    // Convert existing appointments to service format
+    appointments.forEach(apt => {
+      try {
+        const appointmentType = Object.values(appointmentTypes).find(type => 
+          type.name.toLowerCase().includes(apt.reason.toLowerCase().split(' ')[0])
+        ) || appointmentTypes.sick;
 
-  const removeAppointment = (appointmentId) => {
+        schedulingService.createAppointment({
+          date: apt.date,
+          time: apt.time,
+          patientId: apt.patientId,
+          clientId: apt.clientId,
+          providerId: apt.staff.includes('Patterson') ? 'P001' :
+                      apt.staff.includes('Lee') ? 'P002' :
+                      apt.staff.includes('Williams') ? 'P003' :
+                      apt.staff.includes('Rodriguez') ? 'P004' :
+                      apt.staff.includes('Johnson') ? 'P005' :
+                      apt.staff.includes('Smith') ? 'P006' : 'P007',
+          appointmentTypeId: appointmentType.id,
+          roomId: 'R001', // Default room
+          reason: apt.reason,
+          notes: '',
+          duration: appointmentType.defaultDuration + appointmentType.bufferTime
+        });
+      } catch (error) {
+        // Skip if appointment can't be created (conflicts, etc.)
+      }
+    });
+  }, []);
+
+  // Get providers list
+  const providers = useMemo(() => {
+    return Array.from(schedulingService.providers.values());
+  }, []);
+
+  // Get rooms list
+  const rooms = useMemo(() => {
+    return Array.from(schedulingService.rooms.values());
+  }, []);
+
+  // Enhanced appointment management functions
+  const addAppointment = useCallback((appointmentData) => {
+    try {
+      const appointment = schedulingService.createAppointment(appointmentData);
+      
+      // Update local state
+      setAppointments(prev => [...prev, {
+        id: appointment.id,
+        date: appointment.date,
+        time: appointment.time,
+        reason: appointment.reason,
+        patient: `${appointmentData.patientName || 'Unknown'} (${appointmentData.species || 'Unknown'})`,
+        clientId: appointment.clientId,
+        patientId: appointment.patientId,
+        staff: appointment.providerName,
+        duration: appointment.duration,
+        status: appointment.status,
+        appointmentType: appointment.appointmentType,
+        roomId: appointment.roomId,
+        roomName: appointment.roomName
+      }]);
+
+      // Show confirmation dialog
+      setConfirmationDialog({
+        appointment,
+        action: 'created'
+      });
+
+      return { success: true, appointment };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }, []);
+
+  const updateAppointmentStatus = useCallback((appointmentId, status) => {
+    try {
+      const updatedAppointment = schedulingService.updateAppointmentStatus(appointmentId, status);
+      
+      // Update local state
+      setAppointments(prev => prev.map(apt => 
+        apt.id === appointmentId ? { ...apt, status } : apt
+      ));
+
+      return { success: true, appointment: updatedAppointment };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }, []);
+
+  const rescheduleAppointment = useCallback((appointmentId, newDate, newTime, newProviderId) => {
+    try {
+      const appointment = schedulingService.rescheduleAppointment(
+        appointmentId, 
+        newDate, 
+        newTime, 
+        newProviderId
+      );
+      
+      // Update local state
+      setAppointments(prev => prev.map(apt => 
+        apt.id === appointmentId 
+          ? { 
+              ...apt, 
+              date: newDate, 
+              time: newTime, 
+              staff: appointment.providerName 
+            } 
+          : apt
+      ));
+
+      setConfirmationDialog({
+        appointment,
+        action: 'rescheduled'
+      });
+
+      return { success: true, appointment };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }, []);
+
+  const cancelAppointment = useCallback((appointmentId, reason) => {
+    try {
+      const appointment = schedulingService.cancelAppointment(appointmentId, reason);
+      
+      // Update local state
+      setAppointments(prev => prev.map(apt => 
+        apt.id === appointmentId ? { ...apt, status: 'cancelled' } : apt
+      ));
+
+      return { success: true, appointment };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }, []);
+
+  const removeAppointment = useCallback((appointmentId) => {
     setAppointments((prev) => prev.filter(appt => appt.id !== appointmentId));
-  };
+  }, []);
 
-  const clearAppointments = () => {
+  const clearAppointments = useCallback(() => {
     // Generate fresh random appointments
     setAppointments(generateRandomAppointments());
+  }, []);
+
+  // Availability checking
+  const checkAvailability = useCallback((date, time, duration, providerId, roomId) => {
+    return schedulingService.checkAvailability(date, time, duration, providerId, roomId);
+  }, []);
+
+  const getAvailableSlots = useCallback((date, providerId, appointmentTypeId, duration) => {
+    return schedulingService.getAvailableSlots(date, providerId, appointmentTypeId, duration);
+  }, []);
+
+  // Waitlist management
+  const addToWaitlist = useCallback((waitlistData) => {
+    const entry = schedulingService.addToWaitlist(waitlistData);
+    setWaitlistEntries(prev => [...prev, entry]);
+    return entry;
+  }, []);
+
+  // Block time management
+  const blockTime = useCallback((providerId, date, startTime, endTime, reason) => {
+    schedulingService.blockTime(providerId, date, startTime, endTime, reason);
+    setBlockedTimes(prev => [...prev, { providerId, date, startTime, endTime, reason }]);
+  }, []);
+
+  // Send confirmation
+  const sendConfirmation = useCallback((appointmentId, method) => {
+    return schedulingService.sendConfirmation(appointmentId, method);
+  }, []);
+
+  // Get appointments with filters
+  const getAppointments = useCallback((startDate, endDate, filters) => {
+    return schedulingService.getAppointments(startDate, endDate, filters);
+  }, []);
+
+  // Get provider schedule
+  const getProviderSchedule = useCallback((providerId, date) => {
+    return schedulingService.getProviderSchedule(providerId, date);
+  }, []);
+
+  // Create recurring appointments
+  const createRecurringAppointments = useCallback((appointmentData, recurrencePattern) => {
+    const appointments = schedulingService.createRecurringAppointments(
+      appointmentData, 
+      recurrencePattern
+    );
+    
+    // Update local state with new appointments
+    appointments.forEach(apt => {
+      setAppointments(prev => [...prev, {
+        id: apt.id,
+        date: apt.date,
+        time: apt.time,
+        reason: apt.reason,
+        patient: `${appointmentData.patientName || 'Unknown'} (${appointmentData.species || 'Unknown'})`,
+        clientId: apt.clientId,
+        patientId: apt.patientId,
+        staff: apt.providerName,
+        duration: apt.duration,
+        status: apt.status
+      }]);
+    });
+
+    return appointments;
+  }, []);
+
+  // Context value with all scheduling features
+  const contextValue = {
+    // State
+    appointments,
+    selectedDate,
+    selectedProvider,
+    viewMode,
+    confirmationDialog,
+    waitlistEntries,
+    blockedTimes,
+    providers,
+    rooms,
+    appointmentTypes,
+    businessHours,
+    
+    // State setters
+    setSelectedDate,
+    setSelectedProvider,
+    setViewMode,
+    setConfirmationDialog,
+    
+    // Appointment management
+    addAppointment,
+    updateAppointmentStatus,
+    rescheduleAppointment,
+    cancelAppointment,
+    removeAppointment,
+    clearAppointments,
+    
+    // Availability
+    checkAvailability,
+    getAvailableSlots,
+    
+    // Waitlist
+    addToWaitlist,
+    
+    // Time blocking
+    blockTime,
+    
+    // Confirmations
+    sendConfirmation,
+    
+    // Queries
+    getAppointments,
+    getProviderSchedule,
+    
+    // Recurring appointments
+    createRecurringAppointments
   };
 
   return (
-    <SchedulingContext.Provider value={{
-      appointments,
-      addAppointment,
-      removeAppointment,
-      clearAppointments
-    }}>
+    <SchedulingContext.Provider value={contextValue}>
       {children}
     </SchedulingContext.Provider>
   );

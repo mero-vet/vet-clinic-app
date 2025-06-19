@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useRef, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useRef, useCallback, useMemo, useEffect } from 'react';
 
 const PatientContext = createContext();
 
@@ -567,8 +567,69 @@ const mockPatients = [
 ];
 
 export const PatientProvider = ({ children }) => {
-  // Store all patients
-  const [patients] = useState(mockPatients);
+  // Initialize patients from localStorage or mock data
+  const [patients, setPatients] = useState(() => {
+    const storedPatients = localStorage.getItem('vetClinicPatients');
+    if (storedPatients) {
+      try {
+        const parsed = JSON.parse(storedPatients);
+        // Merge with mock patients to ensure we have the full medical history
+        const mergedPatients = [...mockPatients];
+        parsed.forEach(newPatient => {
+          if (!mergedPatients.find(p => p.patientId === newPatient.patientId)) {
+            // Convert new patient format to match existing format
+            mergedPatients.push({
+              clientId: newPatient.clientId,
+              clientFirstName: '', // Will be populated from client data
+              clientLastName: '',
+              clientEmail: '',
+              emailDeclined: false,
+              phoneHome: '',
+              phoneExt: '',
+              phoneDeclined: false,
+              balanceDue: '0.00',
+              address: '',
+              city: '',
+              stateProv: '',
+              postalCode: '',
+              patientId: newPatient.patientId,
+              patientName: newPatient.name,
+              species: newPatient.species === 'dog' ? 'Canine' : newPatient.species === 'cat' ? 'Feline' : 'Other',
+              sex: newPatient.sex,
+              breed: newPatient.breed,
+              birthDate: newPatient.dateOfBirth,
+              ageYears: '',
+              ageMonths: '',
+              ageDays: '',
+              weightDate: new Date().toISOString().split('T')[0],
+              weight: newPatient.weight || '',
+              additionalNotes: '',
+              alertNotes: newPatient.alerts ? newPatient.alerts.join(', ') : '',
+              primaryReason: '',
+              secondaryReason: '',
+              room: '',
+              visitType: 'Outpatient',
+              status: '',
+              ward: '',
+              cage: '',
+              rdvmName: '',
+              referralRecheck: false,
+              staffId: '',
+              checkedInBy: '',
+              checkInDate: '',
+              checkOutDate: '',
+              medicalHistory: newPatient.medicalHistory || []
+            });
+          }
+        });
+        return mergedPatients;
+      } catch (e) {
+        console.error('Error parsing stored patients:', e);
+        return mockPatients;
+      }
+    }
+    return mockPatients;
+  });
 
   // Current active patient data (for backward compatibility)
   const [patientData, setPatientData] = useState({
@@ -655,14 +716,108 @@ export const PatientProvider = ({ children }) => {
     }
   }, [patients, setActivePatient]);
 
+  // Add new patient to the context
+  const addPatient = useCallback((newPatient) => {
+    setPatients(prevPatients => {
+      const updatedPatients = [...prevPatients, newPatient];
+      // Update localStorage with all patients in new format
+      const patientsToStore = updatedPatients
+        .filter(p => p.patientId.startsWith('P-')) // Only store new format patients
+        .map(p => ({
+          patientId: p.patientId,
+          clientId: p.clientId,
+          name: p.patientName,
+          species: p.species === 'Canine' ? 'dog' : p.species === 'Feline' ? 'cat' : 'exotic',
+          breed: p.breed,
+          sex: p.sex,
+          dateOfBirth: p.birthDate,
+          weight: p.weight,
+          microchip: p.microchip || '',
+          rabiesTag: p.rabiesTag || '',
+          alerts: p.alertNotes ? p.alertNotes.split(', ').filter(a => a) : [],
+          medicalHistory: p.medicalHistory || []
+        }));
+      localStorage.setItem('vetClinicPatients', JSON.stringify(patientsToStore));
+      return updatedPatients;
+    });
+  }, []);
+
+  // Update patient in the context
+  const updatePatient = useCallback((patientId, updates) => {
+    setPatients(prevPatients => {
+      const updatedPatients = prevPatients.map(p => 
+        p.patientId === patientId ? { ...p, ...updates } : p
+      );
+      // Update localStorage
+      const patientsToStore = updatedPatients
+        .filter(p => p.patientId.startsWith('P-'))
+        .map(p => ({
+          patientId: p.patientId,
+          clientId: p.clientId,
+          name: p.patientName,
+          species: p.species === 'Canine' ? 'dog' : p.species === 'Feline' ? 'cat' : 'exotic',
+          breed: p.breed,
+          sex: p.sex,
+          dateOfBirth: p.birthDate,
+          weight: p.weight,
+          microchip: p.microchip || '',
+          rabiesTag: p.rabiesTag || '',
+          alerts: p.alertNotes ? p.alertNotes.split(', ').filter(a => a) : [],
+          medicalHistory: p.medicalHistory || []
+        }));
+      localStorage.setItem('vetClinicPatients', JSON.stringify(patientsToStore));
+      return updatedPatients;
+    });
+  }, []);
+
+  // Sync with client data when available
+  useEffect(() => {
+    const syncClientData = async () => {
+      const clientsData = localStorage.getItem('vetClinicClients');
+      if (clientsData) {
+        try {
+          const clients = JSON.parse(clientsData);
+          setPatients(prevPatients => {
+            return prevPatients.map(patient => {
+              const client = clients.find(c => c.clientId === patient.clientId);
+              if (client) {
+                return {
+                  ...patient,
+                  clientFirstName: client.firstName,
+                  clientLastName: client.lastName,
+                  clientEmail: client.email,
+                  phoneHome: client.phone,
+                  address: client.street,
+                  city: client.city,
+                  stateProv: client.state,
+                  postalCode: client.zip
+                };
+              }
+              return patient;
+            });
+          });
+        } catch (e) {
+          console.error('Error syncing client data:', e);
+        }
+      }
+    };
+    
+    syncClientData();
+    // Set up interval to sync periodically
+    const interval = setInterval(syncClientData, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   const value = useMemo(() => ({
     patientData,
     setPatientData,
     setMockPatientData,
     patients,
     searchPatients,
-    setActivePatient
-  }), [patientData, setMockPatientData, patients, searchPatients, setActivePatient]);
+    setActivePatient,
+    addPatient,
+    updatePatient
+  }), [patientData, setMockPatientData, patients, searchPatients, setActivePatient, addPatient, updatePatient]);
 
   return (
     <PatientContext.Provider value={value}>

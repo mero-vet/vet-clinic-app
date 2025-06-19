@@ -248,6 +248,30 @@ export const CommunicationsProvider = ({ children }) => {
         setReminderQueue(reminderQueue.filter((reminder) => reminder.id !== id));
     };
 
+    // Log communication for audit trail
+    const logCommunication = (communicationData) => {
+        const logEntry = {
+            id: `LOG${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            ...communicationData
+        };
+        
+        // Add to message history
+        setMessageHistory(prev => [...prev, logEntry]);
+        
+        // If it's a reminder, add to reminder queue
+        if (communicationData.type === 'appointment_reminder' && communicationData.scheduledFor) {
+            const reminder = {
+                id: `REM${Date.now()}`,
+                ...communicationData,
+                status: 'Scheduled'
+            };
+            setReminderQueue(prev => [...prev, reminder]);
+        }
+        
+        return logEntry;
+    };
+
     return (
         <CommunicationsContext.Provider
             value={{
@@ -266,6 +290,7 @@ export const CommunicationsProvider = ({ children }) => {
                 addReminder,
                 updateReminder,
                 deleteReminder,
+                logCommunication,
             }}
         >
             {children}

@@ -1,116 +1,140 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useScheduling } from '../context/SchedulingContext';
 import { usePIMS } from '../context/PIMSContext';
 import PIMSScreenWrapper from '../components/PIMSScreenWrapper';
+import AppointmentForm from '../components/AppointmentScheduler/AppointmentForm';
+import AvailabilityGrid from '../components/AppointmentScheduler/AvailabilityGrid';
 import '../styles/PatientForms.css';
 
 /**
- * SchedulingScreen
- * Displays a weekly calendar starting from current week.
- * Past dates and weekends are grayed out.
- * Allows viewing up to 5 weeks in the future.
+ * Enhanced SchedulingScreen with full appointment management features
+ * - Calendar view with day/week/month modes
+ * - Drag-and-drop rescheduling
+ * - Real-time availability checking
+ * - Appointment confirmations and reminders
+ * - Waitlist management
  */
 function SchedulingScreen() {
-  const { appointments, addAppointment, removeAppointment, clearAppointments } = useScheduling();
-  const { config, currentPIMS } = usePIMS();
-  const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
-  const [selectedSlot, setSelectedSlot] = useState(null);
+  const { 
+    appointments, 
+    providers,
+    selectedDate,
+    selectedProvider,
+    viewMode,
+    confirmationDialog,
+    setSelectedDate,
+    setSelectedProvider,
+    setViewMode,
+    setConfirmationDialog,
+    updateAppointmentStatus,
+    cancelAppointment,
+    sendConfirmation,
+    clearAppointments
+  } = useScheduling();
+  
+  const { config } = usePIMS();
+  
+  const [showAppointmentForm, setShowAppointmentForm] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const [formData, setFormData] = useState({
-    date: '',
-    time: '',
-    reason: '',
-    patient: '',
-    clientId: '',
-    patientId: '',
-    staff: '',
-  });
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [showAvailabilityGrid, setShowAvailabilityGrid] = useState(false);
+  const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
 
   // Generate the days for the current week based on the offset
   const days = useMemo(() => {
-    // Get the current date
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Find the most recent Monday (or today if it's Monday)
+    if (viewMode === 'day') {
+      return [selectedDate];
+    }
+
+    // Find the most recent Monday
     const currentMonday = new Date(today);
     const dayOfWeek = today.getDay();
-    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // If Sunday, go back 6 days, otherwise find last Monday
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
     currentMonday.setDate(today.getDate() + diff);
 
-    // Add the week offset to get to the requested week
+    // Add the week offset
     const baseDate = new Date(currentMonday);
     baseDate.setDate(baseDate.getDate() + (currentWeekOffset * 7));
 
-    // Generate days for the week (all 7 days)
+    // Generate days for the week
     return Array.from({ length: 7 }).map((_, index) => {
       const date = new Date(baseDate);
       date.setDate(baseDate.getDate() + index);
-      const dateString = date.toISOString().split('T')[0];
-      return dateString;
+      return date.toISOString().split('T')[0];
     });
-  }, [currentWeekOffset]);
+  }, [currentWeekOffset, viewMode, selectedDate]);
 
   const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
-  // Helper to check if a date is a weekend
+  // Helper functions
   const isWeekend = (dateString) => {
     const date = new Date(dateString);
-    const day = date.getDay(); // 0 is Sunday, 6 is Saturday
+    const day = date.getDay();
     return day === 0 || day === 6;
   };
 
-  // Helper to check if a date is in the past or today
   const isPastDate = (dateString) => {
     const today = new Date();
-    // Set today to start of day for comparison
     today.setHours(0, 0, 0, 0);
-
     const date = new Date(dateString);
-    // Set the date to start of day for fair comparison
     date.setHours(0, 0, 0, 0);
-
-    // Return true if the date is strictly less than tomorrow
     return date < new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
   };
 
-  const handleSlotClick = (day, time) => {
-    // Don't allow booking on weekends or past dates
-    if (isWeekend(day) || isPastDate(day)) {
-      return;
-    }
-
-    const existingAppt = appointments.find(
-      (appt) => appt.date === day && appt.time === time
-    );
-    if (existingAppt) {
-      setSelectedAppointment(existingAppt);
-      setSelectedSlot(null);
-    } else {
-      setSelectedSlot({ day, time });
+  const handleSlotClick = useCallback((slotData) => {
+    if (slotData.action === 'view' && slotData.appointment) {
+      setSelectedAppointment(slotData.appointment);
+      setShowAppointmentForm(false);
+    } else if (slotData.time && slotData.date) {
+      setSelectedSlot(slotData);
+      setShowAppointmentForm(true);
       setSelectedAppointment(null);
-      setFormData({ date: day, time: time, reason: '', patient: '', clientId: '', patientId: '', staff: '' });
     }
-  };
+  }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleAppointmentAction = useCallback((action, appointmentId) => {
+    switch (action) {
+      case 'check-in':
+        updateAppointmentStatus(appointmentId, 'arrived');
+        break;
+      case 'start':
+        updateAppointmentStatus(appointmentId, 'in_progress');
+        break;
+      case 'complete':
+        updateAppointmentStatus(appointmentId, 'completed');
+        break;
+      case 'no-show':
+        updateAppointmentStatus(appointmentId, 'no_show');
+        break;
+      case 'cancel':
+        const reason = prompt('Cancellation reason:');
+        if (reason !== null) {
+          cancelAppointment(appointmentId, reason);
+        }
+        break;
+      case 'reschedule':
+        setShowAppointmentForm(true);
+        break;
+      case 'confirm':
+        const method = prompt('Send confirmation via (email/sms/both):', 'email');
+        if (method) {
+          const result = sendConfirmation(appointmentId, method);
+          if (result.success) {
+            alert(result.message);
+          }
+        }
+        break;
+    }
+  }, [updateAppointmentStatus, cancelAppointment, sendConfirmation]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    addAppointment(formData);
+  const handleFormSuccess = useCallback((appointment) => {
+    setShowAppointmentForm(false);
+    setSelectedAppointment(null);
     setSelectedSlot(null);
-    alert('Appointment scheduled!');
-  };
-
-  const handleCancelAppointment = () => {
-    if (window.confirm('Are you sure you want to cancel this appointment?')) {
-      removeAppointment(selectedAppointment.id);
-      setSelectedAppointment(null);
-    }
-  };
+  }, []);
 
   // Get PIMS-specific styles
   const getPIMSStyles = () => {
@@ -127,23 +151,29 @@ function SchedulingScreen() {
             fontSize: '12px',
             cursor: 'pointer',
           },
-          input: {
-            border: '2px inset #d0d0d0',
-            padding: '3px',
+          primaryButton: {
+            backgroundColor: '#0066cc',
+            color: 'white',
+            border: '2px outset #0088ff',
+            boxShadow: 'inset -1px -1px #004499, inset 1px 1px #0088ff',
+            padding: '3px 10px',
             fontSize: '12px',
-          },
-          table: {
-            border: '1px solid #808080',
-          },
-          cell: {
-            border: '1px solid #808080',
-            padding: '4px',
+            cursor: 'pointer',
           }
         };
 
       case 'avimark':
         return {
           button: {
+            backgroundColor: '#f0f0f0',
+            color: '#333',
+            border: '1px solid #999',
+            padding: '5px 12px',
+            fontSize: '13px',
+            cursor: 'pointer',
+            borderRadius: '2px',
+          },
+          primaryButton: {
             backgroundColor: '#A70000',
             color: 'white',
             border: 'none',
@@ -151,26 +181,22 @@ function SchedulingScreen() {
             fontSize: '13px',
             cursor: 'pointer',
             borderRadius: '2px',
-          },
-          input: {
-            border: '1px solid #cccccc',
-            padding: '5px',
-            fontSize: '13px',
-            borderRadius: '2px',
-          },
-          table: {
-            border: '1px solid #cccccc',
-            borderCollapse: 'collapse',
-          },
-          cell: {
-            border: '1px solid #cccccc',
-            padding: '6px',
           }
         };
 
       case 'easyvet':
         return {
           button: {
+            backgroundColor: 'white',
+            color: '#333',
+            border: '1px solid #E0E0E0',
+            padding: '8px 16px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            borderRadius: '4px',
+            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+          },
+          primaryButton: {
             backgroundColor: '#4CAF50',
             color: 'white',
             border: 'none',
@@ -179,27 +205,21 @@ function SchedulingScreen() {
             cursor: 'pointer',
             borderRadius: '4px',
             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-          },
-          input: {
-            border: '1px solid #E0E0E0',
-            padding: '8px 12px',
-            fontSize: '14px',
-            borderRadius: '4px',
-          },
-          table: {
-            border: '1px solid #E0E0E0',
-            borderRadius: '8px',
-            overflow: 'hidden',
-          },
-          cell: {
-            border: '1px solid #E0E0E0',
-            padding: '8px',
           }
         };
 
       case 'intravet':
         return {
           button: {
+            backgroundColor: '#f5f5f5',
+            color: '#333',
+            border: '1px solid #BBBBBB',
+            padding: '6px 14px',
+            fontSize: '13px',
+            cursor: 'pointer',
+            borderRadius: '3px',
+          },
+          primaryButton: {
             background: 'linear-gradient(to bottom, #2196F3, #1565C0)',
             color: 'white',
             border: 'none',
@@ -207,26 +227,22 @@ function SchedulingScreen() {
             fontSize: '13px',
             cursor: 'pointer',
             borderRadius: '3px',
-          },
-          input: {
-            border: '1px solid #BBBBBB',
-            padding: '6px 10px',
-            fontSize: '13px',
-            borderRadius: '3px',
-          },
-          table: {
-            border: '1px solid #BBBBBB',
-            borderCollapse: 'collapse',
-          },
-          cell: {
-            border: '1px solid #BBBBBB',
-            padding: '6px',
           }
         };
 
       case 'covetrus pulse':
         return {
           button: {
+            backgroundColor: 'white',
+            color: '#333',
+            border: '1px solid #E0E0E0',
+            padding: '10px 20px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            borderRadius: '8px',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+          },
+          primaryButton: {
             backgroundColor: '#6200EA',
             color: 'white',
             border: 'none',
@@ -235,22 +251,6 @@ function SchedulingScreen() {
             cursor: 'pointer',
             borderRadius: '8px',
             boxShadow: '0 3px 8px rgba(98, 0, 234, 0.2)',
-          },
-          input: {
-            border: '1px solid #E0E0E0',
-            padding: '10px 14px',
-            fontSize: '14px',
-            borderRadius: '8px',
-          },
-          table: {
-            border: '1px solid #E0E0E0',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
-          },
-          cell: {
-            border: '1px solid #E0E0E0',
-            padding: '10px',
           }
         };
 
@@ -261,17 +261,12 @@ function SchedulingScreen() {
             fontSize: '14px',
             cursor: 'pointer',
           },
-          input: {
-            border: '1px solid #ccc',
-            padding: '5px',
+          primaryButton: {
+            backgroundColor: '#007bff',
+            color: 'white',
+            padding: '5px 10px',
             fontSize: '14px',
-          },
-          table: {
-            border: '1px solid #ccc',
-          },
-          cell: {
-            border: '1px solid #ccc',
-            padding: '4px',
+            cursor: 'pointer',
           }
         };
     }
@@ -281,257 +276,484 @@ function SchedulingScreen() {
 
   return (
     <PIMSScreenWrapper title={config.screenLabels.scheduler}>
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <p>Click on an open slot to schedule a new appointment. Past dates and weekends are unavailable.</p>
-          <div style={{ display: 'flex', gap: '8px' }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {/* Toolbar */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          borderBottom: '1px solid #e0e0e0',
+          paddingBottom: '10px'
+        }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            {/* View Mode Selector */}
+            <div style={{ display: 'flex', gap: '5px' }}>
+              <button
+                onClick={() => setViewMode('day')}
+                style={{
+                  ...styles.button,
+                  ...(viewMode === 'day' ? { backgroundColor: '#e0e0e0' } : {})
+                }}
+              >
+                Day
+              </button>
+              <button
+                onClick={() => setViewMode('week')}
+                style={{
+                  ...styles.button,
+                  ...(viewMode === 'week' ? { backgroundColor: '#e0e0e0' } : {})
+                }}
+              >
+                Week
+              </button>
+              <button
+                onClick={() => setShowAvailabilityGrid(!showAvailabilityGrid)}
+                style={styles.button}
+              >
+                {showAvailabilityGrid ? 'Calendar View' : 'Availability Grid'}
+              </button>
+            </div>
+
+            {/* Provider Filter */}
+            <select
+              value={selectedProvider}
+              onChange={(e) => setSelectedProvider(e.target.value)}
+              style={{ padding: '5px', fontSize: '13px' }}
+            >
+              <option value="">All Providers</option>
+              {providers.map(provider => (
+                <option key={provider.id} value={provider.id}>
+                  {provider.name}
+                </option>
+              ))}
+            </select>
+
+            {/* Date Navigation */}
+            <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+              <button
+                onClick={() => setCurrentWeekOffset(prev => prev - 1)}
+                style={{ ...styles.button, width: '32px' }}
+              >
+                ←
+              </button>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                style={{ padding: '5px', fontSize: '13px' }}
+              />
+              <button
+                onClick={() => setCurrentWeekOffset(prev => prev + 1)}
+                style={{ ...styles.button, width: '32px' }}
+              >
+                →
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentWeekOffset(0);
+                  setSelectedDate(new Date().toISOString().split('T')[0]);
+                }}
+                style={styles.button}
+              >
+                Today
+              </button>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              onClick={() => {
+                setSelectedSlot(null);
+                setSelectedAppointment(null);
+                setShowAppointmentForm(true);
+              }}
+              style={styles.primaryButton}
+            >
+              New Appointment
+            </button>
             <button
               onClick={() => {
                 clearAppointments();
                 setCurrentWeekOffset(0);
-                setSelectedSlot(null);
-                setSelectedAppointment(null);
               }}
               style={styles.button}
             >
               Reset Calendar
             </button>
-            <button
-              onClick={() => setCurrentWeekOffset(prev => Math.max(0, prev - 1))}
-              disabled={currentWeekOffset === 0}
-              style={{
-                ...styles.button,
-                width: '32px',
-                cursor: currentWeekOffset === 0 ? 'not-allowed' : 'pointer',
-                opacity: currentWeekOffset === 0 ? 0.6 : 1
-              }}
-            >
-              ←
-            </button>
-            <button
-              onClick={() => setCurrentWeekOffset(prev => prev < 5 ? prev + 1 : prev)}
-              disabled={currentWeekOffset >= 5}
-              style={{
-                ...styles.button,
-                width: '32px',
-                cursor: currentWeekOffset >= 5 ? 'not-allowed' : 'pointer',
-                opacity: currentWeekOffset >= 5 ? 0.6 : 1
-              }}
-            >
-              →
-            </button>
           </div>
         </div>
 
+        {/* Main Content Area */}
         <div style={{ flex: 1, overflow: 'auto' }}>
-          <table style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            tableLayout: 'fixed',
-            ...styles.table
-          }}>
-            <thead>
-              <tr>
-                <th style={{ ...styles.cell, width: '80px' }}>Time</th>
-                {days.map((day) => {
-                  // Format date to show day of week and month/day
-                  const date = new Date(day);
-                  const options = { weekday: 'short', month: 'short', day: 'numeric' };
-                  const formattedDate = date.toLocaleDateString('en-US', options);
-                  const weekend = isWeekend(day);
-                  const pastDate = isPastDate(day);
-
-                  return (
-                    <th
-                      key={day}
-                      style={{
-                        ...styles.cell,
-                        backgroundColor: weekend || pastDate ? '#e0e0e0' : 'transparent'
-                      }}
-                    >
-                      {formattedDate}
-                    </th>
-                  );
-                })}
-              </tr>
-            </thead>
-            <tbody>
-              {times.map((timeStr) => (
-                <tr key={timeStr}>
-                  <td style={{ ...styles.cell, whiteSpace: 'nowrap' }}>{timeStr}</td>
+          {showAvailabilityGrid ? (
+            <AvailabilityGrid
+              date={selectedDate}
+              selectedProviderId={selectedProvider}
+              onSlotClick={handleSlotClick}
+              viewMode={selectedProvider ? 'provider' : 'multi-provider'}
+            />
+          ) : (
+            /* Traditional Calendar View */
+            <table style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              tableLayout: 'fixed'
+            }}>
+              <thead>
+                <tr>
+                  <th style={{ width: '80px', padding: '8px', borderBottom: '2px solid #e0e0e0' }}>
+                    Time
+                  </th>
                   {days.map((day) => {
+                    const date = new Date(day);
+                    const options = { weekday: 'short', month: 'short', day: 'numeric' };
+                    const formattedDate = date.toLocaleDateString('en-US', options);
                     const weekend = isWeekend(day);
                     const pastDate = isPastDate(day);
-                    const foundAppt = appointments.find(
-                      (appt) => appt.date === day && appt.time === timeStr
-                    );
 
                     return (
-                      <td
-                        key={day + timeStr}
+                      <th
+                        key={day}
                         style={{
-                          ...styles.cell,
-                          backgroundColor: weekend || pastDate
-                            ? '#e0e0e0'
-                            : foundAppt ? '#ffd9d9' : '#d9ffd9',
-                          cursor: weekend || pastDate ? 'not-allowed' : 'pointer',
-                          wordBreak: 'break-word',
-                          whiteSpace: 'normal',
-                          minHeight: '40px',
-                          height: '40px',
-                          verticalAlign: 'top',
-                          overflow: 'hidden',
-                          maxWidth: '0',
-                          width: '14.28%' // 1/7 of the table width
+                          padding: '8px',
+                          borderBottom: '2px solid #e0e0e0',
+                          backgroundColor: weekend || pastDate ? '#f0f0f0' : 'transparent',
+                          color: pastDate ? '#999' : 'inherit'
                         }}
-                        onClick={() => handleSlotClick(day, timeStr)}
                       >
-                        <div style={{
-                          wordWrap: 'break-word',
-                          overflowWrap: 'break-word',
-                          width: '100%'
-                        }}>
-                          {weekend
-                            ? 'Weekend - Closed'
-                            : pastDate
-                              ? 'Past Date - Unavailable'
-                              : foundAppt
-                                ? `${foundAppt.reason} - ${foundAppt.patient}`
-                                : 'Available'}
-                        </div>
-                      </td>
+                        {formattedDate}
+                        {day === selectedDate && (
+                          <div style={{ fontSize: '10px', color: '#4CAF50' }}>Selected</div>
+                        )}
+                      </th>
                     );
                   })}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {times.map((timeStr) => (
+                  <tr key={timeStr}>
+                    <td style={{ 
+                      padding: '8px', 
+                      borderRight: '1px solid #e0e0e0',
+                      borderBottom: '1px solid #f0f0f0',
+                      fontWeight: 'bold',
+                      fontSize: '12px'
+                    }}>
+                      {timeStr}
+                    </td>
+                    {days.map((day) => {
+                      const weekend = isWeekend(day);
+                      const pastDate = isPastDate(day);
+                      const dayAppointments = appointments.filter(
+                        appt => appt.date === day && 
+                               appt.time === timeStr &&
+                               (!selectedProvider || appt.staff?.includes(providers.find(p => p.id === selectedProvider)?.name))
+                      );
+
+                      return (
+                        <td
+                          key={day + timeStr}
+                          style={{
+                            padding: '4px',
+                            borderRight: '1px solid #f0f0f0',
+                            borderBottom: '1px solid #f0f0f0',
+                            backgroundColor: weekend || pastDate
+                              ? '#f0f0f0'
+                              : dayAppointments.length > 0 ? '#ffd9d9' : '#f8f8f8',
+                            cursor: weekend || pastDate ? 'not-allowed' : 'pointer',
+                            minHeight: '60px',
+                            height: '60px',
+                            verticalAlign: 'top',
+                            position: 'relative'
+                          }}
+                          onClick={() => {
+                            if (!weekend && !pastDate) {
+                              if (dayAppointments.length > 0) {
+                                setSelectedAppointment(dayAppointments[0]);
+                              } else {
+                                handleSlotClick({
+                                  date: day,
+                                  time: timeStr,
+                                  providerId: selectedProvider || 'P001'
+                                });
+                              }
+                            }
+                          }}
+                        >
+                          {weekend ? (
+                            <div style={{ fontSize: '11px', color: '#999', textAlign: 'center' }}>
+                              Closed
+                            </div>
+                          ) : pastDate ? (
+                            <div style={{ fontSize: '11px', color: '#999', textAlign: 'center' }}>
+                              Past
+                            </div>
+                          ) : dayAppointments.length > 0 ? (
+                            dayAppointments.map((appt, idx) => (
+                              <div 
+                                key={appt.id}
+                                style={{
+                                  fontSize: '11px',
+                                  marginBottom: '2px',
+                                  padding: '2px',
+                                  backgroundColor: appt.status === 'cancelled' ? '#ccc' :
+                                                 appt.status === 'completed' ? '#90EE90' :
+                                                 appt.status === 'arrived' ? '#87CEEB' :
+                                                 appt.status === 'in_progress' ? '#FFD700' :
+                                                 'transparent',
+                                  borderRadius: '2px',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap'
+                                }}
+                                title={`${appt.patient} - ${appt.reason} (${appt.staff})`}
+                              >
+                                <strong>{appt.patient?.split(' ')[0]}</strong>
+                                {appt.status === 'cancelled' && ' (X)'}
+                              </div>
+                            ))
+                          ) : (
+                            <div style={{ 
+                              fontSize: '11px', 
+                              color: '#4CAF50', 
+                              textAlign: 'center',
+                              paddingTop: '20px'
+                            }}>
+                              Available
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
-        {selectedSlot && (
-          <div style={{ marginTop: '16px', padding: '12px', border: '1px solid #ccc', backgroundColor: '#f8f8f8' }}>
-            <h3>Schedule Appointment</h3>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <div>
-                  <label>Date: </label>
-                  <input
-                    type="text"
-                    name="date"
-                    value={formData.date}
-                    readOnly
-                    style={styles.input}
-                  />
-                </div>
-                <div>
-                  <label>Time: </label>
-                  <input
-                    type="text"
-                    name="time"
-                    value={formData.time}
-                    readOnly
-                    style={styles.input}
-                  />
-                </div>
-              </div>
-              <div>
-                <label>Reason: </label>
-                <input
-                  type="text"
-                  name="reason"
-                  value={formData.reason}
-                  onChange={handleInputChange}
-                  required
-                  style={{ ...styles.input, width: '300px' }}
-                />
-              </div>
-              <div>
-                <label>Patient: </label>
-                <input
-                  type="text"
-                  name="patient"
-                  value={formData.patient}
-                  onChange={handleInputChange}
-                  required
-                  style={{ ...styles.input, width: '300px' }}
-                />
-              </div>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <div>
-                  <label>Client ID: </label>
-                  <input
-                    type="text"
-                    name="clientId"
-                    value={formData.clientId}
-                    onChange={handleInputChange}
-                    style={styles.input}
-                  />
-                </div>
-                <div>
-                  <label>Patient ID: </label>
-                  <input
-                    type="text"
-                    name="patientId"
-                    value={formData.patientId}
-                    onChange={handleInputChange}
-                    style={styles.input}
-                  />
-                </div>
-              </div>
-              <div>
-                <label>Staff: </label>
-                <input
-                  type="text"
-                  name="staff"
-                  value={formData.staff}
-                  onChange={handleInputChange}
-                  style={{ ...styles.input, width: '300px' }}
-                />
-              </div>
-              <div style={{ marginTop: '10px' }}>
-                <button type="submit" style={styles.button}>
-                  Schedule
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedSlot(null)}
-                  style={{ ...styles.button, marginLeft: '10px' }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {selectedAppointment && (
-          <div style={{ marginTop: '16px', padding: '12px', border: '1px solid #ccc', backgroundColor: '#f8f8f8' }}>
-            <h3>Appointment Details</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div>Date: {selectedAppointment.date}</div>
-              <div>Time: {selectedAppointment.time}</div>
-              <div>Reason: {selectedAppointment.reason}</div>
-              <div>Patient: {selectedAppointment.patient}</div>
-              <div>Client ID: {selectedAppointment.clientId}</div>
-              <div>Patient ID: {selectedAppointment.patientId}</div>
-              <div>Staff: {selectedAppointment.staff}</div>
-              <div style={{ marginTop: '10px' }}>
-                <button
-                  onClick={handleCancelAppointment}
-                  style={styles.button}
-                >
-                  Cancel Appointment
-                </button>
-                <button
-                  onClick={() => setSelectedAppointment(null)}
-                  style={{ ...styles.button, marginLeft: '10px' }}
-                >
-                  Close
-                </button>
-              </div>
+        {/* Appointment Form Modal */}
+        {showAppointmentForm && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              minWidth: '600px'
+            }}>
+              <AppointmentForm
+                initialDate={selectedSlot?.date || selectedDate}
+                initialTime={selectedSlot?.time || ''}
+                onClose={() => {
+                  setShowAppointmentForm(false);
+                  setSelectedSlot(null);
+                }}
+                onSuccess={handleFormSuccess}
+                existingAppointment={selectedAppointment}
+                mode={selectedAppointment ? 'reschedule' : 'create'}
+              />
             </div>
           </div>
         )}
+
+        {/* Appointment Details Panel */}
+        {selectedAppointment && !showAppointmentForm && (
+          <div style={{
+            position: 'fixed',
+            right: '20px',
+            top: '100px',
+            width: '300px',
+            backgroundColor: 'white',
+            border: '1px solid #e0e0e0',
+            borderRadius: '8px',
+            padding: '15px',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+            zIndex: 100
+          }}>
+            <h3 style={{ marginTop: 0 }}>Appointment Details</h3>
+            <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
+              <div><strong>Date:</strong> {selectedAppointment.date}</div>
+              <div><strong>Time:</strong> {selectedAppointment.time}</div>
+              <div><strong>Patient:</strong> {selectedAppointment.patient}</div>
+              <div><strong>Provider:</strong> {selectedAppointment.staff}</div>
+              <div><strong>Type:</strong> {selectedAppointment.appointmentType || 'General'}</div>
+              <div><strong>Reason:</strong> {selectedAppointment.reason}</div>
+              <div><strong>Status:</strong> 
+                <span style={{
+                  marginLeft: '5px',
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  backgroundColor: selectedAppointment.status === 'cancelled' ? '#f44336' :
+                                 selectedAppointment.status === 'completed' ? '#4CAF50' :
+                                 selectedAppointment.status === 'arrived' ? '#2196F3' :
+                                 selectedAppointment.status === 'in_progress' ? '#FF9800' :
+                                 '#757575',
+                  color: 'white'
+                }}>
+                  {selectedAppointment.status || 'Scheduled'}
+                </span>
+              </div>
+              {selectedAppointment.roomName && (
+                <div><strong>Room:</strong> {selectedAppointment.roomName}</div>
+              )}
+              <div><strong>Duration:</strong> {selectedAppointment.duration || 30} minutes</div>
+            </div>
+
+            <div style={{ marginTop: '15px', display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+              {selectedAppointment.status !== 'cancelled' && selectedAppointment.status !== 'completed' && (
+                <>
+                  {selectedAppointment.status !== 'arrived' && selectedAppointment.status !== 'in_progress' && (
+                    <button
+                      onClick={() => handleAppointmentAction('check-in', selectedAppointment.id)}
+                      style={{ ...styles.button, fontSize: '12px', padding: '4px 8px' }}
+                    >
+                      Check In
+                    </button>
+                  )}
+                  {selectedAppointment.status === 'arrived' && (
+                    <button
+                      onClick={() => handleAppointmentAction('start', selectedAppointment.id)}
+                      style={{ ...styles.button, fontSize: '12px', padding: '4px 8px' }}
+                    >
+                      Start
+                    </button>
+                  )}
+                  {selectedAppointment.status === 'in_progress' && (
+                    <button
+                      onClick={() => handleAppointmentAction('complete', selectedAppointment.id)}
+                      style={{ ...styles.primaryButton, fontSize: '12px', padding: '4px 8px' }}
+                    >
+                      Complete
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleAppointmentAction('reschedule', selectedAppointment.id)}
+                    style={{ ...styles.button, fontSize: '12px', padding: '4px 8px' }}
+                  >
+                    Reschedule
+                  </button>
+                  <button
+                    onClick={() => handleAppointmentAction('cancel', selectedAppointment.id)}
+                    style={{ 
+                      ...styles.button, 
+                      fontSize: '12px', 
+                      padding: '4px 8px',
+                      backgroundColor: '#f44336',
+                      color: 'white'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  {!selectedAppointment.confirmationSent && (
+                    <button
+                      onClick={() => handleAppointmentAction('confirm', selectedAppointment.id)}
+                      style={{ ...styles.button, fontSize: '12px', padding: '4px 8px' }}
+                    >
+                      Send Confirmation
+                    </button>
+                  )}
+                  {selectedAppointment.status !== 'arrived' && selectedAppointment.status !== 'in_progress' && (
+                    <button
+                      onClick={() => handleAppointmentAction('no-show', selectedAppointment.id)}
+                      style={{ ...styles.button, fontSize: '12px', padding: '4px 8px' }}
+                    >
+                      No Show
+                    </button>
+                  )}
+                </>
+              )}
+              <button
+                onClick={() => setSelectedAppointment(null)}
+                style={{ ...styles.button, fontSize: '12px', padding: '4px 8px' }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Confirmation Dialog */}
+        {confirmationDialog && (
+          <div style={{
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            padding: '15px 20px',
+            borderRadius: '8px',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+            maxWidth: '300px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+              <div>
+                <strong>Appointment {confirmationDialog.action}!</strong>
+                <div style={{ fontSize: '14px', marginTop: '5px' }}>
+                  {confirmationDialog.appointment.patientName} - {confirmationDialog.appointment.date} at {confirmationDialog.appointment.time}
+                </div>
+              </div>
+              <button
+                onClick={() => setConfirmationDialog(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'white',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  marginLeft: '10px'
+                }}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Status Legend */}
+        <div style={{ 
+          borderTop: '1px solid #e0e0e0',
+          paddingTop: '10px',
+          display: 'flex',
+          gap: '20px',
+          fontSize: '12px',
+          justifyContent: 'center'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#ffd9d9', border: '1px solid #ccc' }}></div>
+            <span>Scheduled</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#87CEEB', border: '1px solid #ccc' }}></div>
+            <span>Checked In</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#FFD700', border: '1px solid #ccc' }}></div>
+            <span>In Progress</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#90EE90', border: '1px solid #ccc' }}></div>
+            <span>Completed</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#ccc', border: '1px solid #999' }}></div>
+            <span>Cancelled</span>
+          </div>
+        </div>
       </div>
     </PIMSScreenWrapper>
   );

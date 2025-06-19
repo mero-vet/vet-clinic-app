@@ -1,0 +1,275 @@
+.room-assignment {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.room-assignment h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  font-size: 1.125rem;
+}
+
+.room-requirements {
+  margin-bottom: 1.5rem;
+}
+
+.room-requirements label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.equipment-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.equipment-tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--primary-light);
+  color: var(--primary-color);
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.no-requirements {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.room-grid {
+  margin-bottom: 1.5rem;
+}
+
+.room-grid h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.no-rooms-message {
+  text-align: center;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  color: var(--text-secondary);
+}
+
+.no-rooms-message p {
+  margin: 0 0 1rem 0;
+}
+
+.rooms-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.room-card {
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg-primary);
+}
+
+.room-card:hover {
+  border-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.room-card.selected {
+  border-color: var(--primary-color);
+  background: var(--primary-light);
+}
+
+.room-card.room-available {
+  border-color: #10b981;
+}
+
+.room-card.room-occupied {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-color: #dc2626;
+}
+
+.room-card.room-cleaning {
+  opacity: 0.8;
+  border-color: #f59e0b;
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.room-header h5 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.room-status {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.room-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.room-equipment {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.equipment-icon {
+  font-size: 1.25rem;
+  cursor: help;
+}
+
+.room-info {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.all-rooms-status {
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.all-rooms-status h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.status-summary {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.status-dot.available {
+  background: #10b981;
+}
+
+.status-dot.occupied {
+  background: #dc2626;
+}
+
+.status-dot.cleaning {
+  background: #f59e0b;
+}
+
+.assignment-notes {
+  margin-bottom: 1rem;
+}
+
+.assignment-notes label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.assignment-notes textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  resize: vertical;
+  min-height: 60px;
+}
+
+.assignment-notes textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: #fee2e2;
+  border-radius: 4px;
+}
+
+.assignment-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}

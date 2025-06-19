@@ -1,0 +1,314 @@
+.active-orders {
+  padding: 20px;
+}
+
+.active-orders h2 {
+  margin: 0 0 20px 0;
+  color: #333;
+}
+
+.no-active-orders {
+  text-align: center;
+  padding: 60px;
+  color: #666;
+}
+
+.no-active-orders p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.order-header {
+  padding: 15px 20px;
+  background: #f8f9fa;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.order-header:hover {
+  background: #e9ecef;
+}
+
+.order-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 5px;
+}
+
+.order-id {
+  font-weight: 500;
+  color: #333;
+}
+
+.order-date {
+  color: #666;
+  font-size: 14px;
+}
+
+.order-status {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: white;
+  text-transform: capitalize;
+}
+
+.priority-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.priority-badge.urgent {
+  background: #ffc107;
+  color: #856404;
+}
+
+.priority-badge.stat {
+  background: #dc3545;
+  color: white;
+}
+
+.order-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.expand-icon {
+  font-size: 12px;
+}
+
+.order-details {
+  padding: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.tests-section {
+  margin-bottom: 20px;
+}
+
+.tests-section h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.test-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.test-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.test-info {
+  flex: 1;
+}
+
+.test-name {
+  display: block;
+  color: #333;
+  font-weight: 500;
+}
+
+.test-status {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 8px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #666;
+  text-transform: capitalize;
+}
+
+.test-status.in-progress {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.test-status.completed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.collect-sample-btn {
+  padding: 6px 12px;
+  background: #17a2b8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.collect-sample-btn:hover {
+  background: #138496;
+}
+
+.sample-info {
+  font-size: 13px;
+  color: #666;
+}
+
+.collected-time {
+  font-style: italic;
+}
+
+.order-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.requisition-btn,
+.cancel-order-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.requisition-btn {
+  background: #007bff;
+  color: white;
+}
+
+.requisition-btn:hover {
+  background: #0056b3;
+}
+
+.cancel-order-btn {
+  background: white;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.cancel-order-btn:hover {
+  background: #dc3545;
+  color: white;
+}
+
+.requisition-info {
+  padding: 10px;
+  background: #e7f3ff;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #004085;
+}
+
+.order-cost {
+  text-align: right;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.cancel-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-content h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+.modal-content p {
+  margin: 0 0 15px 0;
+  color: #666;
+}
+
+.modal-content textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.modal-actions button:first-child {
+  background: #6c757d;
+  color: white;
+}
+
+.confirm-cancel {
+  background: #dc3545;
+  color: white;
+}
+
+.confirm-cancel:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
