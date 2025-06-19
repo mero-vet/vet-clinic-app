@@ -18,6 +18,55 @@ The Vet Clinic App functions as a sandbox for AI agent training but lacks struct
 - Generate reports on agent efficiency and success rates
 - Identify breakpoints and areas for improvement
 
+## 2025-06 Sandbox Enhancements (Human-In-The-Loop Testing)
+
+The following refinements are based on hands-on feedback while using the Vet-Clinic Sandbox with the computer-use agent.
+
+1. **One-Click Boundary Controls**
+   • Add a floating "Test Manager" panel that is always visible on top of the PIMS UI.
+   • Controls: *Scenario selector* ➜ *Start Test* ➜ *End Test & Download Logs*.
+   • Prevent multiple tests running at the same time.
+
+2. **Event Capture v1 (Client-Side Only)**
+   • When a test is active, the system captures DOM‐level `click`, `keydown`, and (optionally) coarse `mousemove` events with a millisecond-relative timestamp.
+   • Each record includes a concise CSS selector for the target element and the chosen **Scenario ID** so downstream tools can correlate logs to a workflow.
+   • No server storage is required in Phase 1; all data are downloaded locally as a plain-text `.json` file on *End Test*.
+
+3. **Fixed Scenario Catalogue**
+   The initial release ships with ten predefined workflows that represent progressively complex clinic tasks. They can later be turned into full test-case objects, but for Phase 1 a simple static list is sufficient.
+
+   | ID | Scenario | Key Steps |
+   |----|----------|-----------|
+   | workflow-1 | New Client + Patient Registration | Search for duplicates → create client → add multiple pets → capture consent forms |
+   | workflow-2 | Appointment Scheduling & Confirmation | Find open slot ➜ book visit type ➜ auto-confirm via SMS/email ➜ update calendar |
+   | workflow-3 | Patient Check-In | Arrive patient ➜ verify info ➜ weigh ➜ triage notes ➜ place in exam room |
+   | workflow-4 | Doctor Exam & Medical Record Entry | SOAP entry ➜ add problems & diagnoses ➜ prescribe meds ➜ add follow-up |
+   | workflow-5 | Diagnostics Ordering | Select lab/imaging ➜ generate requisition ➜ simulate result return ➜ attach to record |
+   | workflow-6 | Treatment Plan & Estimate | Build estimate ➜ present to owner ➜ capture electronic approval ➜ convert to invoice |
+   | workflow-7 | Pharmacy Dispensing | Check prescription ➜ deduct inventory ➜ print label ➜ record lot/expiry |
+   | workflow-8 | Invoice & Payment Processing | Add charges ➜ apply discounts/taxes ➜ split payment (cash/Card/on-account) ➜ email receipt |
+   | workflow-9 | Reminder Generation & Outreach | Auto-create vaccine/med reminders ➜ batch send ➜ track responses |
+   | workflow-10 | End-of-Day Reconciliation & Reporting | Close invoices ➜ cash drawer balance ➜ inventory adjustments ➜ generate financial & productivity reports |
+
+4. **Downloadable Log Format**
+   ```json
+   {
+     "testId": "workflow-3",
+     "startedAt": "2025-06-19T17:30:22.456Z",
+     "logs": [
+       { "timestamp": 0,    "type": "click",   "selector": "button#create-client" },
+       { "timestamp": 357,  "type": "keydown", "key": "J", "selector": "input#firstName" }
+       // …
+     ]
+   }
+   ```
+
+5. **Out-Of-Scope For Phase 1**
+   • Automated success-criteria checking (manual visual inspection for now).
+   • Server-side persistence, analytics & dashboard; those remain in later phases of the existing roadmap.
+
+---
+
 ## Proposed Solution
 
 ### System Architecture

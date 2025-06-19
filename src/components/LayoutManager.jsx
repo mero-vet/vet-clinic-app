@@ -3,6 +3,7 @@ import { usePIMS } from '../context/PIMSContext';
 import PIMSSelector from './PIMSSelector';
 import usePIMSKeyboardShortcuts from '../hooks/usePIMSKeyboardShortcuts';
 import { useLocation } from 'react-router-dom';
+import TestManager from './TestManager';
 
 // Import all layout components
 import CornerstoneLayout from './layouts/cornerstone/CornerstoneLayout';
@@ -58,6 +59,8 @@ const LayoutManager = ({ children }) => {
 
             {/* Render the appropriate layout */}
             {renderLayout()}
+            {/* Test manager overlay */}
+            <TestManager />
         </div>
     );
 };

@@ -14,6 +14,7 @@ import CommunicationsScreen from './screens/CommunicationsScreen';
 import PharmacyScreen from './screens/PharmacyScreen';
 import ReportsScreen from './screens/ReportsScreen';
 import FeatureNotEnabledScreen from './screens/FeatureNotEnabledScreen';
+import ReplayViewer from './components/ReplayViewer';
 
 // Import Layout Manager
 import LayoutManager from './components/LayoutManager';
@@ -74,6 +75,8 @@ function App() {
 
           {/* Catch-all route for non-implemented features */}
           <Route path="*" element={<FeatureNotEnabledScreen />} />
+
+          <Route path="/replay" element={<ReplayViewer />} />
         </Routes>
       </LayoutManager>
     </RouteChangeWrapper>
