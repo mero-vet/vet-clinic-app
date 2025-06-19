@@ -8,6 +8,7 @@ import React, {
 import { testDefinitions } from '../tests/testDefinitions';
 import throttle from 'lodash.throttle';
 import html2canvas from 'html2canvas';
+import testStorageService from '../services/TestStorageService';
 
 // Context
 const TestLoggerContext = createContext();
@@ -40,7 +41,9 @@ function getElementSelector(element) {
 export const TestLoggerProvider = ({ children }) => {
   const [activeTest, setActiveTest] = useState(null); // contains definition
   const [logs, setLogs] = useState([]);
+  const [currentSessionId, setCurrentSessionId] = useState(null);
   const startTimeRef = useRef(null);
+  const screenshotCounter = useRef(0);
 
   const captureScreenshot = useCallback(async () => {
     if (!startTimeRef.current) return null;
@@ -55,8 +58,9 @@ export const TestLoggerProvider = ({ children }) => {
 
   const logEvent = useCallback(async (type, details) => {
     if (!startTimeRef.current) return;
+    const timestamp = Date.now() - startTimeRef.current;
     const baseRecord = {
-      timestamp: Date.now() - startTimeRef.current,
+      timestamp,
       type,
       testId: activeTest?.id ?? null,
       ...details,
@@ -68,11 +72,30 @@ export const TestLoggerProvider = ({ children }) => {
       const shot = await captureScreenshot();
       if (shot) {
         record = { ...baseRecord, screenshot: shot };
+        
+        // Save screenshot to storage
+        if (currentSessionId) {
+          try {
+            const blob = await fetch(shot).then(r => r.blob());
+            await testStorageService.saveScreenshot(blob, timestamp);
+          } catch (err) {
+            console.error('Failed to save screenshot:', err);
+          }
+        }
       }
     }
 
     setLogs(prev => [...prev, record]);
-  }, [activeTest, captureScreenshot]);
+    
+    // Save event to storage
+    if (currentSessionId) {
+      try {
+        await testStorageService.saveEvent(record);
+      } catch (err) {
+        console.error('Failed to save event:', err);
+      }
+    }
+  }, [activeTest, captureScreenshot, currentSessionId]);
 
   const clickListener = useCallback(
     e => {
@@ -110,11 +133,27 @@ export const TestLoggerProvider = ({ children }) => {
   );
 
   const startTest = useCallback(
-    testId => {
+    async testId => {
       if (activeTest) return; // prevent nested tests
       const definition =
         typeof testId === 'object' ? testId : testDefinitions.find(t => t.id === testId);
       if (!definition) return;
+      
+      // Initialize storage session
+      try {
+        const sessionMeta = {
+          scenarioId: definition.id,
+          scenarioName: definition.name,
+          pimsType: definition.pimsType || 'unknown',
+          userAgent: navigator.userAgent,
+        };
+        const sessionId = await testStorageService.initSession(sessionMeta);
+        setCurrentSessionId(sessionId);
+        screenshotCounter.current = 0;
+      } catch (err) {
+        console.error('Failed to initialize storage session:', err);
+      }
+      
       setActiveTest(definition);
       setLogs([]);
       startTimeRef.current = Date.now();
@@ -170,17 +209,28 @@ export const TestLoggerProvider = ({ children }) => {
     return { result, criteriaMet, criteriaFailed };
   }, [activeTest]);
 
-  const endTest = useCallback(() => {
+  const endTest = useCallback(async () => {
     if (!activeTest) return null;
     stopListeners();
 
     const evaluation = evaluateSuccessCriteria();
+
+    // Finalize storage session
+    let finalSessionId = currentSessionId;
+    if (currentSessionId) {
+      try {
+        await testStorageService.finaliseSession(evaluation);
+      } catch (err) {
+        console.error('Failed to finalize storage session:', err);
+      }
+    }
 
     const logPayload = {
       test: activeTest,
       startedAt: new Date(startTimeRef.current).toISOString(),
       evaluation,
       logs,
+      sessionId: currentSessionId,
     };
     const blob = new Blob([JSON.stringify(logPayload, null, 2)], {
       type: 'application/json',
@@ -191,16 +241,19 @@ export const TestLoggerProvider = ({ children }) => {
     // Reset state
     setActiveTest(null);
     setLogs([]);
+    setCurrentSessionId(null);
     startTimeRef.current = null;
 
-    return { url, filename, evaluation, payload: JSON.stringify(logPayload) };
-  }, [activeTest, logs, evaluateSuccessCriteria]);
+    return { url, filename, evaluation, payload: JSON.stringify(logPayload), sessionId: finalSessionId };
+  }, [activeTest, logs, evaluateSuccessCriteria, currentSessionId]);
 
   const value = {
     activeTest,
     logs,
     startTest,
     endTest,
+    currentSessionId,
+    testStorageService,
   };
 
   return (
