@@ -28,14 +28,23 @@ const TestManager = () => {
   const handleEnd = () => {
     const result = endTest();
     if (result) {
+      const { url, filename, evaluation } = result;
       const link = document.createElement('a');
-      link.href = result.url;
-      link.download = result.filename;
+      link.href = url;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       // Revoke later
-      setTimeout(() => URL.revokeObjectURL(result.url), 5000);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+      if (evaluation.result !== 'unknown') {
+        alert(
+          `Test Result: ${evaluation.result}\n` +
+            `Criteria Met: ${evaluation.criteriaMet}\n` +
+            `Criteria Failed: ${evaluation.criteriaFailed}`,
+        );
+      }
     }
   };
 
