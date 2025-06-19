@@ -4,6 +4,7 @@ import '../styles/PatientForms.css';
 import { usePatient } from '../context/PatientContext';
 import { usePIMS } from '../context/PIMSContext';
 import PIMSScreenWrapper from '../components/PIMSScreenWrapper';
+import PatientSearchBar from '../components/PatientSearchBar';
 
 import ClientInfo from './PatientCheckin/components/ClientInfo';
 import PatientInfo from './PatientCheckin/components/PatientInfo';
@@ -324,6 +325,7 @@ const PatientCheckinScreen = () => {
 
   return (
     <PIMSScreenWrapper title={config.screenLabels.checkin}>
+      <PatientSearchBar />
       <div className="patient-checkin-grid">
         {/* Left Column */}
         <div className="patient-checkin-column">
