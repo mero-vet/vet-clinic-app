@@ -158,6 +158,7 @@ function AddNoteForm() {
     } else if (currentPIMS === 'cornerstone') {
       return {
         backgroundColor: '#c0c0c0',
+        color: '#000000',
         border: '2px outset #ffffff',
         boxShadow: 'inset -1px -1px #0a0a0a, inset 1px 1px #ffffff',
         padding: '3px 10px',
@@ -169,8 +170,9 @@ function AddNoteForm() {
       return {
         cursor: 'pointer',
         padding: '6px 12px',
-        backgroundColor: '#f0f0f0',
-        border: '1px solid #ccc',
+        backgroundColor: '#007bff',
+        color: '#ffffff',
+        border: '1px solid #0056b3',
         borderRadius: '2px'
       };
     }

@@ -108,6 +108,7 @@ function NoteItem({ note }) {
         marginRight: '5px',
         cursor: 'pointer',
         backgroundColor: '#c0c0c0',
+        color: '#000000',
         border: '2px outset #ffffff',
         boxShadow: 'inset -1px -1px #0a0a0a, inset 1px 1px #ffffff',
         padding: '3px 10px',
@@ -119,8 +120,9 @@ function NoteItem({ note }) {
         cursor: 'pointer',
         marginRight: '5px',
         padding: '5px 10px',
-        backgroundColor: '#f0f0f0',
-        border: '1px solid #ccc',
+        backgroundColor: '#007bff',
+        color: '#ffffff',
+        border: '1px solid #0056b3',
         borderRadius: '2px'
       };
     }

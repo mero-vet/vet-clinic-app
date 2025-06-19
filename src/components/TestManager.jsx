@@ -74,17 +74,17 @@ const TestManager = () => {
         </select>
       </label>
       {!activeTest ? (
-        <button style={{ marginTop: 8, width: '100%' }} onClick={handleStart}>
+        <button style={{ marginTop: 8, width: '100%', background: '#007bff', color: 'white', border: 'none' }} onClick={handleStart}>
           Start Test
         </button>
       ) : (
         <>
           <div style={{ marginTop: 8 }}>Logs captured: {logs.length}</div>
-          <button style={{ marginTop: 4, width: '100%' }} onClick={handleEnd}>
+          <button style={{ marginTop: 4, width: '100%', background: '#dc3545', color: 'white', border: 'none' }} onClick={handleEnd}>
             End Test & Download Logs
           </button>
           {lastEnded && (
-            <button style={{ marginTop: 4, width: '100%' }} onClick={openReplay}>
+            <button style={{ marginTop: 4, width: '100%', background: '#28a745', color: 'white', border: 'none' }} onClick={openReplay}>
               View Replay
             </button>
           )}
