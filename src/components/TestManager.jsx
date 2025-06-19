@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTestLogger } from '../context/TestLoggerContext';
 import { testDefinitions } from '../tests/testDefinitions';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,7 @@ const TestManager = ({ embedded = false }) => {
   const [selectedId, setSelectedId] = useState(testDefinitions[0]?.id || '');
   const navigate = useNavigate();
   const [lastEnded, setLastEnded] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   const handleStart = () => {
     startTest(selectedId);
@@ -32,7 +33,7 @@ const TestManager = ({ embedded = false }) => {
     const def = testDefinitions.find(t => t.id === selectedId);
     if (def?.agentPrompt) {
       navigator.clipboard.writeText(def.agentPrompt).then(() => {
-        alert('Agent prompt copied to clipboard');
+        setCopied(true);
       });
     }
   };
@@ -63,6 +64,13 @@ const TestManager = ({ embedded = false }) => {
 
   const containerStyle = embedded ? { padding: 0, width: '100%' } : floatingPanelStyle;
 
+  useEffect(() => {
+    if (copied) {
+      const t = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(t);
+    }
+  }, [copied]);
+
   return (
     <div style={containerStyle}>
       <div style={{ fontWeight: 'bold', marginBottom: 8 }}>Test Manager</div>
@@ -86,8 +94,8 @@ const TestManager = ({ embedded = false }) => {
       </label>
       {!activeTest ? (
         <>
-          <button style={{ marginTop: 8, width: '100%' }} onClick={handleCopyPrompt}>
-            Copy Agent Prompt
+          <button style={{ marginTop: 8, width: '100%' }} onClick={handleCopyPrompt} disabled={copied}>
+            {copied ? 'Copy Successful' : 'Copy Agent Prompt'}
           </button>
           <button style={{ marginTop: 4, width: '100%' }} onClick={handleStart}>
             Start Test
