@@ -26,13 +26,13 @@ import TriageAssessment from '../components/CheckIn/TriageAssessment';
 const PatientCheckinScreenEnhanced = () => {
   const { patientData, setPatientData, setMockPatientData } = usePatient();
   const { config, currentPIMS } = usePIMS();
-  const { 
-    currentCheckIn, 
-    createCheckIn, 
-    updateCheckInStatus, 
+  const {
+    currentCheckIn,
+    createCheckIn,
+    updateCheckInStatus,
     CHECK_IN_STATUS,
     notifications,
-    dismissNotification 
+    dismissNotification
   } = useCheckIn();
   const { appointments } = useScheduling();
   const location = useLocation();
@@ -92,8 +92,8 @@ const PatientCheckinScreenEnhanced = () => {
 
   const handleStartCheckIn = () => {
     // Find today's appointment for the selected patient
-    const todayAppointment = appointments.find(apt => 
-      apt.patientId === patientData.patientId && 
+    const todayAppointment = appointments.find(apt =>
+      apt.patientId === patientData.patientId &&
       new Date(apt.date).toDateString() === new Date().toDateString()
     );
 
@@ -190,8 +190,8 @@ const PatientCheckinScreenEnhanced = () => {
       {notifications.length > 0 && (
         <div className="check-in-notifications">
           {notifications.map(notification => (
-            <div 
-              key={notification.id} 
+            <div
+              key={notification.id}
               className={`notification ${notification.severity}`}
             >
               <span>{notification.message}</span>
@@ -205,11 +205,10 @@ const PatientCheckinScreenEnhanced = () => {
         <div className="check-in-container">
           <div className="check-in-header">
             <PatientSearchBar />
-            <button 
+            <button
               onClick={handleStartCheckIn}
               disabled={!patientData.patientId}
               className="start-checkin-btn"
-              style={styles.button}
             >
               Start New Check-In
             </button>
@@ -232,36 +231,36 @@ const PatientCheckinScreenEnhanced = () => {
 
           <div className="workflow-content">
             {activeStep === 'weight' && currentCheckIn && (
-              <WeightCapture 
+              <WeightCapture
                 checkInId={currentCheckIn.checkInId}
                 patientId={checkInData.patientId}
                 onComplete={() => handleStepComplete('weight')}
               />
             )}
-            
+
             {activeStep === 'insurance' && currentCheckIn && (
-              <InsuranceVerification 
+              <InsuranceVerification
                 checkInId={currentCheckIn.checkInId}
                 clientId={checkInData.clientId}
                 onComplete={() => handleStepComplete('insurance')}
               />
             )}
-            
+
             {activeStep === 'triage' && currentCheckIn && (
-              <TriageAssessment 
+              <TriageAssessment
                 checkInId={currentCheckIn.checkInId}
                 onComplete={() => handleStepComplete('triage')}
               />
             )}
-            
+
             {activeStep === 'room' && currentCheckIn && (
-              <RoomAssignment 
+              <RoomAssignment
                 checkInId={currentCheckIn.checkInId}
                 visitType={currentCheckIn.reasonForVisit}
                 onComplete={() => handleStepComplete('room')}
               />
             )}
-            
+
             {activeStep === 'complete' && (
               <div className="check-in-complete">
                 <h2>Check-In Complete!</h2>
@@ -270,8 +269,8 @@ const PatientCheckinScreenEnhanced = () => {
                   <button onClick={handleBackToQueue} style={styles.button}>
                     Return to Queue
                   </button>
-                  <button 
-                    onClick={() => navigate(`/${currentPIMS}/exam/${currentCheckIn.patientId}`)} 
+                  <button
+                    onClick={() => navigate(`/${currentPIMS}/exam/${currentCheckIn.patientId}`)}
                     style={{ ...styles.button, backgroundColor: '#28a745', color: 'white' }}
                   >
                     Start Exam
