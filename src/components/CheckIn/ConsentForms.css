@@ -239,12 +239,14 @@
 }
 
 .btn-primary {
-  background: var(--primary-color);
-  color: white;
+  background: #f8f9fa;
+  color: #212529;
+  border: 1px solid #ccc;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--primary-hover);
+  background: #e9ecef;
+  border-color: #adb5bd;
 }
 
 .btn-primary:disabled {

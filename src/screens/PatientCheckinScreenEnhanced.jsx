@@ -218,7 +218,7 @@ const PatientCheckinScreenEnhanced = () => {
       ) : (
         <div className="check-in-workflow">
           <div className="workflow-header">
-            <button onClick={handleBackToQueue} style={styles.button}>
+            <button onClick={handleBackToQueue}>
               ← Back to Queue
             </button>
             <div className="workflow-progress">
@@ -266,12 +266,11 @@ const PatientCheckinScreenEnhanced = () => {
                 <h2>Check-In Complete!</h2>
                 <p>Patient has been checked in and assigned to a room.</p>
                 <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                  <button onClick={handleBackToQueue} style={styles.button}>
+                  <button onClick={handleBackToQueue}>
                     Return to Queue
                   </button>
                   <button
                     onClick={() => navigate(`/${currentPIMS}/exam/${currentCheckIn.patientId}`)}
-                    style={{ ...styles.button, backgroundColor: '#28a745', color: 'white' }}
                   >
                     Start Exam
                   </button>

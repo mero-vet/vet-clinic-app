@@ -166,14 +166,9 @@ function AddNoteForm() {
         cursor: 'pointer'
       };
     } else {
-      // Default styles for other PIMS
+      // Default styles for other PIMS - use minimal styling to let global styles take effect
       return {
-        cursor: 'pointer',
-        padding: '6px 12px',
-        backgroundColor: '#007bff',
-        color: '#ffffff',
-        border: '1px solid #0056b3',
-        borderRadius: '2px'
+        cursor: 'pointer'
       };
     }
   };

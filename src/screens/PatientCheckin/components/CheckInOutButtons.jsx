@@ -58,11 +58,11 @@ function CheckInOutButtons({ formData, handleInputChange, styles = {} }) {
         </div>
       </fieldset>
 
-      <button style={s.button} type="button">Check-in</button>
-      <button style={s.button} type="button">Check-out</button>
-      <button style={s.button} type="button">Travel Sheet</button>
-      <button style={s.button} type="button">Make Appt</button>
-      <button style={s.button} type="button">Cancel</button>
+      <button type="button">Check-in</button>
+      <button type="button">Check-out</button>
+      <button type="button">Travel Sheet</button>
+      <button type="button">Make Appt</button>
+      <button type="button">Cancel</button>
     </div>
   );
 }

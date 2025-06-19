@@ -115,15 +115,10 @@ function NoteItem({ note }) {
         fontSize: '12px'
       };
     } else {
-      // Default styles for other PIMS
+      // Default styles for other PIMS - use minimal styling to let global styles take effect
       return {
         cursor: 'pointer',
-        marginRight: '5px',
-        padding: '5px 10px',
-        backgroundColor: '#007bff',
-        color: '#ffffff',
-        border: '1px solid #0056b3',
-        borderRadius: '2px'
+        marginRight: '5px'
       };
     }
   };
