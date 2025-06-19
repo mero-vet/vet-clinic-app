@@ -10,6 +10,7 @@ import { CommunicationsProvider } from './context/CommunicationsContext'
 import { PharmacyProvider } from './context/PharmacyContext'
 import { ReportsProvider } from './context/ReportsContext'
 import { PIMSProvider } from './context/PIMSContext'
+import { TestLoggerProvider } from './context/TestLoggerContext'
 import '98.css'
 import './index.css'
 import './styles/pimsThemes.css'
@@ -19,21 +20,23 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <PIMSProvider>
-        <PatientProvider>
-          <SchedulingProvider>
-            <MedicalRecordsProvider>
-              <InventoryProvider>
-                <CommunicationsProvider>
-                  <PharmacyProvider>
-                    <ReportsProvider>
-                      <App />
-                    </ReportsProvider>
-                  </PharmacyProvider>
-                </CommunicationsProvider>
-              </InventoryProvider>
-            </MedicalRecordsProvider>
-          </SchedulingProvider>
-        </PatientProvider>
+        <TestLoggerProvider>
+          <PatientProvider>
+            <SchedulingProvider>
+              <MedicalRecordsProvider>
+                <InventoryProvider>
+                  <CommunicationsProvider>
+                    <PharmacyProvider>
+                      <ReportsProvider>
+                        <App />
+                      </ReportsProvider>
+                    </PharmacyProvider>
+                  </CommunicationsProvider>
+                </InventoryProvider>
+              </MedicalRecordsProvider>
+            </SchedulingProvider>
+          </PatientProvider>
+        </TestLoggerProvider>
       </PIMSProvider>
     </BrowserRouter>
   </React.StrictMode>
