@@ -3,10 +3,12 @@ import { useScheduling } from '../../context/SchedulingContext';
 import { usePatient } from '../../context/PatientContext';
 import { appointmentTypes, waitlistPriorities } from '../../utils/appointmentRules';
 import PatientSearchBar from '../PatientSearchBar';
+import { useToast } from '../Toast/ToastContext';
 
 function WaitlistManager({ onClose }) {
   const { waitlistEntries, addToWaitlist, providers } = useScheduling();
   const { patients } = usePatient();
+  const toast = useToast();
   
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -60,7 +62,7 @@ function WaitlistManager({ onClose }) {
     e.preventDefault();
     
     if (!formData.patientId) {
-      alert('Please select a patient');
+      toast.warning('Please select a patient');
       return;
     }
 
@@ -79,7 +81,7 @@ function WaitlistManager({ onClose }) {
     setSelectedPatient(null);
     setShowAddForm(false);
     
-    alert('Added to waitlist successfully!');
+    toast.success('Added to waitlist successfully!');
   };
 
   const getPriorityColor = (priority) => {

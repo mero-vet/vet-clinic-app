@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useScheduling } from '../../context/SchedulingContext';
+import { useToast } from '../Toast/ToastContext';
 
 function BlockScheduling({ onClose }) {
   const { providers, blockTime, blockedTimes, appointmentTypes } = useScheduling();
+  const toast = useToast();
   
   const [formData, setFormData] = useState({
     providerId: '',
@@ -26,7 +28,7 @@ function BlockScheduling({ onClose }) {
     e.preventDefault();
     
     if (!formData.providerId || !formData.date || !formData.startTime || !formData.endTime) {
-      alert('Please fill in all required fields');
+      toast.warning('Please fill in all required fields');
       return;
     }
 
@@ -37,7 +39,7 @@ function BlockScheduling({ onClose }) {
     const endMinutes = endHour * 60 + endMinute;
 
     if (startMinutes >= endMinutes) {
-      alert('End time must be after start time');
+      toast.error('End time must be after start time');
       return;
     }
 
@@ -60,12 +62,12 @@ function BlockScheduling({ onClose }) {
       blockType: 'unavailable'
     });
 
-    alert('Time blocked successfully!');
+    toast.success('Time blocked successfully!');
   };
 
   const handleCreateSurgeryBlock = () => {
     if (!formData.providerId || !formData.date) {
-      alert('Please select a provider and date first');
+      toast.warning('Please select a provider and date first');
       return;
     }
 
@@ -81,7 +83,7 @@ function BlockScheduling({ onClose }) {
       'Surgery Block: Reserved for surgical procedures'
     );
 
-    alert('Surgery block created from 9:00 AM to 12:00 PM');
+    toast.success('Surgery block created from 9:00 AM to 12:00 PM');
   };
 
   // Get blocked times for the selected date and provider

@@ -3,6 +3,7 @@ import { useScheduling } from '../../context/SchedulingContext';
 import { usePatient } from '../../context/PatientContext';
 import { appointmentTypes, calculateEndTime } from '../../utils/appointmentRules';
 import PatientSearchBar from '../PatientSearchBar';
+import { useToast } from '../Toast/ToastContext';
 
 function AppointmentForm({ 
   initialDate = '', 
@@ -22,6 +23,7 @@ function AppointmentForm({
   } = useScheduling();
   
   const { patients } = usePatient();
+  const toast = useToast();
   
   const [formData, setFormData] = useState({
     date: existingAppointment?.date || initialDate,
@@ -107,7 +109,7 @@ function AppointmentForm({
 
   const findAvailableSlots = () => {
     if (!formData.date || !formData.providerId || !formData.appointmentTypeId) {
-      alert('Please select a date, provider, and appointment type first');
+      toast.warning('Please select a date, provider, and appointment type first');
       return;
     }
 
@@ -213,10 +215,10 @@ function AppointmentForm({
           onClose();
         }
       } else {
-        alert(`Error: ${result.error}`);
+        toast.error(`Error: ${result.error}`);
       }
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      toast.error(`Error: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }

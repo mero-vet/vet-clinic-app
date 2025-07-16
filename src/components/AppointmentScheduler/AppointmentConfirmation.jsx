@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useScheduling } from '../../context/SchedulingContext';
 import { useCommunications } from '../../context/CommunicationsContext';
 import { appointmentTypes } from '../../utils/appointmentRules';
+import { useToast } from '../Toast/ToastContext';
 
 function AppointmentConfirmation({ appointment, onClose }) {
   const { sendConfirmation } = useScheduling();
   const { logCommunication } = useCommunications();
+  const toast = useToast();
   
   const [confirmationMethod, setConfirmationMethod] = useState('email');
   const [customMessage, setCustomMessage] = useState('');
@@ -130,10 +132,10 @@ function AppointmentConfirmation({ appointment, onClose }) {
 
         setConfirmationSent(true);
       } else {
-        alert('Failed to send confirmation. Please try again.');
+        toast.error('Failed to send confirmation. Please try again.');
       }
     } catch (error) {
-      alert(`Error sending confirmation: ${error.message}`);
+      toast.error(`Error sending confirmation: ${error.message}`);
     } finally {
       setIsSending(false);
     }

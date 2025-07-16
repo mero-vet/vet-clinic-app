@@ -13,6 +13,7 @@ import { ReportsProvider } from './context/ReportsContext'
 import { PIMSProvider } from './context/PIMSContext'
 import { CheckInProvider } from './context/CheckInContext'
 import { TestLoggerProvider } from './context/TestLoggerContext'
+import { ToastProvider } from './components/Toast/ToastContext'
 import '98.css'
 import './index.css'
 import './styles/pimsThemes.css'
@@ -24,23 +25,25 @@ root.render(
       <ErrorBoundary>
         <PIMSProvider>
           <TestLoggerProvider>
-            <PatientProvider>
-              <SchedulingProvider>
-                <CheckInProvider>
-                  <MedicalRecordsProvider>
-                    <InventoryProvider>
-                      <CommunicationsProvider>
-                        <PharmacyProvider>
-                          <ReportsProvider>
-                            <App />
-                          </ReportsProvider>
-                        </PharmacyProvider>
-                      </CommunicationsProvider>
-                    </InventoryProvider>
-                  </MedicalRecordsProvider>
-                </CheckInProvider>
-              </SchedulingProvider>
-            </PatientProvider>
+            <ToastProvider>
+              <PatientProvider>
+                <SchedulingProvider>
+                  <CheckInProvider>
+                    <MedicalRecordsProvider>
+                      <InventoryProvider>
+                        <CommunicationsProvider>
+                          <PharmacyProvider>
+                            <ReportsProvider>
+                              <App />
+                            </ReportsProvider>
+                          </PharmacyProvider>
+                        </CommunicationsProvider>
+                      </InventoryProvider>
+                    </MedicalRecordsProvider>
+                  </CheckInProvider>
+                </SchedulingProvider>
+              </PatientProvider>
+            </ToastProvider>
           </TestLoggerProvider>
         </PIMSProvider>
       </ErrorBoundary>
