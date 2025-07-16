@@ -1,0 +1,146 @@
+.ds-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background);
+  border-radius: var(--border-radius-md);
+  position: relative;
+  width: 100%;
+  transition: all var(--transition-fast);
+}
+
+/* Variants */
+.ds-card--default {
+  /* Default styles already applied */
+}
+
+.ds-card--elevated {
+  background-color: var(--color-background-secondary);
+}
+
+.ds-card--outlined {
+  border: 1px solid var(--color-border);
+}
+
+/* Padding */
+.ds-card--padding-none {
+  padding: 0;
+}
+
+.ds-card--padding-small {
+  padding: var(--spacing-sm);
+}
+
+.ds-card--padding-medium {
+  padding: var(--spacing-md);
+}
+
+.ds-card--padding-large {
+  padding: var(--spacing-lg);
+}
+
+/* Shadow */
+.ds-card--shadow-none {
+  box-shadow: none;
+}
+
+.ds-card--shadow-small {
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-card--shadow-default {
+  box-shadow: var(--shadow);
+}
+
+.ds-card--shadow-medium {
+  box-shadow: var(--shadow-md);
+}
+
+.ds-card--shadow-large {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Border */
+.ds-card--bordered {
+  border: 1px solid var(--color-border);
+}
+
+/* Interactive States */
+.ds-card--hoverable:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.ds-card--clickable {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+}
+
+.ds-card--clickable:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.ds-card--clickable:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-card--clickable:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Full Height */
+.ds-card--full-height {
+  height: 100%;
+}
+
+/* Card Sections */
+.ds-card__header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+}
+
+.ds-card__header:last-child {
+  border-bottom: none;
+  border-radius: var(--border-radius-md);
+}
+
+.ds-card__body {
+  flex: 1;
+  padding: var(--spacing-md);
+}
+
+.ds-card__footer {
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+}
+
+.ds-card__footer:first-child {
+  border-top: none;
+  border-radius: var(--border-radius-md);
+}
+
+/* When using sections, remove default card padding */
+.ds-card--padding-none .ds-card__header,
+.ds-card--padding-none .ds-card__body,
+.ds-card--padding-none .ds-card__footer {
+  padding: var(--spacing-md);
+}
+
+/* Nested cards should have less shadow */
+.ds-card .ds-card {
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-card .ds-card:hover {
+  box-shadow: var(--shadow);
+}

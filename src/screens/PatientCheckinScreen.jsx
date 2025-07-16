@@ -12,6 +12,7 @@ import ReasonForVisit from './PatientCheckin/components/ReasonForVisit';
 import DocumentsList from './PatientCheckin/components/DocumentsList';
 import RemindersAppointments from './PatientCheckin/components/RemindersAppointments';
 import CheckInOutButtons from './PatientCheckin/components/CheckInOutButtons';
+import ScenarioControls from '../components/ScenarioControls';
 
 const PatientCheckinScreen = () => {
   const { patientData, setPatientData, setMockPatientData } = usePatient();
@@ -436,6 +437,11 @@ const PatientCheckinScreen = () => {
           </fieldset>
           <RemindersAppointments styles={styles} />
           <DocumentsList styles={styles} />
+        </div>
+
+        {/* Scenario Engine Controls */}
+        <div style={{ marginTop: '2rem', padding: '1rem', borderTop: '2px solid #e0e0e0' }}>
+          <ScenarioControls />
         </div>
       </div>
     </PIMSScreenWrapper>

@@ -1,0 +1,156 @@
+.ds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--button-padding);
+  border-radius: var(--border-radius);
+  border: 1px solid transparent;
+  font-family: var(--font-family);
+  font-size: var(--button-font-size);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ds-button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Variants */
+.ds-button--primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-text);
+  border-color: var(--color-primary);
+}
+
+.ds-button--primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.ds-button--primary:active:not(:disabled) {
+  background-color: var(--color-primary-active);
+  border-color: var(--color-primary-active);
+}
+
+.ds-button--secondary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.ds-button--secondary:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.ds-button--secondary:active:not(:disabled) {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary-active);
+  border-color: var(--color-primary-active);
+}
+
+.ds-button--tertiary {
+  background-color: transparent;
+  color: var(--color-text);
+  border-color: transparent;
+}
+
+.ds-button--tertiary:hover:not(:disabled) {
+  background-color: var(--color-background-hover);
+}
+
+.ds-button--tertiary:active:not(:disabled) {
+  background-color: var(--color-background-active);
+}
+
+.ds-button--danger {
+  background-color: var(--color-danger);
+  color: var(--color-danger-text);
+  border-color: var(--color-danger);
+}
+
+.ds-button--danger:hover:not(:disabled) {
+  background-color: var(--color-danger-hover);
+  border-color: var(--color-danger-hover);
+}
+
+.ds-button--danger:active:not(:disabled) {
+  background-color: var(--color-danger-active);
+  border-color: var(--color-danger-active);
+}
+
+/* Sizes */
+.ds-button--small {
+  --button-padding: var(--spacing-xs) var(--spacing-sm);
+  --button-font-size: var(--font-size-sm);
+  min-height: 32px;
+}
+
+.ds-button--medium {
+  --button-padding: var(--spacing-sm) var(--spacing-md);
+  --button-font-size: var(--font-size-base);
+  min-height: 40px;
+}
+
+.ds-button--large {
+  --button-padding: var(--spacing-md) var(--spacing-lg);
+  --button-font-size: var(--font-size-lg);
+  min-height: 48px;
+}
+
+/* States */
+.ds-button--disabled,
+.ds-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ds-button--loading {
+  cursor: wait;
+  color: transparent;
+}
+
+.ds-button--full-width {
+  width: 100%;
+}
+
+/* Icons */
+.ds-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ds-button__content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Loading spinner */
+.ds-button__spinner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: ds-button-spin 0.8s linear infinite;
+}
+
+@keyframes ds-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

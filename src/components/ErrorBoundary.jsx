@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { Button, Card } from './design-system';
 
-class ErrorBoundary extends React.Component {
+class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      errorCount: 0,
+    };
   }
 
   static getDerivedStateFromError(error) {
@@ -11,49 +17,109 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('Error caught by ErrorBoundary:', error, errorInfo);
-    this.setState({
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    
+    this.setState(prevState => ({
       error,
-      errorInfo
-    });
+      errorInfo,
+      errorCount: prevState.errorCount + 1,
+    }));
+
+    // Log to external service in production
+    if (import.meta.env.PROD) {
+      this.logErrorToService(error, errorInfo);
+    }
   }
+
+  logErrorToService = (error, errorInfo) => {
+    // Implement error logging to external service
+    // Example: Sentry, LogRocket, etc.
+    const errorData = {
+      message: error.toString(),
+      stack: errorInfo.componentStack,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+    };
+    
+    console.log('Error logged to service:', errorData);
+  };
+
+  handleReset = () => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    });
+  };
+
+  handleReload = () => {
+    window.location.reload();
+  };
 
   render() {
     if (this.state.hasError) {
+      const { fallback, showDetails = import.meta.env.DEV } = this.props;
+
+      if (fallback) {
+        return fallback(this.state.error, this.state.errorInfo, this.handleReset);
+      }
+
       return (
         <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
           padding: '20px',
-          margin: '20px',
-          backgroundColor: '#fff3cd',
-          border: '1px solid #ffeaa7',
-          borderRadius: '4px',
-          color: '#856404'
+          backgroundColor: '#f9fafb'
         }}>
-          <h2 style={{ marginTop: 0 }}>Something went wrong</h2>
-          <p>The application encountered an error. Please try refreshing the page.</p>
-          {process.env.NODE_ENV === 'development' && this.state.error && (
-            <details style={{ whiteSpace: 'pre-wrap', marginTop: '10px' }}>
-              <summary style={{ cursor: 'pointer' }}>Error details (development only)</summary>
-              <pre style={{ marginTop: '10px', fontSize: '12px' }}>
-                {this.state.error.toString()}
-                {this.state.errorInfo?.componentStack}
-              </pre>
-            </details>
-          )}
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              marginTop: '10px',
-              padding: '8px 16px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Refresh Page
-          </button>
+          <Card variant="outlined" padding="large" style={{ maxWidth: '600px', width: '100%' }}>
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" style={{ margin: '0 auto' }}>
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </div>
+            
+            <h1 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '12px', textAlign: 'center' }}>
+              Oops! Something went wrong
+            </h1>
+            <p style={{ color: '#6b7280', marginBottom: '24px', textAlign: 'center' }}>
+              We're sorry for the inconvenience. The application encountered an unexpected error.
+            </p>
+
+            {showDetails && this.state.error && (
+              <details style={{ marginBottom: '24px', padding: '16px', backgroundColor: '#f3f4f6', borderRadius: '8px' }}>
+                <summary style={{ cursor: 'pointer', fontWeight: '500' }}>Error Details</summary>
+                <div style={{ marginTop: '16px' }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px' }}>Error Message:</h3>
+                  <pre style={{ fontSize: '12px', overflow: 'auto', padding: '8px', backgroundColor: '#fff', borderRadius: '4px' }}>
+                    {this.state.error.toString()}
+                  </pre>
+                  
+                  <h3 style={{ fontSize: '14px', fontWeight: '600', marginTop: '16px', marginBottom: '8px' }}>Component Stack:</h3>
+                  <pre style={{ fontSize: '12px', overflow: 'auto', padding: '8px', backgroundColor: '#fff', borderRadius: '4px' }}>
+                    {this.state.errorInfo?.componentStack}
+                  </pre>
+                  
+                  <p style={{ fontSize: '12px', marginTop: '16px', color: '#6b7280' }}>
+                    This error has occurred {this.state.errorCount} time(s)
+                  </p>
+                </div>
+              </details>
+            )}
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <Button onClick={this.handleReset} variant="primary">
+                Try Again
+              </Button>
+              <Button onClick={this.handleReload} variant="secondary">
+                Reload Page
+              </Button>
+            </div>
+          </Card>
         </div>
       );
     }

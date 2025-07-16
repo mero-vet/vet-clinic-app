@@ -1,0 +1,622 @@
+.queue-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    min-height: 100vh;
+    background: var(--color-background-alt);
+}
+
+/* Statistics Card */
+.statistics-card {
+    border: 2px solid var(--color-border);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+}
+
+.stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+    text-align: center;
+}
+
+.stat-value {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+}
+
+.priority-distribution {
+    margin-top: var(--spacing-lg);
+}
+
+.priority-distribution h5 {
+    margin: 0 0 var(--spacing-sm) 0;
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+}
+
+.priority-bars {
+    display: flex;
+    height: 30px;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.priority-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.priority-bar.low {
+    background: var(--color-success);
+}
+
+.priority-bar.medium {
+    background: var(--color-warning);
+}
+
+.priority-bar.high {
+    background: var(--color-danger);
+}
+
+.priority-bar.emergency {
+    background: #dc2626;
+}
+
+/* Queues Container */
+.queues-container {
+    flex: 1;
+}
+
+.queues-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.queue-section {
+    border: 2px solid var(--color-border);
+    background: var(--color-background);
+}
+
+.queue-section .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.queue-section h4 {
+    margin: 0;
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+}
+
+.patient-count {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+.empty-queue {
+    text-align: center;
+    color: var(--color-text-tertiary);
+    font-style: italic;
+    padding: var(--spacing-lg);
+}
+
+/* Patient Entries */
+.patient-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.patient-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    background: var(--color-surface);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.patient-entry:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.patient-entry.selected {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+}
+
+.patient-info {
+    flex: 1;
+    margin-right: var(--spacing-md);
+}
+
+.patient-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+}
+
+.patient-name {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
+}
+
+.priority {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+}
+
+.priority-low {
+    background: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.priority-medium {
+    background: var(--color-warning-light);
+    color: var(--color-warning);
+}
+
+.priority-high {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+.priority-emergency {
+    background: #fecaca;
+    color: #dc2626;
+}
+
+.patient-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+}
+
+.owner-name {
+    color: var(--color-text-secondary);
+}
+
+.appointment-time {
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+.patient-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--font-size-sm);
+}
+
+.reason {
+    color: var(--color-text-primary);
+    flex: 1;
+    margin-right: var(--spacing-sm);
+}
+
+.wait-time {
+    color: var(--color-warning);
+    font-weight: var(--font-weight-medium);
+}
+
+.assignment-info {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+}
+
+.assignment-info .room,
+.assignment-info .staff {
+    padding: var(--spacing-xs);
+    background: var(--color-background-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+}
+
+/* Patient Actions */
+.patient-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.patient-actions select {
+    padding: var(--spacing-xs);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    background: var(--color-background);
+}
+
+/* Resources Container */
+.resources-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.rooms-card,
+.staff-card {
+    border: 2px solid var(--color-border);
+}
+
+.rooms-grid,
+.staff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+/* Room Status */
+.room-status {
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    background: var(--color-surface);
+    transition: all 0.2s ease;
+}
+
+.room-status.available {
+    border-left: 4px solid var(--color-success);
+}
+
+.room-status.occupied {
+    border-left: 4px solid var(--color-danger);
+}
+
+.room-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.room-name {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
+.room-indicator {
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+}
+
+.room-indicator.available {
+    background: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.room-indicator.occupied {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+.room-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.current-patient {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--color-background-alt);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+}
+
+.estimated-free {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    margin-top: var(--spacing-xs);
+}
+
+/* Staff Status */
+.staff-status {
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    background: var(--color-surface);
+}
+
+.staff-status.available {
+    border-left: 4px solid var(--color-success);
+}
+
+.staff-status.busy {
+    border-left: 4px solid var(--color-warning);
+}
+
+.staff-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.staff-name {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
+.staff-indicator {
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+}
+
+.staff-indicator.available {
+    background: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.staff-indicator.busy {
+    background: var(--color-warning-light);
+    color: var(--color-warning);
+}
+
+.staff-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.current-assignment,
+.staff-expertise {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+/* Patient Details Modal */
+.patient-details-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.patient-details-modal {
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--color-background);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+}
+
+.patient-full-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.detail-section h5 {
+    margin: 0 0 var(--spacing-md) 0;
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--spacing-sm);
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.detail-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+.detail-value {
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+}
+
+.detail-value.priority-low {
+    color: var(--color-success);
+}
+
+.detail-value.priority-medium {
+    color: var(--color-warning);
+}
+
+.detail-value.priority-high {
+    color: var(--color-danger);
+}
+
+.detail-value.priority-emergency {
+    color: #dc2626;
+}
+
+.notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.note-item {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+}
+
+.note-timestamp {
+    color: var(--color-text-tertiary);
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+}
+
+.note-type {
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+}
+
+.note-type.arrival {
+    background: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.note-type.assignment {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.note-type.status_change {
+    background: var(--color-warning-light);
+    color: var(--color-warning);
+}
+
+.note-type.priority_change {
+    background: var(--color-info-light);
+    color: var(--color-info);
+}
+
+.note-type.completion {
+    background: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.note-message {
+    flex: 1;
+    color: var(--color-text-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .resources-container {
+        grid-template-columns: 1fr;
+    }
+
+    .queues-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .queue-dashboard {
+        padding: var(--spacing-md);
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .queues-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rooms-grid,
+    .staff-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-entry {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .patient-info {
+        margin-right: 0;
+    }
+
+    .patient-actions {
+        flex-direction: row;
+        align-self: stretch;
+    }
+
+    .patient-details-modal {
+        width: 95%;
+        margin: var(--spacing-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+
+    .patient-details {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+}
