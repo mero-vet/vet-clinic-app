@@ -7,10 +7,15 @@
 **Implementation Date**: TBD  
 **Type**: App Polish & Optimization  
 **Complexity**: Medium  
+<!-- REVIEWER COMMENT: Complexity seems underestimated given the scope. This includes 6 phases with significant architectural changes, new component library creation, and comprehensive refactoring. Should this be "High"? -->
+<!-- QUESTION: What's the estimated engineering time for this? Without time estimates, how can we assess if this is achievable? -->  
 
 ## Overview
 
 This PRD focuses on polishing and optimizing the existing veterinary clinic sandbox application without adding new features. The goal is to improve reliability, accessibility, user experience, and optimize the app for computer use agent testing. All improvements are frontend-only and maintain the sandbox/demo nature of the app.
+<!-- REVIEWER COMMENT: The scope here is contradictory - you say "no new features" but then propose creating an entire component library, implementing new hooks, and adding complex systems like optimistic updates and focus trapping. These feel like features, not polish. -->
+<!-- QUESTION: How does creating 10+ new files and modifying every component align with "polish"? This seems more like a major refactor. -->
+<!-- SUGGESTION: Consider splitting this into 2-3 focused PRDs: one for accessibility/agent optimization, one for UI consistency, and one for performance/transitions. -->
 
 ## Key Areas for Polish
 
@@ -19,6 +24,8 @@ This PRD focuses on polishing and optimizing the existing veterinary clinic sand
 - Inconsistent element IDs and test-ids
 - Ambiguous clickable elements
 - Poor keyboard navigation support
+<!-- QUESTION: Do we have specific examples of where agents are failing? Without concrete failure cases, how do we know these improvements will help? -->
+<!-- REVIEWER COMMENT: "Ambiguous clickable elements" is vague. Which elements specifically? What makes them ambiguous? -->
 
 ### 2. **Loading States & Error Handling**
 - No loading indicators in most components
@@ -43,6 +50,8 @@ This PRD focuses on polishing and optimizing the existing veterinary clinic sand
 - No data validation on load
 - Missing storage quota handling
 - Inconsistent key naming
+<!-- REVIEWER COMMENT: This is marked as "Low Priority" in Phase 5, but multi-tab conflicts could cause data loss. Shouldn't this be higher priority? -->
+<!-- QUESTION: What happens when users lose data due to tab conflicts? Do we have any user reports of this happening? -->
 
 ### 6. **Performance & Transitions**
 - Flash of unstyled content on PIMS switch
@@ -72,6 +81,8 @@ This PRD focuses on polishing and optimizing the existing veterinary clinic sand
 />
 <span id="weight-help" className="sr-only">Enter weight in pounds</span>
 ```
+<!-- QUESTION: Are we standardizing on a naming convention for IDs and test-ids? This example uses kebab-case, but what about consistency across the app? -->
+<!-- REVIEWER COMMENT: This adds a lot of markup. Have we considered the bundle size impact of adding all these attributes to every input? -->
 
 **Files to Update:**
 - `src/components/CheckInScreen.tsx` - Add ARIA labels to all form fields
@@ -79,6 +90,8 @@ This PRD focuses on polishing and optimizing the existing veterinary clinic sand
 - `src/components/scheduling/AppointmentForm.jsx` - Add element IDs and test-ids
 - `src/components/PatientSearchBar.tsx` - Add autocomplete ARIA attributes
 - All form components - Add consistent labeling pattern
+<!-- REVIEWER COMMENT: "All form components" is not specific enough. How many components is this? What's the testing strategy for ensuring we don't miss any? -->
+<!-- QUESTION: Do we have a lint rule or automated check to ensure ARIA compliance after these changes? -->
 
 **1.2 Improve Element Targeting**
 - Add unique IDs to all interactive elements
@@ -104,6 +117,9 @@ const useKeyboardNavigation = (modalOpen, closeModal) => {
   }, [modalOpen, closeModal]);
 };
 ```
+<!-- REVIEWER COMMENT: This implementation is incomplete - the Tab key handler has a TODO comment. Are we shipping incomplete code? -->
+<!-- QUESTION: How does this handle nested modals? What about focus restoration when modal closes? -->
+<!-- SUGGESTION: Consider using an existing focus-trap library like focus-trap-react instead of reimplementing. -->
 
 ### Phase 2: Loading States & Error Handling (High Priority)
 
@@ -124,6 +140,9 @@ const [loadingStates, setLoadingStates] = useState({
   saving: false
 });
 ```
+<!-- QUESTION: How do we handle multiple simultaneous loading states? What if patients and appointments are loading at the same time? -->
+<!-- REVIEWER COMMENT: This state structure doesn't scale well. What happens when we have 20 different loadable entities? -->
+<!-- SUGGESTION: Consider a more scalable loading state management solution, perhaps using a context or state machine. -->
 
 **2.2 Add Skeleton Screens**
 ```javascript
@@ -158,6 +177,7 @@ const ErrorMessage = ({ error, onRetry }) => (
 - Update all async operations to show loading states
 
 ### Phase 3: UI/UX Consistency (Medium Priority)
+<!-- REVIEWER COMMENT: Why is UI consistency "Medium Priority"? For agent testing, consistent UI patterns are crucial for reliable element targeting. -->
 
 **3.1 Create Design System Components**
 ```javascript
@@ -185,6 +205,9 @@ const Button = ({
   </button>
 );
 ```
+<!-- QUESTION: How does this handle PIMS theme variations? Each PIMS has different button styles - where is that logic? -->
+<!-- REVIEWER COMMENT: No TypeScript? How do we ensure type safety across component props? -->
+<!-- SUGGESTION: Consider using CSS-in-JS or CSS modules to avoid className conflicts across PIMS themes. -->
 
 **3.2 Standardize Form Patterns**
 ```javascript
@@ -243,6 +266,8 @@ const Modal = ({
 ```
 
 ### Phase 4: Mobile Responsiveness (Medium Priority)
+<!-- QUESTION: Is mobile responsiveness really needed for computer use agent testing? Agents typically run on desktop resolutions. -->
+<!-- REVIEWER COMMENT: This seems out of scope for the stated goal of "optimizing for computer use agent testing". -->
 
 **4.1 Responsive Calendar**
 ```css
@@ -268,6 +293,8 @@ const Modal = ({
   }
 }
 ```
+<!-- REVIEWER COMMENT: These CSS changes could break existing desktop layouts. Have we tested the impact on current functionality? -->
+<!-- QUESTION: How does this interact with the PIMS-specific styles? Won't these global styles conflict? -->
 
 **4.2 Mobile-Optimized Modals**
 ```css
@@ -310,6 +337,7 @@ const MobileNav = () => (
 ```
 
 ### Phase 5: Data Management Improvements (Low Priority)
+<!-- REVIEWER COMMENT: Data corruption and multi-tab conflicts should NOT be low priority. This can cause real user issues. -->
 
 **5.1 Implement Safe localStorage**
 ```javascript
@@ -343,6 +371,10 @@ class SafeStorage {
   }
 }
 ```
+<!-- QUESTION: Where is the validateSchema function defined? This code won't work as-is. -->
+<!-- REVIEWER COMMENT: The "cleanup strategy" comment suggests incomplete implementation. What's the actual strategy? -->
+<!-- SUGGESTION: Consider using IndexedDB for larger data sets instead of localStorage. -->
+<!-- QUESTION: How do we handle data migration when the schema changes? This could break existing users' data. -->
 
 **5.2 Handle Multi-Tab Conflicts**
 ```javascript
@@ -357,6 +389,7 @@ window.addEventListener('storage', (e) => {
 ```
 
 ### Phase 6: Performance & Transitions (Low Priority)
+<!-- REVIEWER COMMENT: Transitions and animations can actually make agent testing harder - elements might not be in their final position when the agent tries to interact. -->
 
 **6.1 Smooth PIMS Transitions**
 ```javascript
@@ -382,6 +415,9 @@ const usePIMSTransition = () => {
   return { switchPIMS, transitioning };
 };
 ```
+<!-- QUESTION: Where is preloadPIMSStyles defined? Another undefined function. -->
+<!-- REVIEWER COMMENT: Using setTimeout for animations is unreliable. What if the styles take longer than 300ms to load? -->
+<!-- QUESTION: How do agents handle the 300ms transition period? This could cause flaky tests. -->
 
 **6.2 Add Micro-animations**
 ```css
@@ -425,6 +461,9 @@ const useOptimisticUpdate = () => {
   return optimisticUpdate;
 };
 ```
+<!-- REVIEWER COMMENT: This is pseudocode with undefined functions: getCurrentState, applyOptimisticChange, showError. Not implementable as-is. -->
+<!-- QUESTION: How does this handle race conditions? What if two optimistic updates happen simultaneously? -->
+<!-- QUESTION: For a demo app with no real backend, why do we need optimistic updates? Everything is already instant. -->
 
 ## Toast System Enhancements
 
@@ -471,6 +510,9 @@ class ToastQueue {
 4. **Performance**: No UI freezes or janky animations
 5. **Error Resilience**: Graceful handling of all error states
 6. **Consistency**: Uniform UI patterns across all screens
+<!-- REVIEWER COMMENT: These criteria are not specific or measurable enough. What does "easily targetable" mean? How do we measure "no UI freezes"? -->
+<!-- QUESTION: Do we have baseline metrics for current performance? How will we know if we've improved? -->
+<!-- SUGGESTION: Add specific metrics like: "All interactive elements have unique IDs", "Page load time < 2s", "No console errors in any flow" -->
 
 ## Testing Approach
 
@@ -494,6 +536,9 @@ class ToastQueue {
 - [ ] Navigation is predictable
 - [ ] Loading states are detectable
 - [ ] Error messages are clear
+<!-- REVIEWER COMMENT: This testing section is too vague. We need specific test scenarios that agents will run. -->
+<!-- QUESTION: Do we have existing agent test scripts that are failing? We should test against those specific failures. -->
+<!-- SUGGESTION: Add concrete test cases like "Agent can successfully create appointment", "Agent can search for patient by name" -->
 
 ## Implementation Notes
 
@@ -534,6 +579,8 @@ Establish consistent:
 8. `src/hooks/useKeyboardNavigation.js`
 9. `src/hooks/useFocusTrap.js`
 10. `src/hooks/useOptimisticUpdate.js`
+<!-- REVIEWER COMMENT: Creating 10 new files contradicts the "no new features" principle. This is essentially building a component library. -->
+<!-- QUESTION: How do we ensure adoption of these new components? What prevents developers from continuing to use the old patterns? -->
 
 ### Files to Modify
 1. All form components - Add ARIA labels and IDs
@@ -542,6 +589,8 @@ Establish consistent:
 4. `src/styles/` - Add responsive styles
 5. `src/context/ToastContext.jsx` - Implement queue management
 6. All PIMS layouts - Add transition support
+<!-- REVIEWER COMMENT: "All form components", "All modals", "All async operations" - we need specific file lists. This is too vague for implementation. -->
+<!-- QUESTION: How many files total will be modified? This could touch the entire codebase. -->
 
 ## Risk Mitigation
 
@@ -550,6 +599,9 @@ Establish consistent:
 3. **Browser Compatibility**: Test in all major browsers
 4. **PIMS Theme Conflicts**: Verify all themes still work
 5. **Data Migration**: Handle old localStorage gracefully
+<!-- REVIEWER COMMENT: This risk section is missing major risks like: regression in agent tests, increased bundle size, CSS conflicts, incomplete migration of components. -->
+<!-- QUESTION: What's the rollback plan if Phase 1 breaks agent testing? Can we feature flag these changes? -->
+<!-- SUGGESTION: Add risk about training/documentation - how will other engineers know to use the new patterns? -->
 
 ## Rollout Strategy
 
@@ -561,6 +613,9 @@ Establish consistent:
 6. **Phase 6**: Add transitions and animations
 
 Each phase should be tested independently before moving to the next.
+<!-- REVIEWER COMMENT: This sequential rollout could take months. Do we have that timeline? What about dependencies between phases? -->
+<!-- QUESTION: How do we handle partially implemented states? If Phase 1 is done but Phase 3 isn't, we'll have accessible but inconsistent UI. -->
+<!-- SUGGESTION: Consider implementing the most critical agent-testing improvements first as a focused sprint. -->
 
 ## Long-term Benefits
 
@@ -572,3 +627,6 @@ Each phase should be tested independently before moving to the next.
 6. **Performance**: Smoother user experience
 
 This polish phase will transform the veterinary clinic app from a functional prototype into a professional, accessible, and reliable application ready for extensive computer use agent testing.
+<!-- REVIEWER COMMENT: This conclusion overpromises. The PRD mixes genuine polish (accessibility, loading states) with major architectural changes (component library, new state management patterns). -->
+<!-- FINAL QUESTION: Is the real goal agent testing optimization or a complete UI overhaul? These seem like different projects. -->
+<!-- CRITICAL ISSUE: Many code examples contain undefined functions and incomplete implementations. This PRD needs working code examples or clear specs for what needs to be built. -->
