@@ -1,0 +1,236 @@
+---
+description: describes the specific format for creating a prd, always consult this rule when creating a prd
+globs: 
+alwaysApply: false
+---
+# PRD Structure and Guidelines
+
+## Overview
+This rule defines the required structure and formatting for Product Requirements Documents (PRDs) in the AI Practice Manager project. PRDs should be living documents that evolve as implementation progresses.
+
+## Implementation Scope and Code Preservation
+
+### Scope Boundaries
+- Implementation should strictly adhere to the scope defined in the PRD
+- Do not expand features beyond what is explicitly documented
+- When facing ambiguity, default to narrower interpretation of requirements
+- Focus on completing the specified functionality completely rather than adding undocumented enhancements
+
+### Existing Code Preservation
+- Assume all existing code is necessary and that the product currently functions as designed
+- Do not delete or substantially modify existing code unless absolutely necessary
+- Document any required changes to existing code with clear justification
+- Prefer additive changes over modifications to working systems
+- Use extension patterns rather than replacing existing implementations
+
+### Adaptation vs. Expansion
+- While implementation details may need to adapt based on codebase research, the core scope should remain fixed
+- Document any scope clarifications or refinements that emerge during development
+- If significant scope changes appear necessary, update the PRD and seek review before proceeding
+- Maintain backward compatibility with existing functionality
+
+## Pre-PRD Research Requirements
+
+Before creating a PRD, the following research must be conducted:
+
+1. **Codebase Analysis**
+   - Search for existing implementations of similar functionality
+   - Identify key files and components that will be affected
+   - Review current architecture patterns
+   - Document any technical debt or limitations to consider
+
+2. **Dependencies Investigation**
+   - Map out affected services and components
+   - Identify integration points
+   - List external dependencies and their versions
+   - Note any version constraints or compatibility requirements
+
+3. **Current State Documentation**
+   - Document existing behavior and implementation
+   - Note any performance metrics or benchmarks
+   - Identify pain points in current implementation
+   - List any existing bugs or issues that should be addressed
+
+## Required Sections (In Order)
+
+### 1. Current Status Block
+```
+Current Status: [IN PROGRESS/COMPLETED/BLOCKED]
+Next Action Item: [specific next task]
+Blocking Issues: [if any]
+```
+
+### 2. Key Files and Components
+List of critical files and components that are:
+- Directly modified by this implementation
+- Referenced by the implementation
+- Affected by the changes
+- New files to be created
+
+Example format:
+```markdown
+### Core Implementation Files
+- `backend/services/ai/loop.py`
+  - Primary logic for AI interaction
+  - Will need modifications for new feature X
+- `frontend/src/components/AIChat.tsx`
+  - User interface components
+  - Requires new state management
+
+### Referenced Components
+- `backend/services/auth/`
+  - Authentication integration points
+  - No direct changes needed
+
+### New Files to Create
+- `backend/services/ai/new_feature.py`
+  - Will contain new implementation
+  - Dependencies: loop.py, auth service
+```
+
+### 3. Objective
+A clear, concise statement of what this PRD aims to accomplish in 2-3 sentences maximum. Include:
+- Problem being solved
+- Target outcome
+- Success metrics
+
+### 4. Implementation Plan
+- Must be at the top after objective
+- Use numbered phases and sub-steps (1.1, 1.2, etc.)
+- Each step must have a checkbox: [x] for completed, [ ] for pending
+- Include dependencies between steps
+- Note parallel work opportunities
+
+Example format:
+```markdown
+### Phase 1: [Phase Name]
+- [ ] 1.1 [Step Description]
+  - Key deliverables
+  - Success criteria
+  - Dependencies: none
+- [ ] 1.2 [Step Description]
+  - Implementation details
+  - Dependencies: 1.1 must be completed
+
+### Phase 2: [Phase Name]
+...
+```
+
+### 5. Implementation Notes
+- Add notes as steps are completed
+- Document any challenges, solutions, or learnings
+- Include code snippets or examples where relevant
+- Tag with phase/step reference
+
+Example format:
+```markdown
+#### Implementation Note [Phase 1.1]
+- What was implemented
+- Challenges encountered
+- Solutions applied
+- Key learnings
+- Performance impacts
+```
+
+### 6. Technical Design
+- System architecture changes
+- Data models and schemas
+- API specifications
+- Dependencies and integrations
+- Performance considerations
+- Security implications
+
+### 7. Success Criteria
+- Measurable outcomes
+- Performance metrics
+- Quality benchmarks
+- User impact metrics
+- Monitoring requirements
+
+### 8. Risks and Mitigations
+- Technical risks
+- Integration risks
+- Performance risks
+- Security risks
+- Mitigation strategies
+- Fallback plans
+
+### 9. Future Considerations
+- Potential enhancements
+- Scale considerations
+- Technical debt notes
+- Future integration points
+
+## Maintenance Rules
+
+1. **Regular Updates**
+   - Update status block with each significant change
+   - Mark completed steps immediately
+   - Add implementation notes within 24 hours of completion
+   - Update affected files list as new dependencies are discovered
+
+2. **Version Control**
+   - Keep history of major changes in a changelog section
+   - Document significant pivots or requirement changes
+   - Note any deviations from original plan
+
+3. **Review Cycles**
+   - Review and update PRD at the end of each phase
+   - Adjust future phases based on learnings
+   - Update success criteria if needed
+   - Re-evaluate risk assessments
+
+## Formatting Guidelines
+
+1. **Markdown Usage**
+   - Use proper heading levels (# for title, ## for major sections, ### for subsections)
+   - Use code blocks for technical examples (```language)
+   - Use tables for structured data
+   - Use bullet points for lists
+   - Use checkboxes for tasks
+
+2. **Code Examples**
+   - Include language identifier in code blocks
+   - Keep examples concise and focused
+   - Include comments for complex logic
+   - Show before/after examples for changes
+
+3. **Links and References**
+   - Link to related PRDs
+   - Link to relevant documentation
+   - Reference ticket/issue numbers
+   - Link to relevant code files
+
+## Best Practices
+
+1. **Clarity**
+   - Write for future team members
+   - Explain why, not just what
+   - Include context for decisions
+   - Document assumptions
+
+2. **Scope**
+   - Clear boundaries of what is/isn't included
+   - Dependencies and prerequisites
+   - Future considerations
+   - Integration points
+
+3. **Updates**
+   - Keep the document current
+   - Note when sections become outdated
+   - Archive completed phases
+   - Document lessons learned
+
+4. **Metrics**
+   - Include measurable outcomes
+   - Track progress against goals
+   - Document performance impacts
+   - Monitor user impact
+
+5. **Code Integration**
+   - Reference specific files and line numbers
+   - Include relevant git commits
+   - Document API changes
+   - Note configuration changes
+
+This rule should be applied to any file matching the pattern `*.prd.md` in the repository. The structure emphasizes actionable implementation plans while maintaining a clear record of progress, dependencies, and learnings. 
