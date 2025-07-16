@@ -165,6 +165,10 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
             value={patientData.name}
             onChange={handleChange}
             onBlur={handleBlur}
+            data-testid="patient-name-input"
+            aria-label="Pet name"
+            aria-required="true"
+            aria-invalid={!!errors.name}
             style={{
               ...inputStyle,
               borderColor: errors.name ? '#c00' : '#000'
@@ -181,6 +185,10 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
             value={patientData.species}
             onChange={handleChange}
             onBlur={handleBlur}
+            data-testid="patient-species-select"
+            aria-label="Pet species"
+            aria-required="true"
+            aria-invalid={!!errors.species}
             style={{
               ...inputStyle,
               borderColor: errors.species ? '#c00' : '#000'
@@ -205,6 +213,11 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
             onChange={handleChange}
             onBlur={handleBlur}
             disabled={!patientData.species}
+            data-testid="patient-breed-select"
+            aria-label="Pet breed"
+            aria-required="true"
+            aria-invalid={!!errors.breed}
+            aria-disabled={!patientData.species}
             style={{
               ...inputStyle,
               borderColor: errors.breed ? '#c00' : '#000',
@@ -228,6 +241,8 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
             value={patientData.color}
             onChange={handleChange}
             placeholder="e.g., Black and white"
+            data-testid="patient-color-input"
+            aria-label="Pet color or markings"
             style={inputStyle}
           />
         </div>
@@ -242,6 +257,10 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
             value={patientData.sex}
             onChange={handleChange}
             onBlur={handleBlur}
+            data-testid="patient-sex-select"
+            aria-label="Pet sex"
+            aria-required="true"
+            aria-invalid={!!errors.sex}
             style={{
               ...inputStyle,
               borderColor: errors.sex ? '#c00' : '#000'
@@ -266,6 +285,10 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
             onChange={handleChange}
             onBlur={handleBlur}
             max={today}
+            data-testid="patient-dob-input"
+            aria-label="Pet date of birth"
+            aria-required="true"
+            aria-invalid={!!errors.dateOfBirth}
             style={{
               ...inputStyle,
               borderColor: errors.dateOfBirth ? '#c00' : '#000'
@@ -284,6 +307,9 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder="0.0"
+            data-testid="patient-weight-input"
+            aria-label="Pet weight in pounds"
+            aria-invalid={!!errors.weight}
             style={{
               ...inputStyle,
               borderColor: errors.weight ? '#c00' : '#000'
@@ -303,6 +329,8 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
             value={patientData.microchip}
             onChange={handleChange}
             placeholder="15-digit number"
+            data-testid="patient-microchip-input"
+            aria-label="Microchip number"
             style={inputStyle}
           />
         </div>
@@ -315,6 +343,8 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
             name="rabiesTag"
             value={patientData.rabiesTag}
             onChange={handleChange}
+            data-testid="patient-rabies-tag-input"
+            aria-label="Rabies tag number"
             style={inputStyle}
           />
         </div>
@@ -327,8 +357,11 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
             <label key={alert} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               <input
                 type="checkbox"
+                id={`alert-${alert.toLowerCase().replace(/\s+/g, '-')}`}
                 checked={patientData.alerts.includes(alert)}
                 onChange={() => handleAlertToggle(alert)}
+                data-testid={`patient-alert-${alert.toLowerCase().replace(/\s+/g, '-')}`}
+                aria-label={`${alert} alert`}
                 style={{ marginRight: '0.25rem' }}
               />
               {alert}
@@ -339,15 +372,21 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
         <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem' }}>
           <input
             type="text"
+            id="custom-alert-input"
             value={customAlert}
             onChange={(e) => setCustomAlert(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustomAlert())}
             placeholder="Add custom alert..."
+            data-testid="patient-custom-alert-input"
+            aria-label="Add custom alert"
             style={{ flex: 1, padding: '4px', border: '1px solid #000' }}
           />
           <button
             type="button"
+            id="add-custom-alert-button"
             onClick={handleAddCustomAlert}
+            data-testid="patient-add-alert-button"
+            aria-label="Add custom alert to patient"
             style={{ padding: '4px 8px', border: '1px solid #000', cursor: 'pointer' }}
           >
             Add
@@ -368,6 +407,9 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
       <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
         <button 
           type="submit" 
+          id="register-patient-button"
+          data-testid="patient-register-button"
+          aria-label="Register new patient"
           style={{ 
             padding: '0.5rem 1rem',
             backgroundColor: '#000080',
@@ -382,7 +424,10 @@ function PatientRegistrationForm({ clientId, clientName, onSubmit, onCancel }) {
         {onCancel && (
           <button 
             type="button"
+            id="cancel-registration-button"
             onClick={onCancel}
+            data-testid="patient-cancel-button"
+            aria-label="Cancel patient registration"
             style={{ 
               padding: '0.5rem 1rem',
               backgroundColor: '#fff',

@@ -15,13 +15,31 @@ const InvoiceActions = () => {
 
   return (
     <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-      <button className="windows-button" onClick={handleSaveDraft}>
+      <button 
+        id="invoice-save-draft-button"
+        className="windows-button" 
+        onClick={handleSaveDraft}
+        data-testid="invoice-save-draft-button"
+        aria-label="Save invoice as draft"
+      >
         Save Draft
       </button>
-      <button className="windows-button" onClick={handlePrint}>
+      <button 
+        id="invoice-print-button"
+        className="windows-button" 
+        onClick={handlePrint}
+        data-testid="invoice-print-button"
+        aria-label="Print invoice"
+      >
         Print
       </button>
-      <button className="windows-button" onClick={handleCancel}>
+      <button 
+        id="invoice-cancel-button"
+        className="windows-button" 
+        onClick={handleCancel}
+        data-testid="invoice-cancel-button"
+        aria-label="Cancel invoice creation"
+      >
         Cancel
       </button>
     </div>

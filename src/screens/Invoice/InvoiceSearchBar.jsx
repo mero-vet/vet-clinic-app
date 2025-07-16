@@ -44,51 +44,70 @@ const InvoiceSearchBar = () => {
       <legend>Invoice Details</legend>
       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
         <div>
-          <label>Client ID:&nbsp;</label>
+          <label htmlFor="invoice-client-id">Client ID:&nbsp;</label>
           <input
+            id="invoice-client-id"
             type="text"
             name="clientId"
             value={searchData.clientId}
             onChange={handleChange}
             required
+            data-testid="invoice-client-id-input"
+            aria-label="Client ID for invoice"
+            aria-required="true"
             style={{ width: '120px' }}
           />
         </div>
         <div>
-          <label>Patient ID:&nbsp;</label>
+          <label htmlFor="invoice-patient-id">Patient ID:&nbsp;</label>
           <input
+            id="invoice-patient-id"
             type="text"
             name="patientId"
             value={searchData.patientId}
             onChange={handleChange}
             required
+            data-testid="invoice-patient-id-input"
+            aria-label="Patient ID for invoice"
+            aria-required="true"
             style={{ width: '120px' }}
           />
         </div>
         <div>
-          <label>Item Description:&nbsp;</label>
+          <label htmlFor="invoice-item-description">Item Description:&nbsp;</label>
           <input
+            id="invoice-item-description"
             type="text"
             name="itemDescription"
             value={searchData.itemDescription}
             onChange={handleChange}
+            data-testid="invoice-item-description-input"
+            aria-label="Description of item to add to invoice"
+            placeholder="Enter item description"
             style={{ width: '200px' }}
           />
         </div>
         <div>
-          <label>Date:&nbsp;</label>
+          <label htmlFor="invoice-date">Date:&nbsp;</label>
           <input
+            id="invoice-date"
             type="date"
             name="date"
             value={searchData.date}
             onChange={handleChange}
+            data-testid="invoice-date-input"
+            aria-label="Invoice date"
           />
         </div>
       </div>
       <button
+        id="invoice-add-item-button"
         className="windows-button"
         onClick={handleAddItem}
         disabled={!searchData.clientId || !searchData.patientId || !searchData.itemDescription}
+        data-testid="invoice-add-item-button"
+        aria-label="Add item to invoice"
+        aria-disabled={!searchData.clientId || !searchData.patientId || !searchData.itemDescription}
       >
         Add Item
       </button>

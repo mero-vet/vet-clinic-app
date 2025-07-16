@@ -160,6 +160,10 @@ function NewClientForm({ onSubmit }) {
             value={clientData.firstName}
             onChange={handleChange}
             onBlur={handleBlur}
+            data-testid="client-first-name-input"
+            aria-label="Client first name"
+            aria-required="true"
+            aria-invalid={!!errors.firstName}
             style={{
               ...inputStyle,
               borderColor: errors.firstName ? '#c00' : '#000'
@@ -177,6 +181,10 @@ function NewClientForm({ onSubmit }) {
             value={clientData.lastName}
             onChange={handleChange}
             onBlur={handleBlur}
+            data-testid="client-last-name-input"
+            aria-label="Client last name"
+            aria-required="true"
+            aria-invalid={!!errors.lastName}
             style={{
               ...inputStyle,
               borderColor: errors.lastName ? '#c00' : '#000'
@@ -195,6 +203,10 @@ function NewClientForm({ onSubmit }) {
           value={clientData.email}
           onChange={handleChange}
           onBlur={handleBlur}
+          data-testid="client-email-input"
+          aria-label="Client email address"
+          aria-required="true"
+          aria-invalid={!!errors.email}
           style={{
             ...inputStyle,
             borderColor: errors.email ? '#c00' : '#000'
@@ -214,6 +226,10 @@ function NewClientForm({ onSubmit }) {
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder="(555) 123-4567"
+            data-testid="client-phone-input"
+            aria-label="Client primary phone number"
+            aria-required="true"
+            aria-invalid={!!errors.phone}
             style={{
               ...inputStyle,
               borderColor: errors.phone ? '#c00' : '#000'
@@ -232,6 +248,9 @@ function NewClientForm({ onSubmit }) {
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder="(555) 123-4567"
+            data-testid="client-alternate-phone-input"
+            aria-label="Client alternate phone number"
+            aria-invalid={!!errors.alternatePhone}
             style={{
               ...inputStyle,
               borderColor: errors.alternatePhone ? '#c00' : '#000'
@@ -252,6 +271,10 @@ function NewClientForm({ onSubmit }) {
           value={clientData.street}
           onChange={handleChange}
           onBlur={handleBlur}
+          data-testid="client-street-input"
+          aria-label="Client street address"
+          aria-required="true"
+          aria-invalid={!!errors.street}
           style={{
             ...inputStyle,
             borderColor: errors.street ? '#c00' : '#000'
@@ -270,6 +293,10 @@ function NewClientForm({ onSubmit }) {
             value={clientData.city}
             onChange={handleChange}
             onBlur={handleBlur}
+            data-testid="client-city-input"
+            aria-label="Client city"
+            aria-required="true"
+            aria-invalid={!!errors.city}
             style={{
               ...inputStyle,
               borderColor: errors.city ? '#c00' : '#000'
@@ -286,6 +313,10 @@ function NewClientForm({ onSubmit }) {
             value={clientData.state}
             onChange={handleChange}
             onBlur={handleBlur}
+            data-testid="client-state-select"
+            aria-label="Client state"
+            aria-required="true"
+            aria-invalid={!!errors.state}
             style={{
               ...inputStyle,
               borderColor: errors.state ? '#c00' : '#000'
@@ -311,6 +342,10 @@ function NewClientForm({ onSubmit }) {
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder="12345"
+            data-testid="client-zip-input"
+            aria-label="Client ZIP code"
+            aria-required="true"
+            aria-invalid={!!errors.zip}
             style={{
               ...inputStyle,
               borderColor: errors.zip ? '#c00' : '#000'
@@ -329,6 +364,8 @@ function NewClientForm({ onSubmit }) {
           name="preferredContact"
           value={clientData.preferredContact}
           onChange={handleChange}
+          data-testid="client-preferred-contact-select"
+          aria-label="Client preferred contact method"
           style={inputStyle}
         >
           <option value="phone">Phone</option>
@@ -345,6 +382,8 @@ function NewClientForm({ onSubmit }) {
           value={clientData.notes}
           onChange={handleChange}
           rows="3"
+          data-testid="client-notes-textarea"
+          aria-label="Additional client notes"
           style={{
             ...inputStyle,
             resize: 'vertical'
@@ -359,6 +398,9 @@ function NewClientForm({ onSubmit }) {
 
       <button 
         type="submit" 
+        id="create-client-button"
+        data-testid="client-submit-button"
+        aria-label="Create new client"
         style={{ 
           marginTop: '1rem',
           padding: '0.5rem 1rem',
