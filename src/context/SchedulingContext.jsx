@@ -141,22 +141,45 @@ const generateRandomAppointments = () => {
 };
 
 export const SchedulingProvider = ({ children }) => {
-  // Generate fresh appointments on every mount (page refresh)
+  // Load appointments from localStorage or generate fresh ones
   const [appointments, setAppointments] = useState(() => {
     try {
+      // Try to load from localStorage first
+      const stored = localStorage.getItem('vet-clinic-appointments');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return parsed.length > 0 ? parsed : generateRandomAppointments();
+      }
+      // Generate fresh appointments if none in localStorage
       const generated = generateRandomAppointments();
       return generated.length > 0 ? generated : MOCK_APPOINTMENTS;
     } catch (error) {
-      console.error('Error generating appointments:', error);
+      console.error('Error loading appointments:', error);
       return MOCK_APPOINTMENTS;
     }
   });
+  
+  // Load other state from localStorage
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedProvider, setSelectedProvider] = useState('P001'); // Default to Dr. Patterson
   const [viewMode, setViewMode] = useState('week'); // 'day', 'week', 'month'
   const [confirmationDialog, setConfirmationDialog] = useState(null);
-  const [waitlistEntries, setWaitlistEntries] = useState([]);
-  const [blockedTimes, setBlockedTimes] = useState([]);
+  const [waitlistEntries, setWaitlistEntries] = useState(() => {
+    try {
+      const stored = localStorage.getItem('vet-clinic-waitlist');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [blockedTimes, setBlockedTimes] = useState(() => {
+    try {
+      const stored = localStorage.getItem('vet-clinic-blocked-times');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
   // Initialize service with existing appointments
   useEffect(() => {
@@ -189,6 +212,33 @@ export const SchedulingProvider = ({ children }) => {
       }
     });
   }, []);
+
+  // Persist appointments to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('vet-clinic-appointments', JSON.stringify(appointments));
+    } catch (error) {
+      console.error('Error saving appointments to localStorage:', error);
+    }
+  }, [appointments]);
+
+  // Persist waitlist to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('vet-clinic-waitlist', JSON.stringify(waitlistEntries));
+    } catch (error) {
+      console.error('Error saving waitlist to localStorage:', error);
+    }
+  }, [waitlistEntries]);
+
+  // Persist blocked times to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('vet-clinic-blocked-times', JSON.stringify(blockedTimes));
+    } catch (error) {
+      console.error('Error saving blocked times to localStorage:', error);
+    }
+  }, [blockedTimes]);
 
   // Get providers list
   const providers = useMemo(() => {
@@ -303,7 +353,19 @@ export const SchedulingProvider = ({ children }) => {
 
   const clearAppointments = useCallback(() => {
     // Generate fresh random appointments
-    setAppointments(generateRandomAppointments());
+    const newAppointments = generateRandomAppointments();
+    setAppointments(newAppointments);
+    // Clear localStorage
+    try {
+      localStorage.removeItem('vet-clinic-appointments');
+      localStorage.removeItem('vet-clinic-waitlist');
+      localStorage.removeItem('vet-clinic-blocked-times');
+    } catch (error) {
+      console.error('Error clearing localStorage:', error);
+    }
+    // Reset other state
+    setWaitlistEntries([]);
+    setBlockedTimes([]);
   }, []);
 
   // Availability checking
