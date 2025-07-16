@@ -1,26 +1,50 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { withScreenErrorBoundary } from './components/ErrorBoundary/withErrorBoundary';
 
 // Import screens
-import PatientCheckinScreen from './screens/PatientCheckinScreen';
-import PatientCheckinScreenEnhanced from './screens/PatientCheckinScreenEnhanced';
-import ServicesScreen from './screens/ServicesScreen';
-import CreateNewClientScreen from './screens/CreateNewClientScreen';
-import InvoiceScreen from './screens/InvoiceScreen';
-import NoteScreen from './screens/NoteScreen';
-import SchedulingScreen from './screens/SchedulingScreen';
-import MedicalRecordsScreen from './screens/MedicalRecordsScreen';
-import InventoryScreen from './screens/InventoryScreen';
-import CommunicationsScreen from './screens/CommunicationsScreen';
-import PharmacyScreen from './screens/PharmacyScreen';
-import ReportsScreen from './screens/ReportsScreen';
-import FeatureNotEnabledScreen from './screens/FeatureNotEnabledScreen';
-import DoctorExamScreen from './screens/DoctorExam/DoctorExamScreen';
-import DiagnosticsScreen from './screens/DiagnosticsScreen';
-import ReplayViewer from './components/ReplayViewer';
+import PatientCheckinScreenBase from './screens/PatientCheckinScreen';
+import PatientCheckinScreenEnhancedBase from './screens/PatientCheckinScreenEnhanced';
+import ServicesScreenBase from './screens/ServicesScreen';
+import CreateNewClientScreenBase from './screens/CreateNewClientScreen';
+import InvoiceScreenBase from './screens/InvoiceScreen';
+import NoteScreenBase from './screens/NoteScreen';
+import SchedulingScreenBase from './screens/SchedulingScreen';
+import MedicalRecordsScreenBase from './screens/MedicalRecordsScreen';
+import InventoryScreenBase from './screens/InventoryScreen';
+import CommunicationsScreenBase from './screens/CommunicationsScreen';
+import PharmacyScreenBase from './screens/PharmacyScreen';
+import ReportsScreenBase from './screens/ReportsScreen';
+import FeatureNotEnabledScreenBase from './screens/FeatureNotEnabledScreen';
+import DoctorExamScreenBase from './screens/DoctorExam/DoctorExamScreen';
+import DiagnosticsScreenBase from './screens/DiagnosticsScreen';
+import ReplayViewerBase from './components/ReplayViewer';
+
+// Wrap all screens with error boundaries for PRD-20 Phase 2A
+const PatientCheckinScreen = withScreenErrorBoundary(PatientCheckinScreenBase);
+const PatientCheckinScreenEnhanced = withScreenErrorBoundary(PatientCheckinScreenEnhancedBase);
+const ServicesScreen = withScreenErrorBoundary(ServicesScreenBase);
+const CreateNewClientScreen = withScreenErrorBoundary(CreateNewClientScreenBase);
+const InvoiceScreen = withScreenErrorBoundary(InvoiceScreenBase);
+const NoteScreen = withScreenErrorBoundary(NoteScreenBase);
+const SchedulingScreen = withScreenErrorBoundary(SchedulingScreenBase);
+const MedicalRecordsScreen = withScreenErrorBoundary(MedicalRecordsScreenBase);
+const InventoryScreen = withScreenErrorBoundary(InventoryScreenBase);
+const CommunicationsScreen = withScreenErrorBoundary(CommunicationsScreenBase);
+const PharmacyScreen = withScreenErrorBoundary(PharmacyScreenBase);
+const ReportsScreen = withScreenErrorBoundary(ReportsScreenBase);
+const FeatureNotEnabledScreen = withScreenErrorBoundary(FeatureNotEnabledScreenBase);
+const DoctorExamScreen = withScreenErrorBoundary(DoctorExamScreenBase);
+const DiagnosticsScreen = withScreenErrorBoundary(DiagnosticsScreenBase);
+const ReplayViewer = withScreenErrorBoundary(ReplayViewerBase);
 
 // Import Layout Manager
-import LayoutManager from './components/LayoutManager';
+import LayoutManagerBase from './components/LayoutManager';
+const LayoutManager = withScreenErrorBoundary(LayoutManagerBase, {
+  componentName: 'LayoutManager',
+  errorTitle: 'Layout Error',
+  errorMessage: 'The application layout encountered an error. Please refresh the page.',
+});
 
 // Import CSS
 import './styles/PatientForms.css';

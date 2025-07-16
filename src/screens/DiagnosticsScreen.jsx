@@ -16,7 +16,7 @@ const DiagnosticsScreen = () => {
   const location = useLocation();
   const { currentPatient, getPatientById } = usePatient();
   const { config, currentPIMS } = usePIMS();
-  
+
   const [activeTab, setActiveTab] = useState('order');
   const [selectedTests, setSelectedTests] = useState([]);
   const [activeOrders, setActiveOrders] = useState([]);
@@ -56,12 +56,12 @@ const DiagnosticsScreen = () => {
     const panelTests = panel.tests
       .map(testId => DiagnosticsService.testCatalog.find(t => t.id === testId))
       .filter(Boolean);
-    
+
     // Add all tests from panel
-    const newTests = panelTests.filter(test => 
+    const newTests = panelTests.filter(test =>
       !selectedTests.some(t => t.id === test.id)
     );
-    
+
     setSelectedTests([...selectedTests, ...newTests]);
   };
 
@@ -78,13 +78,13 @@ const DiagnosticsScreen = () => {
 
     // Refresh active orders
     setActiveOrders(DiagnosticsService.getPatientOrders(patientId));
-    
+
     // Clear selection
     setSelectedTests([]);
     setActiveTab('active');
-    
+
     // Show success notification (in real app)
-    console.log('Order created:', order);
+    // Order created successfully
   };
 
   const handleCollectSample = (orderId, testId) => {
@@ -96,7 +96,7 @@ const DiagnosticsScreen = () => {
     const requisition = DiagnosticsService.generateRequisition(orderId);
     if (requisition) {
       // In real app, would open PDF or print
-      console.log('Requisition generated:', requisition);
+      // Requisition generated successfully
       setActiveOrders([...DiagnosticsService.getPatientOrders(patientId)]);
     }
   };
@@ -129,9 +129,9 @@ const DiagnosticsScreen = () => {
               </span>
             </div>
           </div>
-          
+
           <div className="header-actions">
-            <button 
+            <button
               className="back-btn"
               onClick={handleNavigateBack}
             >
@@ -141,19 +141,19 @@ const DiagnosticsScreen = () => {
         </div>
 
         <div className="diagnostics-tabs">
-          <button 
+          <button
             className={`tab ${activeTab === 'order' ? 'active' : ''}`}
             onClick={() => setActiveTab('order')}
           >
             New Order
           </button>
-          <button 
+          <button
             className={`tab ${activeTab === 'active' ? 'active' : ''}`}
             onClick={() => setActiveTab('active')}
           >
             Active Orders ({activeOrders.filter(o => o.status !== 'completed').length})
           </button>
-          <button 
+          <button
             className={`tab ${activeTab === 'results' ? 'active' : ''}`}
             onClick={() => setActiveTab('results')}
           >
@@ -234,7 +234,7 @@ const DiagnosticsScreen = () => {
                   selectedTests={selectedTests}
                   priority={orderPriority}
                   onPriorityChange={setOrderPriority}
-                  onRemoveTest={(testId) => 
+                  onRemoveTest={(testId) =>
                     setSelectedTests(selectedTests.filter(t => t.id !== testId))
                   }
                   onSubmit={handleSubmitOrder}

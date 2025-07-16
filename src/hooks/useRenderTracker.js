@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { debugLog } from '../utils/logger';
 
 const useRenderTracker = (componentName, props = {}) => {
   const renderInfo = useRef({
@@ -9,10 +10,10 @@ const useRenderTracker = (componentName, props = {}) => {
 
   useEffect(() => {
     renderInfo.current.count += 1;
-    
+
     if (import.meta.env.DEV) {
       const changedProps = [];
-      
+
       Object.keys(props).forEach(key => {
         if (props[key] !== renderInfo.current.previousProps[key]) {
           changedProps.push({
@@ -22,15 +23,15 @@ const useRenderTracker = (componentName, props = {}) => {
           });
         }
       });
-      
+
       if (renderInfo.current.count > 1) {
-        console.log(
-          `[RenderTracker] ${componentName} rendered ${renderInfo.current.count} times`,
+        debugLog(
+          `${componentName} rendered ${renderInfo.current.count} times`,
           changedProps.length > 0 ? 'Changed props:' : 'No prop changes',
           changedProps
         );
       }
-      
+
       renderInfo.current.previousProps = { ...props };
       renderInfo.current.changedProps = changedProps;
     }

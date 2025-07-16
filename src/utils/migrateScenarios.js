@@ -3,21 +3,21 @@ import { testDefinitions } from '../tests/testDefinitions';
 
 export async function runScenarioMigration() {
   try {
-    console.log('Starting scenario migration...');
-    
+    // Starting scenario migration
+
     // Check if migration has already been done
     const existingScenarios = await ScenarioService.getAllScenarios();
     if (existingScenarios.length > 0) {
-      console.log(`Found ${existingScenarios.length} existing scenarios. Checking for missing ones...`);
+      // Checking for missing scenarios
     }
-    
+
     // Run migration
     await ScenarioService.migrateExistingScenarios(testDefinitions);
-    
+
     // Verify migration
     const scenarios = await ScenarioService.getAllScenarios();
-    console.log(`Migration complete. Total scenarios: ${scenarios.length}`);
-    
+    // Migration complete
+
     return true;
   } catch (error) {
     console.error('Migration failed:', error);
@@ -31,7 +31,7 @@ if (import.meta.env.DEV) {
   setTimeout(() => {
     runScenarioMigration().then(success => {
       if (success) {
-        console.log('Scenario migration check completed');
+        // Scenario migration check completed
       }
     });
   }, 1000);

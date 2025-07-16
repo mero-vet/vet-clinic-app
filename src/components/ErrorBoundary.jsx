@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { debugLog } from '../utils/logger';
 import { Button, Card } from './design-system';
 
 class ErrorBoundary extends Component {
@@ -18,7 +19,7 @@ class ErrorBoundary extends Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
+
     this.setState(prevState => ({
       error,
       errorInfo,
@@ -41,8 +42,8 @@ class ErrorBoundary extends Component {
       userAgent: navigator.userAgent,
       url: window.location.href,
     };
-    
-    console.log('Error logged to service:', errorData);
+
+    debugLog('Error logged to service:', errorData);
   };
 
   handleReset = () => {
@@ -82,7 +83,7 @@ class ErrorBoundary extends Component {
                 <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
             </div>
-            
+
             <h1 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '12px', textAlign: 'center' }}>
               Oops! Something went wrong
             </h1>
@@ -98,12 +99,12 @@ class ErrorBoundary extends Component {
                   <pre style={{ fontSize: '12px', overflow: 'auto', padding: '8px', backgroundColor: '#fff', borderRadius: '4px' }}>
                     {this.state.error.toString()}
                   </pre>
-                  
+
                   <h3 style={{ fontSize: '14px', fontWeight: '600', marginTop: '16px', marginBottom: '8px' }}>Component Stack:</h3>
                   <pre style={{ fontSize: '12px', overflow: 'auto', padding: '8px', backgroundColor: '#fff', borderRadius: '4px' }}>
                     {this.state.errorInfo?.componentStack}
                   </pre>
-                  
+
                   <p style={{ fontSize: '12px', marginTop: '16px', color: '#6b7280' }}>
                     This error has occurred {this.state.errorCount} time(s)
                   </p>

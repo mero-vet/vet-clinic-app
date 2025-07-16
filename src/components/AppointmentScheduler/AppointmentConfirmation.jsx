@@ -8,7 +8,7 @@ function AppointmentConfirmation({ appointment, onClose }) {
   const { sendConfirmation } = useScheduling();
   const { logCommunication } = useCommunications();
   const toast = useToast();
-  
+
   const [confirmationMethod, setConfirmationMethod] = useState('email');
   const [customMessage, setCustomMessage] = useState('');
   const [includeReminders, setIncludeReminders] = useState(true);
@@ -24,11 +24,11 @@ function AppointmentConfirmation({ appointment, onClose }) {
   const generateConfirmationMessage = () => {
     const appointmentType = appointmentTypes[appointment.appointmentTypeId];
     const dateObj = new Date(appointment.date);
-    const formattedDate = dateObj.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    const formattedDate = dateObj.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
 
     let message = `Dear ${appointment.clientName || 'Client'},\n\n`;
@@ -74,11 +74,11 @@ function AppointmentConfirmation({ appointment, onClose }) {
     try {
       // Send confirmation through scheduling service
       const result = sendConfirmation(appointment.id, confirmationMethod);
-      
+
       if (result.success) {
         // Log communication
         const message = generateConfirmationMessage();
-        
+
         if (logCommunication) {
           logCommunication({
             clientId: appointment.clientId,
@@ -95,7 +95,7 @@ function AppointmentConfirmation({ appointment, onClose }) {
         // Set up reminders if requested
         if (includeReminders) {
           const reminders = [];
-          
+
           if (reminderPreferences.weekBefore && appointment.appointmentTypeId === 'surgery') {
             reminders.push({
               type: 'appointment_reminder',
@@ -105,7 +105,7 @@ function AppointmentConfirmation({ appointment, onClose }) {
               message: 'Surgery reminder: Please review pre-surgery instructions'
             });
           }
-          
+
           if (reminderPreferences.dayBefore) {
             reminders.push({
               type: 'appointment_reminder',
@@ -115,7 +115,7 @@ function AppointmentConfirmation({ appointment, onClose }) {
               message: 'Reminder: You have an appointment tomorrow'
             });
           }
-          
+
           if (reminderPreferences.hourBefore) {
             reminders.push({
               type: 'appointment_reminder',
@@ -127,7 +127,7 @@ function AppointmentConfirmation({ appointment, onClose }) {
           }
 
           // Log scheduled reminders
-          console.log('Scheduled reminders:', reminders);
+          // Scheduled reminders processed
         }
 
         setConfirmationSent(true);
@@ -146,8 +146,8 @@ function AppointmentConfirmation({ appointment, onClose }) {
   if (confirmationSent) {
     return (
       <div style={{ padding: '20px', textAlign: 'center' }}>
-        <div style={{ 
-          fontSize: '48px', 
+        <div style={{
+          fontSize: '48px',
           color: '#4CAF50',
           marginBottom: '20px'
         }}>
@@ -179,11 +179,11 @@ function AppointmentConfirmation({ appointment, onClose }) {
   return (
     <div style={{ padding: '20px', maxWidth: '600px' }}>
       <h3>Send Appointment Confirmation</h3>
-      
+
       {/* Appointment Summary */}
-      <div style={{ 
-        backgroundColor: '#f0f0f0', 
-        padding: '15px', 
+      <div style={{
+        backgroundColor: '#f0f0f0',
+        padding: '15px',
         borderRadius: '4px',
         marginBottom: '20px'
       }}>
@@ -237,7 +237,7 @@ function AppointmentConfirmation({ appointment, onClose }) {
           />
           Set up automatic reminders
         </label>
-        
+
         {includeReminders && (
           <div style={{ marginLeft: '20px', marginTop: '10px' }}>
             {appointment.appointmentTypeId === 'surgery' && (
@@ -282,9 +282,9 @@ function AppointmentConfirmation({ appointment, onClose }) {
       {/* Message Preview */}
       <div style={{ marginBottom: '20px' }}>
         <h4>Message Preview:</h4>
-        <div style={{ 
-          backgroundColor: '#f8f8f8', 
-          padding: '15px', 
+        <div style={{
+          backgroundColor: '#f8f8f8',
+          padding: '15px',
           borderRadius: '4px',
           fontSize: '13px',
           whiteSpace: 'pre-wrap',

@@ -1,4 +1,4 @@
-import { DataFactory } from './mockData/DataFactory';
+import DataFactory from './mockData/DataFactory';
 import QueueManagementService from './QueueManagementService';
 
 class EmergencyService {
@@ -497,4 +497,5 @@ class EmergencyService {
     }
 }
 
-export default new EmergencyService(); 
+export default EmergencyService;
+export { EmergencyService }; 

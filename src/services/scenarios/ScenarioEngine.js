@@ -1,5 +1,30 @@
-import EventEmitter from 'events';
-import { performanceStore } from '../../stores/performanceStore';
+// import EventEmitter from 'events';
+// import { performanceStore } from '../../stores/performanceStore';
+
+class EventEmitter {
+  constructor() {
+    this.events = {};
+  }
+  
+  on(event, callback) {
+    if (!this.events[event]) {
+      this.events[event] = [];
+    }
+    this.events[event].push(callback);
+  }
+  
+  emit(event, data) {
+    if (this.events[event]) {
+      this.events[event].forEach(callback => callback(data));
+    }
+  }
+  
+  off(event, callback) {
+    if (this.events[event]) {
+      this.events[event] = this.events[event].filter(cb => cb !== callback);
+    }
+  }
+}
 
 class ScenarioEngine extends EventEmitter {
   constructor() {
@@ -311,7 +336,7 @@ class ScenarioEngine extends EventEmitter {
     
     this.emit('scenario:completed', result);
     
-    performanceStore.recordScenarioResult(result);
+    // performanceStore.recordScenarioResult(result);
     
     return result;
   }
@@ -399,4 +424,5 @@ class ScenarioEngine extends EventEmitter {
   }
 }
 
+export { ScenarioEngine };
 export default new ScenarioEngine();

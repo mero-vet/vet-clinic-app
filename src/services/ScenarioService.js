@@ -274,7 +274,7 @@ class ScenarioService {
       // Check if scenario already exists
       const existing = await this.getScenario(test.id);
       if (existing) {
-        console.log(`Scenario ${test.id} already exists, skipping migration`);
+        // Migration logging - scenario already exists
         return;
       }
 
@@ -294,11 +294,11 @@ class ScenarioService {
       };
 
       await this.saveScenario(scenario);
-      console.log(`Migrated scenario: ${scenario.name}`);
+      // Migration completed for scenario
     });
 
     await Promise.all(migrationPromises);
-    console.log('Migration completed');
+    // All scenario migrations completed
   }
 
   async getScenariosByPIMS(pimsName) {

@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { perfLog, warnLog, errorLog, debugLog } from '../utils/logger';
 
 const useDataFetchMonitor = (fetchName) => {
   const [loading, setLoading] = useState(false);
@@ -12,9 +13,9 @@ const useDataFetchMonitor = (fetchName) => {
   });
 
   const monitoredFetch = useCallback(async (fetchFn, options = {}) => {
-    const { 
-      onSuccess, 
-      onError, 
+    const {
+      onSuccess,
+      onError,
       timeout = 30000,
       retries = 0,
       retryDelay = 1000,
@@ -22,63 +23,59 @@ const useDataFetchMonitor = (fetchName) => {
 
     setLoading(true);
     setError(null);
-    
+
     const startTime = performance.now();
     fetchMetrics.current.attempts += 1;
-    
+
     const attemptFetch = async (attemptNumber = 0) => {
       try {
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => reject(new Error('Request timeout')), timeout);
         });
-        
+
         const result = await Promise.race([
           fetchFn(),
           timeoutPromise,
         ]);
-        
+
         const duration = performance.now() - startTime;
         fetchMetrics.current.successes += 1;
         fetchMetrics.current.totalDuration += duration;
         fetchMetrics.current.durations.push(duration);
-        
-        if (import.meta.env.DEV) {
-          console.log(`[DataFetch] ${fetchName} completed in ${duration.toFixed(2)}ms`);
-        }
-        
+
+        perfLog(`${fetchName} completed`, duration);
+
         if (duration > 3000) {
-          console.warn(`[DataFetch] Slow request: ${fetchName} took ${duration.toFixed(2)}ms`);
+          warnLog(`Slow request: ${fetchName} took ${duration.toFixed(2)}ms`);
         }
-        
+
         onSuccess?.(result);
         setLoading(false);
         return result;
-        
+
       } catch (err) {
         const duration = performance.now() - startTime;
-        
+
         if (attemptNumber < retries) {
-          if (import.meta.env.DEV) {
-            console.log(`[DataFetch] ${fetchName} failed, retrying (${attemptNumber + 1}/${retries})...`);
-          }
-          
+          debugLog(`${fetchName} failed, retrying (${attemptNumber + 1}/${retries})...`);
+
           await new Promise(resolve => setTimeout(resolve, retryDelay * (attemptNumber + 1)));
           return attemptFetch(attemptNumber + 1);
         }
-        
+
         fetchMetrics.current.failures += 1;
         fetchMetrics.current.totalDuration += duration;
         fetchMetrics.current.durations.push(duration);
-        
-        console.error(`[DataFetch] ${fetchName} failed after ${duration.toFixed(2)}ms`, err);
-        
+
+        errorLog(`${fetchName} failed after ${duration.toFixed(2)}ms`, err);
+
         onError?.(err);
         setError(err);
         setLoading(false);
         throw err;
       }
     };
-    
+
     return attemptFetch();
   }, [fetchName]);
 
@@ -86,7 +83,7 @@ const useDataFetchMonitor = (fetchName) => {
     const avgDuration = fetchMetrics.current.durations.length > 0
       ? fetchMetrics.current.totalDuration / fetchMetrics.current.durations.length
       : 0;
-    
+
     const successRate = fetchMetrics.current.attempts > 0
       ? (fetchMetrics.current.successes / fetchMetrics.current.attempts) * 100
       : 0;

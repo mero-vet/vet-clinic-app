@@ -188,4 +188,5 @@ class ScenarioRegistry {
   }
 }
 
+export { ScenarioRegistry };
 export default new ScenarioRegistry();

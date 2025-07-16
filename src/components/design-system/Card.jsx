@@ -68,4 +68,5 @@ Card.Header = CardHeader;
 Card.Body = CardBody;
 Card.Footer = CardFooter;
 
+export { Card };
 export default Card;

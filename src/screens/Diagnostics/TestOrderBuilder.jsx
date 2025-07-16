@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import './TestOrderBuilder.css';
 
-const TestOrderBuilder = ({ 
-  selectedTests, 
-  priority, 
-  onPriorityChange, 
-  onRemoveTest, 
-  onSubmit, 
-  totalCost 
+const TestOrderBuilder = ({
+  selectedTests,
+  priority,
+  onPriorityChange,
+  onRemoveTest,
+  onSubmit,
+  totalCost
 }) => {
   const [notes, setNotes] = useState('');
   const [fastingRequired, setFastingRequired] = useState(false);
@@ -27,13 +27,13 @@ const TestOrderBuilder = ({
       const volume = parseFloat(test.sampleVolume) || 0;
       return sum + volume;
     }, 0);
-    
+
     return { sampleType, count: tests.length, totalVolume };
   });
 
   const handleSubmit = () => {
     if (selectedTests.length === 0) return;
-    
+
     // In real app, would include notes and other metadata
     onSubmit();
   };
@@ -41,7 +41,7 @@ const TestOrderBuilder = ({
   return (
     <div className="test-order-builder">
       <h2>Order Summary</h2>
-      
+
       {selectedTests.length === 0 ? (
         <div className="empty-order">
           <p>No tests selected</p>
@@ -90,7 +90,7 @@ const TestOrderBuilder = ({
                   <div className="test-info">
                     <span className="test-name">{test.name}</span>
                     <span className="test-meta">
-                      {test.type === 'in-house' ? 'In-House' : 'Send Out'} • 
+                      {test.type === 'in-house' ? 'In-House' : 'Send Out'} •
                       {test.turnaroundTime}
                     </span>
                   </div>
@@ -116,7 +116,7 @@ const TestOrderBuilder = ({
                 <div key={sampleType} className="sample-item">
                   <span className="sample-type">{sampleType}</span>
                   <span className="sample-details">
-                    {count} test{count > 1 ? 's' : ''} • 
+                    {count} test{count > 1 ? 's' : ''} •
                     {totalVolume > 0 ? ` ${totalVolume} mL total` : ' Volume varies'}
                   </span>
                 </div>
@@ -157,15 +157,15 @@ const TestOrderBuilder = ({
           </div>
 
           <div className="order-actions">
-            <button 
+            <button
               className="submit-order-btn"
               onClick={handleSubmit}
             >
               Submit Order
             </button>
-            <button 
+            <button
               className="save-draft-btn"
-              onClick={() => console.log('Save as draft')}
+              onClick={() => {/* Save as draft - placeholder */ }}
             >
               Save as Draft
             </button>

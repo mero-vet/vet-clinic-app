@@ -5,26 +5,26 @@ import { appointmentTypes, calculateEndTime } from '../../utils/appointmentRules
 import PatientSearchBar from '../PatientSearchBar';
 import { useToast } from '../Toast/ToastContext';
 
-function AppointmentForm({ 
-  initialDate = '', 
-  initialTime = '', 
-  onClose, 
+function AppointmentForm({
+  initialDate = '',
+  initialTime = '',
+  onClose,
   onSuccess,
   existingAppointment = null,
   mode = 'create' // 'create', 'edit', 'reschedule'
 }) {
-  const { 
-    providers, 
-    rooms, 
-    addAppointment, 
+  const {
+    providers,
+    rooms,
+    addAppointment,
     rescheduleAppointment,
     getAvailableSlots,
-    checkAvailability 
+    checkAvailability
   } = useScheduling();
-  
+
   const { patients } = usePatient();
   const toast = useToast();
-  
+
   const [formData, setFormData] = useState({
     date: existingAppointment?.date || initialDate,
     time: existingAppointment?.time || initialTime,
@@ -72,7 +72,7 @@ function AppointmentForm({
     if (formData.date && formData.time && formData.providerId) {
       const appointmentType = appointmentTypes[formData.appointmentTypeId];
       const duration = formData.duration || (appointmentType.defaultDuration + appointmentType.bufferTime);
-      
+
       const availability = checkAvailability(
         formData.date,
         formData.time,
@@ -80,7 +80,7 @@ function AppointmentForm({
         formData.providerId,
         formData.roomId
       );
-      
+
       if (!availability.available && mode === 'create') {
         setValidationErrors(prev => ({
           ...prev,
@@ -165,7 +165,7 @@ function AppointmentForm({
 
     try {
       let result;
-      
+
       if (mode === 'reschedule' && existingAppointment) {
         result = rescheduleAppointment(
           existingAppointment.id,
@@ -180,14 +180,14 @@ function AppointmentForm({
           patientName: selectedPatient?.patientName,
           species: selectedPatient?.species
         };
-        
+
         result = addAppointment(appointmentData);
       }
 
       if (result.success) {
         if (formData.sendConfirmation) {
           // Send confirmation (simulated)
-          console.log(`Sending ${formData.confirmationMethod} confirmation for appointment`);
+          // Sending confirmation for appointment
         }
 
         if (onSuccess) {
@@ -229,21 +229,21 @@ function AppointmentForm({
   const endTime = formData.time ? calculateEndTime(formData.time, formData.appointmentTypeId) : '';
 
   return (
-    <div style={{ 
-      backgroundColor: '#f8f8f8', 
-      padding: '20px', 
+    <div style={{
+      backgroundColor: '#f8f8f8',
+      padding: '20px',
       borderRadius: '8px',
       maxWidth: '800px',
       margin: '0 auto'
     }}>
       <h3>{mode === 'reschedule' ? 'Reschedule' : mode === 'edit' ? 'Edit' : 'Schedule New'} Appointment</h3>
-      
+
       <form onSubmit={handleSubmit}>
         {/* Patient Selection */}
         {mode === 'create' && (
           <div style={{ marginBottom: '15px' }}>
             <label>Patient *</label>
-            <PatientSearchBar 
+            <PatientSearchBar
               onPatientSelect={handlePatientSelect}
               selectedPatient={selectedPatient}
             />
@@ -255,9 +255,9 @@ function AppointmentForm({
 
         {/* Display selected patient info */}
         {selectedPatient && (
-          <div style={{ 
-            backgroundColor: '#e0e0e0', 
-            padding: '10px', 
+          <div style={{
+            backgroundColor: '#e0e0e0',
+            padding: '10px',
             marginBottom: '15px',
             borderRadius: '4px'
           }}>
@@ -390,9 +390,9 @@ function AppointmentForm({
               ))}
             </select>
             {appointmentType && (
-              <div style={{ 
-                marginTop: '5px', 
-                padding: '10px', 
+              <div style={{
+                marginTop: '5px',
+                padding: '10px',
                 backgroundColor: appointmentType.colorCode + '20',
                 borderLeft: `4px solid ${appointmentType.colorCode}`,
                 fontSize: '12px'
@@ -491,9 +491,9 @@ function AppointmentForm({
 
         {/* Available Slots */}
         {showAvailability && availableSlots.length > 0 && (
-          <div style={{ 
-            marginTop: '15px', 
-            padding: '10px', 
+          <div style={{
+            marginTop: '15px',
+            padding: '10px',
             backgroundColor: '#f0f0f0',
             borderRadius: '4px'
           }}>

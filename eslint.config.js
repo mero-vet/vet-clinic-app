@@ -33,6 +33,16 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      // Prevent console.log usage in production code
+      'no-console': ['error', {
+        'allow': ['warn', 'error']
+      }],
+      // Additional code quality rules
+      'no-debugger': 'error',
+      'no-unused-vars': ['warn', {
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_'
+      }],
     },
   },
 ]

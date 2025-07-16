@@ -82,4 +82,5 @@ const useScenarioStore = create(
   )
 );
 
+export { useScenarioStore };
 export default useScenarioStore;

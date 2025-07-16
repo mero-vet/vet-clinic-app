@@ -8,6 +8,7 @@ import {
     MdSearch, MdHelp, MdSettings, MdClose, MdHome, MdInfo
 } from 'react-icons/md';
 import { createPIMSUrl } from '../../../utils/urlUtils';
+import { tabLog, errorLog } from '../../../utils/logger';
 
 // Function to load tabs from localStorage
 const loadTabsFromStorage = (getIconForPath) => {
@@ -19,7 +20,7 @@ const loadTabsFromStorage = (getIconForPath) => {
             const parsedTabs = JSON.parse(savedTabs);
             // Only use if we have valid tabs
             if (Array.isArray(parsedTabs) && parsedTabs.length > 0) {
-                console.log('[Tab Debug] Pre-loading tabs from localStorage', parsedTabs);
+                tabLog('Pre-loading tabs from localStorage', parsedTabs);
 
                 // Fix icon components which can't be serialized
                 const restoredTabs = parsedTabs.map(tab => {
@@ -41,7 +42,7 @@ const loadTabsFromStorage = (getIconForPath) => {
             }
         }
     } catch (e) {
-        console.error('Failed to pre-load tabs from localStorage', e);
+        errorLog('Failed to pre-load tabs from localStorage', e);
     }
 
     return null;
@@ -243,12 +244,12 @@ const IntraVetLayout = ({ children }) => {
 
     // Create or activate tab
     const createOrActivateTab = useCallback((path) => {
-        console.log(`[Tab Debug] createOrActivateTab called for path: ${path}`);
+        tabLog(`createOrActivateTab called for path: ${path}`);
 
         // Prevent duplicate activations for the same path in quick succession
         const now = Date.now();
         if (path === lastActivatedPathRef.current && now - lastActivationTimeRef.current < 1000) {
-            console.log(`[Tab Debug] Preventing duplicate activation for ${path} (${now - lastActivationTimeRef.current}ms)`);
+            tabLog(`Preventing duplicate activation for ${path} (${now - lastActivationTimeRef.current}ms)`);
             return null;
         }
 
@@ -260,7 +261,7 @@ const IntraVetLayout = ({ children }) => {
         const existingTabIndex = openTabs.findIndex(tab => tab.path === path);
         if (existingTabIndex !== -1) {
             const existingTab = openTabs[existingTabIndex];
-            console.log(`[Tab Debug] Tab exists, activating: ${existingTab.id}`);
+            tabLog(`Tab exists, activating: ${existingTab.id}`);
             setActiveTab(existingTab.id);
             return existingTab.id;
         }
@@ -268,7 +269,7 @@ const IntraVetLayout = ({ children }) => {
         // If not, find the navigation item to create a tab
         const navItemInfo = findNavigationItem(path);
         if (!navItemInfo) {
-            console.log(`[Tab Debug] No navigation item found for path: ${path}`);
+            tabLog(`No navigation item found for path: ${path}`);
             return null;
         }
 
@@ -282,7 +283,7 @@ const IntraVetLayout = ({ children }) => {
 
         // Create a unique ID
         const uniqueTabId = `${item.id}-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-        console.log(`[Tab Debug] Creating new tab with ID: ${uniqueTabId}`);
+        tabLog(`Creating new tab with ID: ${uniqueTabId}`);
 
         // Create the tab
         const newTab = {
@@ -297,7 +298,7 @@ const IntraVetLayout = ({ children }) => {
             // Check again if a tab with this path was already added
             const existingTabInUpdatedState = prev.find(tab => tab.path === path);
             if (existingTabInUpdatedState) {
-                console.log(`[Tab Debug] Tab was added concurrently, using existing: ${existingTabInUpdatedState.id}`);
+                tabLog(`Tab was added concurrently, using existing: ${existingTabInUpdatedState.id}`);
                 // Don't add a new tab, just return current state
                 setTimeout(() => {
                     setActiveTab(existingTabInUpdatedState.id);
@@ -320,21 +321,21 @@ const IntraVetLayout = ({ children }) => {
     // Navigate to a path (internal use)
     const navigateTo = useCallback((path) => {
         if (!isRouteEnabled(path)) {
-            console.log(`[Tab Debug] Path not enabled: ${path}`);
+            tabLog(`Path not enabled: ${path}`);
             return;
         }
 
-        console.log(`[Tab Debug] Navigating to: ${path}`);
+        tabLog(`Navigating to: ${path}`);
 
         // Only set the flag if it's not already set
         if (!isNavigatingInternally.current) {
             isNavigatingInternally.current = true;
-            console.log(`[Tab Debug] Setting isNavigatingInternally to true`);
+            tabLog(`Setting isNavigatingInternally to true`);
 
             // Set a timeout to reset the flag after navigation
             // Use a longer timeout to ensure the navigation effect completes
             setTimeout(() => {
-                console.log(`[Tab Debug] Resetting isNavigatingInternally to false`);
+                tabLog(`Resetting isNavigatingInternally to false`);
                 isNavigatingInternally.current = false;
             }, 500); // Increase timeout to 500ms to be safe
         }
@@ -345,16 +346,16 @@ const IntraVetLayout = ({ children }) => {
 
     // Handle menu item click
     const handleMenuItemClick = useCallback((item) => {
-        console.log(`[Tab Debug] Menu item clicked: ${item.id}, path: ${item.path}`);
+        tabLog(`Menu item clicked: ${item.id}, path: ${item.path}`);
 
         if (!item.enabled || !item.path) {
-            console.log(`[Tab Debug] Item not enabled or no path, ignoring: ${item.id}`);
+            tabLog(`Item not enabled or no path, ignoring: ${item.id}`);
             return;
         }
 
         // Ensure only one operation happens at a time
         if (isNavigatingInternally.current) {
-            console.log(`[Tab Debug] Navigation already in progress, ignoring click`);
+            tabLog(`Navigation already in progress, ignoring click`);
             return;
         }
 
@@ -367,7 +368,7 @@ const IntraVetLayout = ({ children }) => {
 
     // Handle tab click
     const handleTabClick = useCallback((tab) => {
-        console.log(`[Tab Debug] Tab clicked: ${tab.id}, path: ${tab.path}`);
+        tabLog(`Tab clicked: ${tab.id}, path: ${tab.path}`);
         setActiveTab(tab.id);
         navigateTo(tab.path);
     }, [navigateTo]);
@@ -403,20 +404,20 @@ const IntraVetLayout = ({ children }) => {
         const pathSegments = currentPath.split('/').filter(Boolean);
         const route = pathSegments.length > 1 ? `/${pathSegments.slice(1).join('/')}` : '/';
 
-        console.log(`[Tab Debug] Location changed to: ${currentPath}, route: ${route}`);
-        console.log(`[Tab Debug] isNavigatingInternally: ${isNavigatingInternally.current}`);
-        console.log(`[Tab Debug] lastActivatedPath: ${lastActivatedPathRef.current}`);
+        tabLog(`Location changed to: ${currentPath}, route: ${route}`);
+        tabLog(`isNavigatingInternally: ${isNavigatingInternally.current}`);
+        tabLog(`lastActivatedPath: ${lastActivatedPathRef.current}`);
 
         // Skip this effect if we're handling navigation internally or if this is the same path
         // that was just activated (within the last second)
         if (isNavigatingInternally.current) {
-            console.log(`[Tab Debug] Skipping effect as navigation is being handled internally`);
+            tabLog(`Skipping effect as navigation is being handled internally`);
             return;
         }
 
         if (route === lastActivatedPathRef.current &&
             Date.now() - lastActivationTimeRef.current < 1000) {
-            console.log(`[Tab Debug] Skipping effect as this path was just activated`);
+            tabLog(`Skipping effect as this path was just activated`);
             return;
         }
 
@@ -428,13 +429,13 @@ const IntraVetLayout = ({ children }) => {
                 if (!isNavigatingInternally.current &&
                     !(route === lastActivatedPathRef.current &&
                         Date.now() - lastActivationTimeRef.current < 1000)) {
-                    console.log(`[Tab Debug] Creating/activating tab for external navigation: ${route}`);
+                    tabLog(`Creating/activating tab for external navigation: ${route}`);
 
                     // Check if we already have a tab for this route
                     const existingTab = openTabs.find(tab => tab.path === route);
                     if (existingTab) {
                         // If a tab exists, just activate it
-                        console.log(`[Tab Debug] Tab exists for route ${route}, activating it`);
+                        tabLog(`Tab exists for route ${route}, activating it`);
                         setActiveTab(existingTab.id);
                     } else {
                         // Otherwise create a new tab
@@ -469,9 +470,9 @@ const IntraVetLayout = ({ children }) => {
 
                 localStorage.setItem('intravet-tabs', JSON.stringify(tabsToStore));
                 localStorage.setItem('intravet-active-tab', activeTab);
-                console.log('[Tab Debug] Saved tabs to localStorage', tabsToStore);
+                tabLog('Saved tabs to localStorage', tabsToStore);
             } catch (e) {
-                console.error('Failed to save tabs to localStorage', e);
+                errorLog('Failed to save tabs to localStorage', e);
             }
         }
     }, [openTabs, activeTab]);

@@ -1,0 +1,15 @@
+version: 2
+snapshot:
+  widths: [375, 768, 1280, 1920]
+  minHeight: 1024
+  percyCSS: |
+    /* Hide dynamic elements during visual testing */
+    .timestamp,
+    .loading-spinner,
+    .real-time-data {
+      visibility: hidden;
+    }
+discovery:
+  allowedHostnames: []
+  networkIdleTimeout: 150
+  disableCache: false

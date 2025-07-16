@@ -1,4 +1,5 @@
 // TestStorageService.js - Centralized storage for test logs and screenshots
+import { infoLog, debugLog } from '../utils/logger';
 
 class TestStorageService {
   constructor() {
@@ -22,7 +23,7 @@ class TestStorageService {
   async initSession(meta) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
     const sessionId = `${timestamp}_${meta.scenarioId || 'unknown'}`;
-    
+
     this.currentSessionId = sessionId;
     this.sessionMeta = {
       ...meta,
@@ -63,11 +64,11 @@ class TestStorageService {
     };
 
     await this.adapter.finalizeSession(this.currentSessionId, finalMeta);
-    
+
     const sessionId = this.currentSessionId;
     this.currentSessionId = null;
     this.sessionMeta = null;
-    
+
     return sessionId;
   }
 
@@ -106,11 +107,11 @@ class LocalDiskAdapter {
         if (handles) {
           this.rootDirHandle = handles;
           this.useFileSystem = true;
-          console.log('Using File System Access API for test storage');
+          infoLog('Using File System Access API for test storage');
           return;
         }
       } catch {
-        console.log('File System Access not available, falling back to IndexedDB');
+        debugLog('File System Access not available, falling back to IndexedDB');
       }
     }
 
@@ -121,28 +122,28 @@ class LocalDiskAdapter {
   async initIndexedDB() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.dbName, 1);
-      
+
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         this.db = request.result;
-        console.log('Using IndexedDB for test storage');
+        infoLog('Using IndexedDB for test storage');
         resolve();
       };
-      
+
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
-        
+
         if (!db.objectStoreNames.contains('sessions')) {
           const sessionsStore = db.createObjectStore('sessions', { keyPath: 'sessionId' });
           sessionsStore.createIndex('startTime', 'startTime');
         }
-        
+
         if (!db.objectStoreNames.contains('events')) {
           const eventsStore = db.createObjectStore('events', { autoIncrement: true });
           eventsStore.createIndex('sessionId', 'sessionId');
           eventsStore.createIndex('timestamp', 'timestamp');
         }
-        
+
         if (!db.objectStoreNames.contains('screenshots')) {
           const screenshotsStore = db.createObjectStore('screenshots', { autoIncrement: true });
           screenshotsStore.createIndex('sessionId', 'sessionId');
@@ -161,10 +162,10 @@ class LocalDiskAdapter {
       this.rootDirHandle = await window.showDirectoryPicker({
         mode: 'readwrite'
       });
-      
+
       // Cache the handle for future use
       await navigator.storage.persist();
-      
+
       this.useFileSystem = true;
       return true;
     } catch (err) {
@@ -185,13 +186,13 @@ class LocalDiskAdapter {
     try {
       // Create session directory
       const sessionDir = await this.rootDirHandle.getDirectoryHandle(sessionId, { create: true });
-      
+
       // Write meta.json
       const metaFile = await sessionDir.getFileHandle('meta.json', { create: true });
       const writable = await metaFile.createWritable();
       await writable.write(JSON.stringify(meta, null, 2));
       await writable.close();
-      
+
       // Create img directory
       await sessionDir.getDirectoryHandle('img', { create: true });
     } catch (err) {
@@ -217,7 +218,7 @@ class LocalDiskAdapter {
   async saveEventFileSystem(sessionId, event) {
     try {
       const sessionDir = await this.rootDirHandle.getDirectoryHandle(sessionId);
-      
+
       // Append to events.jsonl
       const eventsFile = await sessionDir.getFileHandle('events.jsonl', { create: true });
       const writable = await eventsFile.createWritable({ keepExistingData: true });
@@ -249,11 +250,11 @@ class LocalDiskAdapter {
     try {
       const sessionDir = await this.rootDirHandle.getDirectoryHandle(sessionId);
       const imgDir = await sessionDir.getDirectoryHandle('img');
-      
+
       // Generate filename based on timestamp
       const index = Math.floor(timestamp / 1000);
       const filename = `${String(index).padStart(3, '0')}.png`;
-      
+
       const file = await imgDir.getFileHandle(filename, { create: true });
       const writable = await file.createWritable();
       await writable.write(blob);
@@ -281,7 +282,7 @@ class LocalDiskAdapter {
   async finalizeSessionFileSystem(sessionId, finalMeta) {
     try {
       const sessionDir = await this.rootDirHandle.getDirectoryHandle(sessionId);
-      
+
       // Update meta.json
       const metaFile = await sessionDir.getFileHandle('meta.json');
       const writable = await metaFile.createWritable();
@@ -309,7 +310,7 @@ class LocalDiskAdapter {
 
   async listSessionsFileSystem(limit) {
     const sessions = [];
-    
+
     try {
       for await (const entry of this.rootDirHandle.values()) {
         if (entry.kind === 'directory') {
@@ -327,7 +328,7 @@ class LocalDiskAdapter {
       console.error('Failed to list sessions from file system:', err);
       return [];
     }
-    
+
     // Sort by start time descending and limit
     return sessions
       .sort((a, b) => b.startTime - a.startTime)
@@ -340,10 +341,10 @@ class LocalDiskAdapter {
       const store = transaction.objectStore('sessions');
       const index = store.index('startTime');
       const sessions = [];
-      
+
       const request = index.openCursor(null, 'prev');
       let count = 0;
-      
+
       request.onsuccess = (event) => {
         const cursor = event.target.result;
         if (cursor && count < limit) {
@@ -354,7 +355,7 @@ class LocalDiskAdapter {
           resolve(sessions);
         }
       };
-      
+
       request.onerror = () => reject(request.error);
     });
   }
@@ -370,12 +371,12 @@ class LocalDiskAdapter {
   async getSessionFileSystem(sessionId) {
     try {
       const sessionDir = await this.rootDirHandle.getDirectoryHandle(sessionId);
-      
+
       // Read meta.json
       const metaFile = await sessionDir.getFileHandle('meta.json');
       const metaText = await (await metaFile.getFile()).text();
       const meta = JSON.parse(metaText);
-      
+
       // Read events
       const events = [];
       try {
@@ -390,7 +391,7 @@ class LocalDiskAdapter {
       } catch {
         // No events file
       }
-      
+
       // Read screenshots
       const screenshots = [];
       try {
@@ -408,9 +409,9 @@ class LocalDiskAdapter {
       } catch {
         // No screenshots
       }
-      
+
       screenshots.sort((a, b) => a.timestamp - b.timestamp);
-      
+
       return { meta, events, screenshots };
     } catch (err) {
       console.error('Failed to get session from file system:', err);
@@ -420,38 +421,38 @@ class LocalDiskAdapter {
 
   async getSessionIndexedDB(sessionId) {
     const transaction = this.db.transaction(['sessions', 'events', 'screenshots'], 'readonly');
-    
+
     // Get meta
     const sessionStore = transaction.objectStore('sessions');
     const meta = await this.getFromStore(sessionStore, sessionId);
-    
+
     if (!meta) {
       throw new Error('Session not found');
     }
-    
+
     // Get events
     const eventsStore = transaction.objectStore('events');
     const eventsIndex = eventsStore.index('sessionId');
     const events = await this.getAllFromIndex(eventsIndex, sessionId);
-    
+
     // Get screenshots
     const screenshotsStore = transaction.objectStore('screenshots');
     const screenshotsIndex = screenshotsStore.index('sessionId');
     const screenshotRecords = await this.getAllFromIndex(screenshotsIndex, sessionId);
-    
+
     const screenshots = await Promise.all(
       screenshotRecords.map(async (record) => ({
         timestamp: record.timestamp,
         dataUrl: await this.blobToDataURL(record.data)
       }))
     );
-    
+
     return { meta, events, screenshots };
   }
 
   async exportZip(sessionId) {
     const session = await this.getSession(sessionId);
-    
+
     // Create zip file using JSZip (will need to add this dependency)
     // For now, return a JSON blob
     const exportData = {
@@ -459,20 +460,20 @@ class LocalDiskAdapter {
       events: session.events,
       screenshotCount: session.screenshots.length
     };
-    
+
     return new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
   }
 
   async deleteOldSessions(daysToKeep) {
     const cutoffTime = Date.now() - (daysToKeep * 24 * 60 * 60 * 1000);
     const sessions = await this.listSessions(1000); // Get more sessions for cleanup
-    
+
     const toDelete = sessions.filter(s => s.startTime < cutoffTime);
-    
+
     for (const session of toDelete) {
       await this.deleteSession(session.sessionId);
     }
-    
+
     return toDelete.length;
   }
 
@@ -494,17 +495,17 @@ class LocalDiskAdapter {
 
   async deleteSessionIndexedDB(sessionId) {
     const transaction = this.db.transaction(['sessions', 'events', 'screenshots'], 'readwrite');
-    
+
     // Delete session
     transaction.objectStore('sessions').delete(sessionId);
-    
+
     // Delete events
     const eventsIndex = transaction.objectStore('events').index('sessionId');
     const eventKeys = await this.getAllKeysFromIndex(eventsIndex, sessionId);
     for (const key of eventKeys) {
       transaction.objectStore('events').delete(key);
     }
-    
+
     // Delete screenshots
     const screenshotsIndex = transaction.objectStore('screenshots').index('sessionId');
     const screenshotKeys = await this.getAllKeysFromIndex(screenshotsIndex, sessionId);
@@ -535,7 +536,7 @@ class LocalDiskAdapter {
     return new Promise((resolve, reject) => {
       const results = [];
       const request = index.openCursor(IDBKeyRange.only(key));
-      
+
       request.onsuccess = (event) => {
         const cursor = event.target.result;
         if (cursor) {
@@ -545,7 +546,7 @@ class LocalDiskAdapter {
           resolve(results);
         }
       };
-      
+
       request.onerror = () => reject(request.error);
     });
   }
@@ -554,7 +555,7 @@ class LocalDiskAdapter {
     return new Promise((resolve, reject) => {
       const keys = [];
       const request = index.openCursor(IDBKeyRange.only(key));
-      
+
       request.onsuccess = (event) => {
         const cursor = event.target.result;
         if (cursor) {
@@ -564,7 +565,7 @@ class LocalDiskAdapter {
           resolve(keys);
         }
       };
-      
+
       request.onerror = () => reject(request.error);
     });
   }

@@ -1,4 +1,4 @@
-import { DataFactory } from './mockData/DataFactory';
+import DataFactory from './mockData/DataFactory';
 import { useUiStore } from '../stores/uiStore';
 
 class QueueManagementService {
@@ -576,4 +576,5 @@ class QueueManagementService {
     }
 }
 
-export default new QueueManagementService(); 
+export default QueueManagementService;
+export { QueueManagementService }; 

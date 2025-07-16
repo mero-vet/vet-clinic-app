@@ -12,7 +12,7 @@ const NotificationSystem = () => {
     const emergencies = activeCheckIns.filter(
       checkIn => checkIn.priority === 'emergency' && checkIn.status === 'arrival'
     );
-    
+
     if (emergencies.length > 0) {
       emergencies.forEach(emergency => {
         addAlert({
@@ -44,17 +44,17 @@ const NotificationSystem = () => {
 
   const addAlert = (alert) => {
     const alertId = `${alert.type}-${alert.checkInId}-${Date.now()}`;
-    const existingAlert = alerts.find(a => 
+    const existingAlert = alerts.find(a =>
       a.checkInId === alert.checkInId && a.type === alert.type
     );
-    
+
     if (!existingAlert) {
       setAlerts(prev => [...prev, { ...alert, id: alertId }]);
-      
+
       if (soundEnabled && alert.type === 'emergency') {
         playNotificationSound();
       }
-      
+
       // Auto-dismiss non-emergency alerts after 30 seconds
       if (alert.type !== 'emergency') {
         setTimeout(() => dismissAlert(alertId), 30000);
@@ -68,7 +68,7 @@ const NotificationSystem = () => {
 
   const playNotificationSound = () => {
     // In a real app, would play an actual sound
-    console.log('🔔 Emergency notification sound');
+    // Emergency notification sound triggered
   };
 
   const getAlertIcon = (type) => {
@@ -88,7 +88,7 @@ const NotificationSystem = () => {
     <div className="notification-system">
       <div className="notification-header">
         <h3>Staff Notifications</h3>
-        <button 
+        <button
           className="sound-toggle"
           onClick={() => setSoundEnabled(!soundEnabled)}
           title={soundEnabled ? 'Mute notifications' : 'Unmute notifications'}
@@ -125,7 +125,7 @@ const NotificationSystem = () => {
                 <h4>{alert.title}</h4>
                 <p>{alert.message}</p>
               </div>
-              <button 
+              <button
                 className="alert-dismiss"
                 onClick={() => dismissAlert(alert.id)}
               >
@@ -143,8 +143,8 @@ const NotificationSystem = () => {
             const roomName = `Exam ${roomNum}`;
             const isOccupied = activeCheckIns.some(c => c.roomNumber === roomName);
             return (
-              <div 
-                key={roomNum} 
+              <div
+                key={roomNum}
                 className={`room-indicator ${isOccupied ? 'occupied' : 'available'}`}
                 title={isOccupied ? 'Occupied' : 'Available'}
               >
