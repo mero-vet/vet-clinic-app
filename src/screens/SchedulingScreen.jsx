@@ -6,6 +6,9 @@ import AppointmentForm from '../components/AppointmentScheduler/AppointmentForm'
 import AvailabilityGrid from '../components/AppointmentScheduler/AvailabilityGrid';
 import CancelModal from '../components/Modals/CancelModal';
 import ConfirmationModal from '../components/Modals/ConfirmationModal';
+import WaitlistManager from '../components/AppointmentScheduler/WaitlistManager';
+import BlockScheduling from '../components/AppointmentScheduler/BlockScheduling';
+import AppointmentConfirmation from '../components/AppointmentScheduler/AppointmentConfirmation';
 import { FALLBACK_CONFIG, MOCK_PROVIDERS } from '../data/mockData';
 import '../styles/PatientForms.css';
 
@@ -47,6 +50,10 @@ function SchedulingScreen() {
   const [appointmentToCancel, setAppointmentToCancel] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [appointmentToConfirm, setAppointmentToConfirm] = useState(null);
+  const [showWaitlistManager, setShowWaitlistManager] = useState(false);
+  const [showBlockScheduling, setShowBlockScheduling] = useState(false);
+  const [showAppointmentConfirmation, setShowAppointmentConfirmation] = useState(false);
+  const [confirmationAppointment, setConfirmationAppointment] = useState(null);
 
   // Generate the days for the current week based on the offset
   const days = useMemo(() => {
@@ -141,6 +148,12 @@ function SchedulingScreen() {
     setShowAppointmentForm(false);
     setSelectedAppointment(null);
     setSelectedSlot(null);
+    
+    // Show appointment confirmation dialog
+    if (appointment && appointment.id) {
+      setConfirmationAppointment(appointment);
+      setShowAppointmentConfirmation(true);
+    }
   }, []);
 
   const handleCancelConfirm = useCallback((appointmentId, reason) => {
@@ -338,6 +351,22 @@ function SchedulingScreen() {
                 style={styles.button}
               >
                 {showAvailabilityGrid ? 'Calendar View' : 'Availability Grid'}
+              </button>
+            </div>
+
+            {/* Advanced Features */}
+            <div style={{ display: 'flex', gap: '5px' }}>
+              <button
+                onClick={() => setShowWaitlistManager(!showWaitlistManager)}
+                style={styles.button}
+              >
+                Waitlist
+              </button>
+              <button
+                onClick={() => setShowBlockScheduling(!showBlockScheduling)}
+                style={styles.button}
+              >
+                Block Time
               </button>
             </div>
 
@@ -804,6 +833,97 @@ function SchedulingScreen() {
               setAppointmentToConfirm(null);
             }}
           />
+        )}
+
+        {/* Waitlist Manager */}
+        {showWaitlistManager && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              minWidth: '800px'
+            }}>
+              <WaitlistManager
+                onClose={() => setShowWaitlistManager(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Block Scheduling */}
+        {showBlockScheduling && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              minWidth: '600px'
+            }}>
+              <BlockScheduling
+                onClose={() => setShowBlockScheduling(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Appointment Confirmation */}
+        {showAppointmentConfirmation && confirmationAppointment && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              minWidth: '500px'
+            }}>
+              <AppointmentConfirmation
+                appointment={confirmationAppointment}
+                onClose={() => {
+                  setShowAppointmentConfirmation(false);
+                  setConfirmationAppointment(null);
+                }}
+              />
+            </div>
+          </div>
         )}
       </div>
     </PIMSScreenWrapper>
