@@ -2,6 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
+import ErrorBoundary from './components/ErrorBoundary'
 import { PatientProvider } from './context/PatientContext'
 import { SchedulingProvider } from './context/SchedulingContext'
 import { MedicalRecordsProvider } from './context/MedicalRecordsContext'
@@ -20,27 +21,29 @@ const root = createRoot(document.getElementById('root'))
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <PIMSProvider>
-        <TestLoggerProvider>
-          <PatientProvider>
-            <SchedulingProvider>
-              <CheckInProvider>
-                <MedicalRecordsProvider>
-                  <InventoryProvider>
-                    <CommunicationsProvider>
-                      <PharmacyProvider>
-                        <ReportsProvider>
-                          <App />
-                        </ReportsProvider>
-                      </PharmacyProvider>
-                    </CommunicationsProvider>
-                  </InventoryProvider>
-                </MedicalRecordsProvider>
-              </CheckInProvider>
-            </SchedulingProvider>
-          </PatientProvider>
-        </TestLoggerProvider>
-      </PIMSProvider>
+      <ErrorBoundary>
+        <PIMSProvider>
+          <TestLoggerProvider>
+            <PatientProvider>
+              <SchedulingProvider>
+                <CheckInProvider>
+                  <MedicalRecordsProvider>
+                    <InventoryProvider>
+                      <CommunicationsProvider>
+                        <PharmacyProvider>
+                          <ReportsProvider>
+                            <App />
+                          </ReportsProvider>
+                        </PharmacyProvider>
+                      </CommunicationsProvider>
+                    </InventoryProvider>
+                  </MedicalRecordsProvider>
+                </CheckInProvider>
+              </SchedulingProvider>
+            </PatientProvider>
+          </TestLoggerProvider>
+        </PIMSProvider>
+      </ErrorBoundary>
     </BrowserRouter>
   </React.StrictMode>
 )

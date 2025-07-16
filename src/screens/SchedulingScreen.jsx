@@ -4,6 +4,9 @@ import { usePIMS } from '../context/PIMSContext';
 import PIMSScreenWrapper from '../components/PIMSScreenWrapper';
 import AppointmentForm from '../components/AppointmentScheduler/AppointmentForm';
 import AvailabilityGrid from '../components/AppointmentScheduler/AvailabilityGrid';
+import CancelModal from '../components/Modals/CancelModal';
+import ConfirmationModal from '../components/Modals/ConfirmationModal';
+import { FALLBACK_CONFIG, MOCK_PROVIDERS } from '../data/mockData';
 import '../styles/PatientForms.css';
 
 /**
@@ -33,12 +36,17 @@ function SchedulingScreen() {
   } = useScheduling();
   
   const { config } = usePIMS();
+  const safeConfig = config || FALLBACK_CONFIG;
   
   const [showAppointmentForm, setShowAppointmentForm] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [showAvailabilityGrid, setShowAvailabilityGrid] = useState(false);
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [appointmentToCancel, setAppointmentToCancel] = useState(null);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [appointmentToConfirm, setAppointmentToConfirm] = useState(null);
 
   // Generate the days for the current week based on the offset
   const days = useMemo(() => {
@@ -110,25 +118,24 @@ function SchedulingScreen() {
         updateAppointmentStatus(appointmentId, 'no_show');
         break;
       case 'cancel':
-        const reason = prompt('Cancellation reason:');
-        if (reason !== null) {
-          cancelAppointment(appointmentId, reason);
+        const appointment = appointments.find(a => a.id === appointmentId);
+        if (appointment) {
+          setAppointmentToCancel(appointment);
+          setShowCancelModal(true);
         }
         break;
       case 'reschedule':
         setShowAppointmentForm(true);
         break;
       case 'confirm':
-        const method = prompt('Send confirmation via (email/sms/both):', 'email');
-        if (method) {
-          const result = sendConfirmation(appointmentId, method);
-          if (result.success) {
-            alert(result.message);
-          }
+        const appt = appointments.find(a => a.id === appointmentId);
+        if (appt) {
+          setAppointmentToConfirm(appt);
+          setShowConfirmationModal(true);
         }
         break;
     }
-  }, [updateAppointmentStatus, cancelAppointment, sendConfirmation]);
+  }, [updateAppointmentStatus, cancelAppointment, sendConfirmation, appointments]);
 
   const handleFormSuccess = useCallback((appointment) => {
     setShowAppointmentForm(false);
@@ -136,9 +143,29 @@ function SchedulingScreen() {
     setSelectedSlot(null);
   }, []);
 
+  const handleCancelConfirm = useCallback((appointmentId, reason) => {
+    cancelAppointment(appointmentId, reason);
+    setShowCancelModal(false);
+    setAppointmentToCancel(null);
+  }, [cancelAppointment]);
+
+  const handleConfirmationSend = useCallback((appointmentId, method) => {
+    const result = sendConfirmation(appointmentId, method);
+    if (result.success) {
+      // Show success toast or notification
+      setConfirmationDialog({
+        action: 'confirmation sent',
+        appointment: appointmentToConfirm
+      });
+      setTimeout(() => setConfirmationDialog(null), 3000);
+    }
+    setShowConfirmationModal(false);
+    setAppointmentToConfirm(null);
+  }, [sendConfirmation, appointmentToConfirm, setConfirmationDialog]);
+
   // Get PIMS-specific styles
   const getPIMSStyles = () => {
-    const pimsName = config.name.toLowerCase();
+    const pimsName = (safeConfig.name || 'default').toLowerCase();
 
     switch (pimsName) {
       case 'cornerstone':
@@ -275,7 +302,7 @@ function SchedulingScreen() {
   const styles = getPIMSStyles();
 
   return (
-    <PIMSScreenWrapper title={config.screenLabels.scheduler}>
+    <PIMSScreenWrapper title={safeConfig.screenLabels?.scheduler || 'Appointment Scheduler'}>
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {/* Toolbar */}
         <div style={{ 
@@ -321,7 +348,7 @@ function SchedulingScreen() {
               style={{ padding: '5px', fontSize: '13px' }}
             >
               <option value="">All Providers</option>
-              {providers.map(provider => (
+              {(providers && providers.length > 0 ? providers : MOCK_PROVIDERS).map(provider => (
                 <option key={provider.id} value={provider.id}>
                   {provider.name}
                 </option>
@@ -448,7 +475,7 @@ function SchedulingScreen() {
                       const dayAppointments = appointments.filter(
                         appt => appt.date === day && 
                                appt.time === timeStr &&
-                               (!selectedProvider || appt.staff?.includes(providers.find(p => p.id === selectedProvider)?.name))
+                               (!selectedProvider || appt.staff?.includes((providers && providers.length > 0 ? providers : MOCK_PROVIDERS).find(p => p.id === selectedProvider)?.name))
                       );
 
                       return (
@@ -754,6 +781,30 @@ function SchedulingScreen() {
             <span>Cancelled</span>
           </div>
         </div>
+
+        {/* Cancel Modal */}
+        {showCancelModal && appointmentToCancel && (
+          <CancelModal
+            appointment={appointmentToCancel}
+            onConfirm={handleCancelConfirm}
+            onCancel={() => {
+              setShowCancelModal(false);
+              setAppointmentToCancel(null);
+            }}
+          />
+        )}
+
+        {/* Confirmation Send Modal */}
+        {showConfirmationModal && appointmentToConfirm && (
+          <ConfirmationModal
+            appointment={appointmentToConfirm}
+            onConfirm={handleConfirmationSend}
+            onCancel={() => {
+              setShowConfirmationModal(false);
+              setAppointmentToConfirm(null);
+            }}
+          />
+        )}
       </div>
     </PIMSScreenWrapper>
   );

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import schedulingService from '../services/SchedulingService';
 import { appointmentTypes, businessHours } from '../utils/appointmentRules';
+import { MOCK_APPOINTMENTS, MOCK_PROVIDERS } from '../data/mockData';
 
 // Enhanced scheduling context with full appointment management features
 // Integrates with SchedulingService for business logic and validation
@@ -141,7 +142,15 @@ const generateRandomAppointments = () => {
 
 export const SchedulingProvider = ({ children }) => {
   // Generate fresh appointments on every mount (page refresh)
-  const [appointments, setAppointments] = useState(() => generateRandomAppointments());
+  const [appointments, setAppointments] = useState(() => {
+    try {
+      const generated = generateRandomAppointments();
+      return generated.length > 0 ? generated : MOCK_APPOINTMENTS;
+    } catch (error) {
+      console.error('Error generating appointments:', error);
+      return MOCK_APPOINTMENTS;
+    }
+  });
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedProvider, setSelectedProvider] = useState('P001'); // Default to Dr. Patterson
   const [viewMode, setViewMode] = useState('week'); // 'day', 'week', 'month'
@@ -183,7 +192,8 @@ export const SchedulingProvider = ({ children }) => {
 
   // Get providers list
   const providers = useMemo(() => {
-    return Array.from(schedulingService.providers.values());
+    const serviceProviders = Array.from(schedulingService.providers.values());
+    return serviceProviders.length > 0 ? serviceProviders : MOCK_PROVIDERS;
   }, []);
 
   // Get rooms list
