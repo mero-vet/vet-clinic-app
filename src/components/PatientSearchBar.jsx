@@ -83,13 +83,19 @@ const PatientSearchBar = () => {
         <label htmlFor="patient-search">Patient Search:</label>
         <input
           ref={searchInputRef}
-          id="patient-search"
+          id="patient-search-input"
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => searchTerm && setShowSuggestions(true)}
           placeholder="Search by patient or owner name..."
+          data-testid="patient-search-field"
+          aria-label="Search patients by name or owner name"
+          aria-autocomplete="list"
+          aria-expanded={showSuggestions}
+          aria-controls="patient-search-results"
+          aria-activedescendant={selectedIndex >= 0 ? `patient-result-${searchResults[selectedIndex]?.patientId}` : undefined}
           style={{ 
             padding: '4px 8px',
             width: '300px',
@@ -98,9 +104,12 @@ const PatientSearchBar = () => {
           }}
         />
         <button 
+          id="patient-search-button"
           onClick={handleSearch}
           disabled={searchResults.length === 0}
           className="windows-button"
+          data-testid="patient-search-submit"
+          aria-label="Search for patients"
           style={{ padding: '4px 16px' }}
         >
           Search
@@ -116,7 +125,11 @@ const PatientSearchBar = () => {
       {showSuggestions && searchResults.length > 0 && (
         <div 
           ref={suggestionsRef}
+          id="patient-search-results"
           className="search-suggestions"
+          role="listbox"
+          aria-label="Patient search results"
+          data-testid="patient-search-suggestions"
           style={{
             position: 'absolute',
             top: '100%',
@@ -133,8 +146,14 @@ const PatientSearchBar = () => {
           {searchResults.map((patient, index) => (
             <div
               key={patient.patientId}
+              id={`patient-result-${patient.patientId}`}
               className={`search-suggestion-item ${index === selectedIndex ? 'selected' : ''}`}
               onClick={() => handleSelectPatient(patient)}
+              role="option"
+              aria-selected={index === selectedIndex}
+              data-testid={`patient-search-result-${index}`}
+              data-patient-id={patient.patientId}
+              data-patient-name={patient.patientName}
               style={{
                 padding: '8px',
                 cursor: 'pointer',

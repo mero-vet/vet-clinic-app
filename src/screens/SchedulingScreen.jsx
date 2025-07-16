@@ -329,7 +329,11 @@ function SchedulingScreen() {
             {/* View Mode Selector */}
             <div style={{ display: 'flex', gap: '5px' }}>
               <button
+                id="view-mode-day-button"
                 onClick={() => setViewMode('day')}
+                data-testid="view-mode-day-button"
+                aria-label="Switch to day view"
+                aria-pressed={viewMode === 'day'}
                 style={{
                   ...styles.button,
                   ...(viewMode === 'day' ? { backgroundColor: '#e0e0e0' } : {})
@@ -338,7 +342,11 @@ function SchedulingScreen() {
                 Day
               </button>
               <button
+                id="view-mode-week-button"
                 onClick={() => setViewMode('week')}
+                data-testid="view-mode-week-button"
+                aria-label="Switch to week view"
+                aria-pressed={viewMode === 'week'}
                 style={{
                   ...styles.button,
                   ...(viewMode === 'week' ? { backgroundColor: '#e0e0e0' } : {})
@@ -347,7 +355,10 @@ function SchedulingScreen() {
                 Week
               </button>
               <button
+                id="toggle-availability-grid-button"
                 onClick={() => setShowAvailabilityGrid(!showAvailabilityGrid)}
+                data-testid="toggle-availability-grid-button"
+                aria-label={showAvailabilityGrid ? 'Switch to calendar view' : 'Switch to availability grid'}
                 style={styles.button}
               >
                 {showAvailabilityGrid ? 'Calendar View' : 'Availability Grid'}
@@ -357,13 +368,19 @@ function SchedulingScreen() {
             {/* Advanced Features */}
             <div style={{ display: 'flex', gap: '5px' }}>
               <button
+                id="waitlist-manager-button"
                 onClick={() => setShowWaitlistManager(!showWaitlistManager)}
+                data-testid="waitlist-manager-button"
+                aria-label="Open waitlist manager"
                 style={styles.button}
               >
                 Waitlist
               </button>
               <button
+                id="block-scheduling-button"
                 onClick={() => setShowBlockScheduling(!showBlockScheduling)}
+                data-testid="block-scheduling-button"
+                aria-label="Open block scheduling"
                 style={styles.button}
               >
                 Block Time
@@ -372,8 +389,11 @@ function SchedulingScreen() {
 
             {/* Provider Filter */}
             <select
+              id="provider-filter-select"
               value={selectedProvider}
               onChange={(e) => setSelectedProvider(e.target.value)}
+              data-testid="provider-filter-select"
+              aria-label="Filter appointments by provider"
               style={{ padding: '5px', fontSize: '13px' }}
             >
               <option value="">All Providers</option>
@@ -387,28 +407,40 @@ function SchedulingScreen() {
             {/* Date Navigation */}
             <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
               <button
+                id="calendar-prev-week-button"
                 onClick={() => setCurrentWeekOffset(prev => prev - 1)}
+                data-testid="calendar-prev-week-button"
+                aria-label="Go to previous week"
                 style={{ ...styles.button, width: '32px' }}
               >
                 ←
               </button>
               <input
+                id="calendar-date-picker"
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
+                data-testid="calendar-date-picker"
+                aria-label="Select date"
                 style={{ padding: '5px', fontSize: '13px' }}
               />
               <button
+                id="calendar-next-week-button"
                 onClick={() => setCurrentWeekOffset(prev => prev + 1)}
+                data-testid="calendar-next-week-button"
+                aria-label="Go to next week"
                 style={{ ...styles.button, width: '32px' }}
               >
                 →
               </button>
               <button
+                id="calendar-today-button"
                 onClick={() => {
                   setCurrentWeekOffset(0);
                   setSelectedDate(new Date().toISOString().split('T')[0]);
                 }}
+                data-testid="calendar-today-button"
+                aria-label="Go to today"
                 style={styles.button}
               >
                 Today
@@ -418,20 +450,26 @@ function SchedulingScreen() {
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
+              id="new-appointment-button"
               onClick={() => {
                 setSelectedSlot(null);
                 setSelectedAppointment(null);
                 setShowAppointmentForm(true);
               }}
+              data-testid="new-appointment-button"
+              aria-label="Create new appointment"
               style={styles.primaryButton}
             >
               New Appointment
             </button>
             <button
+              id="reset-calendar-button"
               onClick={() => {
                 clearAppointments();
                 setCurrentWeekOffset(0);
               }}
+              data-testid="reset-calendar-button"
+              aria-label="Reset calendar to initial state"
               style={styles.button}
             >
               Reset Calendar
@@ -511,32 +549,49 @@ function SchedulingScreen() {
                         <td
                           key={day + timeStr}
                           style={{
-                            padding: '4px',
+                            padding: '0',
                             borderRight: '1px solid #f0f0f0',
                             borderBottom: '1px solid #f0f0f0',
-                            backgroundColor: weekend || pastDate
-                              ? '#f0f0f0'
-                              : dayAppointments.length > 0 ? '#ffd9d9' : '#f8f8f8',
-                            cursor: weekend || pastDate ? 'not-allowed' : 'pointer',
                             minHeight: '60px',
                             height: '60px',
                             verticalAlign: 'top',
                             position: 'relative'
                           }}
-                          onClick={() => {
-                            if (!weekend && !pastDate) {
-                              if (dayAppointments.length > 0) {
-                                setSelectedAppointment(dayAppointments[0]);
-                              } else {
-                                handleSlotClick({
-                                  date: day,
-                                  time: timeStr,
-                                  providerId: selectedProvider || 'P001'
-                                });
-                              }
-                            }
-                          }}
                         >
+                          <button
+                            id={`appointment-slot-${day}-${timeStr.replace(':', '-')}`}
+                            data-testid={`appointment-slot-${day}-${timeStr.replace(':', '-')}`}
+                            data-date={day}
+                            data-time={timeStr}
+                            data-available={!weekend && !pastDate && dayAppointments.length === 0}
+                            aria-label={`${weekend ? 'Closed' : pastDate ? 'Past date' : dayAppointments.length > 0 ? `${dayAppointments.length} appointment(s)` : 'Available'} slot on ${day} at ${timeStr}`}
+                            disabled={weekend || pastDate}
+                            onClick={() => {
+                              if (!weekend && !pastDate) {
+                                if (dayAppointments.length > 0) {
+                                  setSelectedAppointment(dayAppointments[0]);
+                                } else {
+                                  handleSlotClick({
+                                    date: day,
+                                    time: timeStr,
+                                    providerId: selectedProvider || 'P001'
+                                  });
+                                }
+                              }
+                            }}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              padding: '4px',
+                              border: 'none',
+                              backgroundColor: weekend || pastDate
+                                ? '#f0f0f0'
+                                : dayAppointments.length > 0 ? '#ffd9d9' : '#f8f8f8',
+                              cursor: weekend || pastDate ? 'not-allowed' : 'pointer',
+                              textAlign: 'left',
+                              font: 'inherit'
+                            }}
+                          >
                           {weekend ? (
                             <div style={{ fontSize: '11px', color: '#999', textAlign: 'center' }}>
                               Closed
@@ -579,6 +634,7 @@ function SchedulingScreen() {
                               Available
                             </div>
                           )}
+                          </button>
                         </td>
                       );
                     })}
@@ -675,7 +731,10 @@ function SchedulingScreen() {
                 <>
                   {selectedAppointment.status !== 'arrived' && selectedAppointment.status !== 'in_progress' && (
                     <button
+                      id="appointment-check-in-button"
                       onClick={() => handleAppointmentAction('check-in', selectedAppointment.id)}
+                      data-testid="appointment-check-in-button"
+                      aria-label={`Check in appointment for ${selectedAppointment.patient}`}
                       style={{ ...styles.button, fontSize: '12px', padding: '4px 8px' }}
                     >
                       Check In
@@ -683,7 +742,10 @@ function SchedulingScreen() {
                   )}
                   {selectedAppointment.status === 'arrived' && (
                     <button
+                      id="appointment-start-button"
                       onClick={() => handleAppointmentAction('start', selectedAppointment.id)}
+                      data-testid="appointment-start-button"
+                      aria-label={`Start appointment for ${selectedAppointment.patient}`}
                       style={{ ...styles.button, fontSize: '12px', padding: '4px 8px' }}
                     >
                       Start
@@ -691,7 +753,10 @@ function SchedulingScreen() {
                   )}
                   {selectedAppointment.status === 'in_progress' && (
                     <button
+                      id="appointment-complete-button"
                       onClick={() => handleAppointmentAction('complete', selectedAppointment.id)}
+                      data-testid="appointment-complete-button"
+                      aria-label={`Complete appointment for ${selectedAppointment.patient}`}
                       style={{ ...styles.primaryButton, fontSize: '12px', padding: '4px 8px' }}
                     >
                       Complete

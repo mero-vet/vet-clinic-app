@@ -276,13 +276,17 @@ function AppointmentForm({
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
           {/* Date and Time */}
           <div>
-            <label>Date *</label>
+            <label htmlFor="appointment-date-input">Date *</label>
             <input
+              id="appointment-date-input"
               type="date"
               name="date"
               value={formData.date}
               onChange={handleInputChange}
               min={new Date().toISOString().split('T')[0]}
+              data-testid="appointment-date-field"
+              aria-label="Appointment date"
+              aria-required="true"
               style={{ width: '100%', padding: '5px' }}
             />
             {validationErrors.date && (
@@ -294,15 +298,22 @@ function AppointmentForm({
             <label>Time *</label>
             <div style={{ display: 'flex', gap: '5px' }}>
               <input
+                id="appointment-time-input"
                 type="time"
                 name="time"
                 value={formData.time}
                 onChange={handleInputChange}
+                data-testid="appointment-time-field"
+                aria-label="Appointment time"
+                aria-required="true"
                 style={{ flex: 1, padding: '5px' }}
               />
               <button
+                id="find-available-button"
                 type="button"
                 onClick={findAvailableSlots}
+                data-testid="find-available-slots-button"
+                aria-label="Find available time slots"
                 style={{ padding: '5px 10px', fontSize: '12px' }}
               >
                 Find Available
@@ -320,11 +331,15 @@ function AppointmentForm({
 
           {/* Provider and Room */}
           <div>
-            <label>Provider *</label>
+            <label htmlFor="appointment-provider-select">Provider *</label>
             <select
+              id="appointment-provider-select"
               name="providerId"
               value={formData.providerId}
               onChange={handleInputChange}
+              data-testid="appointment-provider-field"
+              aria-label="Select provider"
+              aria-required="true"
               style={{ width: '100%', padding: '5px' }}
             >
               {providers.map(provider => (
@@ -336,11 +351,14 @@ function AppointmentForm({
           </div>
 
           <div>
-            <label>Room</label>
+            <label htmlFor="appointment-room-select">Room</label>
             <select
+              id="appointment-room-select"
               name="roomId"
               value={formData.roomId}
               onChange={handleInputChange}
+              data-testid="appointment-room-field"
+              aria-label="Select examination room"
               style={{ width: '100%', padding: '5px' }}
             >
               <option value="">Auto-assign</option>
@@ -354,11 +372,15 @@ function AppointmentForm({
 
           {/* Appointment Type */}
           <div style={{ gridColumn: 'span 2' }}>
-            <label>Appointment Type *</label>
+            <label htmlFor="appointment-type-select">Appointment Type *</label>
             <select
+              id="appointment-type-select"
               name="appointmentTypeId"
               value={formData.appointmentTypeId}
               onChange={handleInputChange}
+              data-testid="appointment-type-field"
+              aria-label="Select appointment type"
+              aria-required="true"
               style={{ width: '100%', padding: '5px' }}
             >
               {Object.entries(appointmentTypes).map(([id, type]) => (
@@ -382,13 +404,17 @@ function AppointmentForm({
 
           {/* Reason for Visit */}
           <div style={{ gridColumn: 'span 2' }}>
-            <label>Reason for Visit *</label>
+            <label htmlFor="appointment-reason-input">Reason for Visit *</label>
             <input
+              id="appointment-reason-input"
               type="text"
               name="reason"
               value={formData.reason}
               onChange={handleInputChange}
               placeholder="Brief description of visit reason"
+              data-testid="appointment-reason-field"
+              aria-label="Reason for visit"
+              aria-required="true"
               style={{ width: '100%', padding: '5px' }}
             />
             {validationErrors.reason && (
@@ -398,12 +424,15 @@ function AppointmentForm({
 
           {/* Notes */}
           <div style={{ gridColumn: 'span 2' }}>
-            <label>Additional Notes</label>
+            <label htmlFor="appointment-notes-textarea">Additional Notes</label>
             <textarea
+              id="appointment-notes-textarea"
               name="notes"
               value={formData.notes}
               onChange={handleInputChange}
               rows="3"
+              data-testid="appointment-notes-field"
+              aria-label="Additional appointment notes"
               style={{ width: '100%', padding: '5px' }}
               placeholder="Any special instructions or notes"
             />
@@ -411,8 +440,9 @@ function AppointmentForm({
 
           {/* Custom Duration */}
           <div>
-            <label>Custom Duration (minutes)</label>
+            <label htmlFor="appointment-duration-input">Custom Duration (minutes)</label>
             <input
+              id="appointment-duration-input"
               type="number"
               name="duration"
               value={formData.duration || ''}
@@ -421,6 +451,8 @@ function AppointmentForm({
               min="15"
               max="240"
               step="15"
+              data-testid="appointment-duration-field"
+              aria-label="Custom appointment duration in minutes"
               style={{ width: '100%', padding: '5px' }}
             />
           </div>
@@ -429,18 +461,24 @@ function AppointmentForm({
           <div>
             <label>
               <input
+                id="send-confirmation-checkbox"
                 type="checkbox"
                 name="sendConfirmation"
                 checked={formData.sendConfirmation}
                 onChange={handleInputChange}
+                data-testid="send-confirmation-checkbox"
+                aria-label="Send appointment confirmation"
               />
               Send Confirmation
             </label>
             {formData.sendConfirmation && (
               <select
+                id="confirmation-method-select"
                 name="confirmationMethod"
                 value={formData.confirmationMethod}
                 onChange={handleInputChange}
+                data-testid="confirmation-method-field"
+                aria-label="Select confirmation method"
                 style={{ marginLeft: '10px', padding: '5px' }}
               >
                 <option value="email">Email</option>
@@ -464,8 +502,11 @@ function AppointmentForm({
               {availableSlots.map(slot => (
                 <button
                   key={slot.time}
+                  id={`time-slot-${slot.time.replace(':', '-')}`}
                   type="button"
                   onClick={() => selectTimeSlot(slot)}
+                  data-testid={`time-slot-button-${slot.time.replace(':', '-')}`}
+                  aria-label={`Select appointment time ${slot.time}`}
                   style={{
                     padding: '5px 10px',
                     backgroundColor: '#4CAF50',
@@ -486,8 +527,11 @@ function AppointmentForm({
         {/* Form Actions */}
         <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
           <button
+            id="appointment-submit-button"
             type="submit"
             disabled={isSubmitting}
+            data-testid="appointment-submit-button"
+            aria-label={isSubmitting ? 'Scheduling appointment...' : mode === 'reschedule' ? 'Reschedule appointment' : 'Schedule appointment'}
             style={{
               padding: '10px 20px',
               backgroundColor: '#4CAF50',
@@ -502,8 +546,11 @@ function AppointmentForm({
           </button>
           {onClose && (
             <button
+              id="appointment-cancel-button"
               type="button"
               onClick={onClose}
+              data-testid="appointment-cancel-button"
+              aria-label="Cancel appointment scheduling"
               style={{
                 padding: '10px 20px',
                 backgroundColor: '#f44336',

@@ -360,58 +360,76 @@ const PatientCheckinScreen = () => {
           <fieldset style={styles.fieldset}>
             <legend style={styles.legend}>Billing & Contact</legend>
             <div style={styles.formRow}>
-              <label>Balance due:</label>
+              <label htmlFor="balance-due-input">Balance due:</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <input
+                  id="balance-due-input"
                   type="text"
                   name="balanceDue"
                   value={patientData.balanceDue}
                   onChange={handleInputChange}
+                  data-testid="balance-due-field"
+                  aria-label="Balance due amount"
                   style={{ width: '80px', ...styles.input }}
                 />
                 <button
+                  id="view-balance-button"
                   style={{ minWidth: '50px', ...styles.button }}
                   type="button"
+                  data-testid="view-balance-button"
+                  aria-label="View balance details"
                 >
                   View
                 </button>
               </div>
             </div>
             <div style={styles.formRow}>
-              <label>Address:</label>
+              <label htmlFor="address-input">Address:</label>
               <input
+                id="address-input"
                 type="text"
                 name="address"
                 value={patientData.address}
                 onChange={handleInputChange}
+                data-testid="address-field"
+                aria-label="Client street address"
                 style={styles.input}
               />
             </div>
             <div style={styles.formRow}>
-              <label>City:</label>
+              <label htmlFor="city-input">City:</label>
               <input
+                id="city-input"
                 type="text"
                 name="city"
                 value={patientData.city}
                 onChange={handleInputChange}
+                data-testid="city-field"
+                aria-label="Client city"
                 style={styles.input}
               />
             </div>
             <div style={styles.formRow}>
-              <label>State/prov:</label>
+              <label htmlFor="state-prov-input">State/prov:</label>
               <input
+                id="state-prov-input"
                 type="text"
                 name="stateProv"
                 value={patientData.stateProv}
                 onChange={handleInputChange}
+                data-testid="state-prov-field"
+                aria-label="State or province"
                 style={{ ...styles.input, width: '60px' }}
               />
-              <label style={{ marginLeft: '5px' }}>Postal code:</label>
+              <label htmlFor="postal-code-input" style={{ marginLeft: '5px' }}>Postal code:</label>
               <input
+                id="postal-code-input"
                 type="text"
                 name="postalCode"
                 value={patientData.postalCode}
                 onChange={handleInputChange}
+                data-testid="postal-code-field"
+                aria-label="Postal or zip code"
                 style={{ ...styles.input, width: '80px' }}
               />
             </div>
