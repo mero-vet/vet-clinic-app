@@ -5,6 +5,7 @@ import RecentPatientsSidebar from '../../RecentPatientsSidebar';
 import TopMenuToolbar from '../../TopMenuToolbar';
 import TestModal from '../../TestModal';
 import LoginScreen from '../../LoginScreen';
+import MedicalRecordsView from '../../MedicalRecordsView';
 import { MenuProvider } from '../../../context/MenuContext';
 
 
@@ -16,16 +17,32 @@ import { MenuProvider } from '../../../context/MenuContext';
 const CovetrusLayout = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isTestModalOpen, setIsTestModalOpen] = useState(false);
+  const [selectedPatientData, setSelectedPatientData] = useState(null);
+  const [showMedicalRecords, setShowMedicalRecords] = useState(false);
 
   useEffect(() => {
     const handleOpenTestModal = () => {
+      setSelectedPatientData(null); // Clear previous data
       setIsTestModalOpen(true);
     };
 
+    const handleOpenClientModal = (event) => {
+      setSelectedPatientData(event.detail); // Set patient data from event
+      setIsTestModalOpen(true);
+    };
+
+    const handleOpenMedicalRecords = () => {
+      setShowMedicalRecords(true);
+    };
+
     window.addEventListener('openTestModal', handleOpenTestModal);
+    window.addEventListener('openClientModal', handleOpenClientModal);
+    window.addEventListener('openMedicalRecords', handleOpenMedicalRecords);
     
     return () => {
       window.removeEventListener('openTestModal', handleOpenTestModal);
+      window.removeEventListener('openClientModal', handleOpenClientModal);
+      window.removeEventListener('openMedicalRecords', handleOpenMedicalRecords);
     };
   }, []);
 
@@ -67,12 +84,16 @@ const CovetrusLayout = ({ children }) => {
         leftPane={leftPane} 
         rightPane={rightPane}
       >
-        {children}
+        {showMedicalRecords ? <MedicalRecordsView /> : children}
       </AppShell>
       
       <TestModal 
         isOpen={isTestModalOpen}
-        onClose={() => setIsTestModalOpen(false)}
+        onClose={() => {
+          setIsTestModalOpen(false);
+          setSelectedPatientData(null); // Clear data when closing
+        }}
+        patientData={selectedPatientData}
       />
     </MenuProvider>
   );

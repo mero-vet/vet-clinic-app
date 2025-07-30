@@ -1,7 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MdClose, MdMinimize, MdCropSquare } from 'react-icons/md';
 
-const TestModal = ({ isOpen, onClose }) => {
+const TestModal = ({ isOpen, onClose, patientData = null }) => {
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
@@ -28,7 +45,9 @@ const TestModal = ({ isOpen, onClose }) => {
 
         {/* Client Header */}
         <div className="client-header">
-          <span className="client-name">Betsy Marshall</span>
+          <span className="client-name">
+            {patientData ? `${patientData.firstName} ${patientData.lastName}` : 'Betsy Marshall'}
+          </span>
         </div>
 
         {/* Toolbar */}
@@ -60,14 +79,21 @@ const TestModal = ({ isOpen, onClose }) => {
               <span className="item-text">Electronic Card on File AUTH</span>
             </div>
             <div className="content-meta">
-              <span className="created-text">Created by GhentVet on 5/25/2022 9:51 AM</span>
+              <span className="created-text">
+                Created by GhentVet on {patientData ? new Date().toLocaleDateString() : '5/25/2022'} {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} {new Date().toLocaleTimeString().slice(-2)}
+              </span>
               <span className="user-icon">👤</span>
             </div>
           </div>
           <div className="content-details">
             <div className="detail-item">
               <span className="detail-icon">✓</span>
-              <span className="detail-text">Client has authorized electronic card on file.</span>
+              <span className="detail-text">
+                {patientData 
+                  ? `Client ${patientData.firstName} ${patientData.lastName} has authorized electronic card on file for ${patientData.name} (${patientData.species}).`
+                  : 'Client has authorized electronic card on file.'
+                }
+              </span>
             </div>
           </div>
         </div>

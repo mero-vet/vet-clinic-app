@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FileExplorerModal from './FileExplorerModal';
 import ExportProgressModal from './ExportProgressModal';
 
@@ -9,6 +9,21 @@ const ExportSelectionView = () => {
   const [selectedRows, setSelectedRows] = useState([0]); // First row selected by default
   const [showFileExplorer, setShowFileExplorer] = useState(false);
   const [showProgress, setShowProgress] = useState(false);
+
+  // Handle Escape key to close export view
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        handleCloseExport();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
 
   const exportData = [
     {
