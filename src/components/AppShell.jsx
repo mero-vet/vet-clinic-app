@@ -7,6 +7,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import { MdMinimize, MdClose, MdCropSquare } from 'react-icons/md';
+import CovetrusMenuButton from './CovetrusMenuButton';
 
 /**
  * AppShell – Generic Windows-XP-like shell used by the Covetrus persona.
@@ -53,6 +54,9 @@ const AppShell = ({
       {/* Header */}
       <AppBar position="static" color="primary" sx={{ height: 32, minHeight: 32 }}>
         <Toolbar variant="dense" sx={{ minHeight: 32, height: 32, px: 1 }}>
+          <div style={{ marginRight: 8 }}>
+            <CovetrusMenuButton />
+          </div>
           <Typography variant="caption" sx={{ fontWeight: 600, flexGrow: 1 }}>
             Impromed&nbsp;Infinity
           </Typography>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { 
+import {
   MdSearch, MdMap, MdStorage, MdReceipt, MdLock, MdRefresh, MdHistory, MdAssignment,
   MdFileDownload, MdInfo, MdLabel, MdPrint, MdSchedule, MdSort, MdMail, MdPostAdd,
   MdHome, MdPerson, MdCalendarToday, MdBusiness, MdBuild, MdHelp, MdChat, MdFolder,
@@ -9,6 +9,8 @@ import {
 } from 'react-icons/md';
 import { useMenu } from '../context/MenuContext';
 import PerformSearchModal from './PerformSearchModal';
+import PatientSearchModal from './PatientSearchModal';
+import CovetrusMenuButton from './CovetrusMenuButton';
 
 /**
  * TopMenuToolbar - The green toolbar section from Impromed Infinity
@@ -17,6 +19,8 @@ import PerformSearchModal from './PerformSearchModal';
 const TopMenuToolbar = () => {
   const { activeMenu } = useMenu();
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isPatientSearchOpen, setIsPatientSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   
   // Define button sets for each menu context
   const toolbarConfigs = {
@@ -119,12 +123,34 @@ const TopMenuToolbar = () => {
       <div className="toolbar-right">
         <div className="search-group">
           <label>Client Quick Search</label>
-          <input type="text" placeholder="" className="search-input" />
+          <input 
+            type="text" 
+            placeholder="" 
+            className="search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && searchTerm.trim()) {
+                setIsPatientSearchOpen(true);
+              }
+            }}
+          />
           <MdSearch className="search-icon" />
         </div>
         <div className="search-group">
           <label>Patient Quick Search</label>
-          <input type="text" placeholder="" className="search-input" />
+          <input 
+            type="text" 
+            placeholder="" 
+            className="search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && searchTerm.trim()) {
+                setIsPatientSearchOpen(true);
+              }
+            }}
+          />
           <MdSearch className="search-icon" />
         </div>
         <div className="control-group">
@@ -157,6 +183,12 @@ const TopMenuToolbar = () => {
       <PerformSearchModal 
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}
+      />
+      
+      <PatientSearchModal 
+        isOpen={isPatientSearchOpen}
+        onClose={() => setIsPatientSearchOpen(false)}
+        searchTerm={searchTerm}
       />
     </div>
   );

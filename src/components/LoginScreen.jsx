@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdClose, MdExpandMore, MdExpandLess } from 'react-icons/md';
 
 const LoginScreen = ({ onLogin }) => {
@@ -9,6 +9,21 @@ const LoginScreen = ({ onLogin }) => {
   const [database, setDatabase] = useState('Impromed');
   const [business, setBusiness] = useState('Granby Veterinary Hospital');
   const [desktop, setDesktop] = useState('Betsy');
+
+  // Handle Escape key to close/cancel login
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        handleCancel();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
 
   const operatorOptions = [
     'A Edrington (A)',

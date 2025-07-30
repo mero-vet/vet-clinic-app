@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdClose, MdMinimize } from 'react-icons/md';
 
 const PerformSearchModal = ({ isOpen, onClose }) => {
@@ -6,6 +6,23 @@ const PerformSearchModal = ({ isOpen, onClose }) => {
   const [comment, setComment] = useState('');
   const [searchCompleted, setSearchCompleted] = useState(false);
   const [searchResults, setSearchResults] = useState('');
+
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose]);
 
   const searchOptions = [
     {

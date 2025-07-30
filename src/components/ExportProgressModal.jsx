@@ -3,6 +3,23 @@ import React, { useState, useEffect } from 'react';
 const ExportProgressModal = ({ isOpen, onClose }) => {
   const [progress, setProgress] = useState(0);
 
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose]);
+
   useEffect(() => {
     if (isOpen) {
       setProgress(0);

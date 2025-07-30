@@ -1,10 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdClose, MdMinimize, MdFolder, MdPerson, MdImage, MdMusicNote, MdVideoLibrary, MdStorage, MdCloud } from 'react-icons/md';
 
 const FileExplorerModal = ({ isOpen, onClose, onSave }) => {
   const [fileName, setFileName] = useState('');
   const [saveAsType, setSaveAsType] = useState('Text File (*.txt)');
   const [currentPath, setCurrentPath] = useState('Desktop');
+
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose]);
 
   const folders = [
     { name: 'Icons', icon: MdFolder },
