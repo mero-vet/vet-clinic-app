@@ -224,22 +224,22 @@ const pimsConfigurations = {
 
     // Covetrus Pulse - Cloud-based modern SaaS interface
     covetrus: {
-        name: "Covetrus Pulse",
+        name: "Covetrus (XP)",
         colors: {
-            primary: "#6200EA", // Deep purple
-            secondary: "#FFFFFF", // White
-            background: "#FAFAFA", // Near white
-            text: "#212121", // Near black
-            border: "#E0E0E0", // Light gray
-            highlight: "#B388FF", // Light purple
+            primary: "#1d4a9e", // Windows XP blue nav bar
+            secondary: "#f05a28", // Orange accent
+            background: "#f0f4fb", // XP light blue-ish background
+            text: "#000000", // Black text
+            border: "#c9c9c9", // Light grey border
+            highlight: "#1d4a9e", // Same as primary for focus rings
         },
         typography: {
-            fontFamily: "'Montserrat', 'Roboto', sans-serif",
+            fontFamily: "'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
             fontSize: "14px",
         },
         appearance: {
-            borderRadius: "8px",
-            buttonStyle: "floating", // Floating action buttons
+            borderRadius: "4px",
+            buttonStyle: "flat", // XP flatish buttons
         },
         logo: {
             text: "Covetrus Pulse",
@@ -252,7 +252,7 @@ const pimsConfigurations = {
         layout: {
             type: "modern-saas",
             menuPosition: "top",
-            navigationStyle: "mega-menu",
+            navigationStyle: "xp-grid",
         },
         screenLabels: {
             checkin: "Patient Flow",

@@ -20,6 +20,12 @@ import DoctorExamScreenBase from './screens/DoctorExam/DoctorExamScreen';
 import DiagnosticsScreenBase from './screens/DiagnosticsScreen';
 import ReplayViewerBase from './components/ReplayViewer';
 
+// Covetrus XP pages
+import Dashboard from './pages/Dashboard';
+import PatientChart from './pages/PatientChart';
+import RecordNoteEditor from './pages/RecordNoteEditor';
+import PrintRecord from './pages/PrintRecord';
+
 // Wrap all screens with error boundaries for PRD-20 Phase 2A
 const PatientCheckinScreen = withScreenErrorBoundary(PatientCheckinScreenBase);
 const PatientCheckinScreenEnhanced = withScreenErrorBoundary(PatientCheckinScreenEnhancedBase);
@@ -87,7 +93,12 @@ function App() {
           {/* PIMS-specific routes */}
           {['cornerstone', 'avimark', 'easyvet', 'intravet', 'covetrus'].map(pims => (
             <React.Fragment key={pims}>
-              <Route path={`/${pims}`} element={<PatientCheckinScreenEnhanced key={`${pims}-checkin`} />} />
+              {/* Covetrus overrides root to Dashboard */}
+              {pims === 'covetrus' ? (
+                <Route path={`/${pims}`} element={<Dashboard key={`${pims}-dashboard`} />} />
+              ) : (
+                <Route path={`/${pims}`} element={<PatientCheckinScreenEnhanced key={`${pims}-checkin`} />} />
+              )}
               <Route path={`/${pims}/patient-checkin/:patientId`} element={<PatientCheckinScreenEnhanced key={`${pims}-checkin-patient`} />} />
               <Route path={`/${pims}/exam/:patientId`} element={<DoctorExamScreen key={`${pims}-exam`} />} />
               <Route path={`/${pims}/services`} element={<ServicesScreen key={`${pims}-services`} />} />
@@ -103,6 +114,15 @@ function App() {
               <Route path={`/${pims}/pharmacy`} element={<PharmacyScreen key={`${pims}-pharmacy`} />} />
               <Route path={`/${pims}/pharmacy/:patientId`} element={<PharmacyScreen key={`${pims}-pharmacy-patient`} />} />
               <Route path={`/${pims}/reports`} element={<ReportsScreen key={`${pims}-reports`} />} />
+              {/* Covetrus additional routes */}
+              {pims === 'covetrus' && (
+                <>
+                  <Route path="/covetrus/patient/:id" element={<PatientChart />} />
+                  <Route path="/covetrus/patient/:id/record/new" element={<RecordNoteEditor />} />
+                  <Route path="/covetrus/record/:noteId" element={<RecordNoteEditor />} />
+                  <Route path="/covetrus/print/record/:noteId" element={<PrintRecord />} />
+                </>
+              )}
             </React.Fragment>
           ))}
 
