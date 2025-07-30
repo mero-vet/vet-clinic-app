@@ -340,6 +340,7 @@ function AppointmentForm({
               data-testid="appointment-provider-field"
               aria-label="Select provider"
               aria-required="true"
+              className="note-dropdown"
               style={{ width: '100%', padding: '5px' }}
             >
               {providers.map(provider => (
@@ -359,6 +360,7 @@ function AppointmentForm({
               onChange={handleInputChange}
               data-testid="appointment-room-field"
               aria-label="Select examination room"
+              className="note-dropdown"
               style={{ width: '100%', padding: '5px' }}
             >
               <option value="">Auto-assign</option>

@@ -62,7 +62,7 @@ const TestModal = ({ isOpen, onClose, patientData = null }) => {
           <div className="toolbar-spacer"></div>
           <div className="client-status">
             <span className="status-icon">🏆</span>
-            <select className="status-dropdown">
+            <select className="status-dropdown note-dropdown">
               <option>Green Good Client</option>
               <option>Yellow Caution Client</option>
               <option>Red Problem Client</option>
@@ -80,7 +80,7 @@ const TestModal = ({ isOpen, onClose, patientData = null }) => {
             </div>
             <div className="content-meta">
               <span className="created-text">
-                Created by GhentVet on {patientData ? new Date().toLocaleDateString() : '5/25/2022'} {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} {new Date().toLocaleTimeString().slice(-2)}
+                Created by GhentVet on {patientData ? new Date().toLocaleDateString() : '5/25/2022'} {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} {new Date().toLocaleTimeString().slice(-2)}
               </span>
               <span className="user-icon">👤</span>
             </div>
@@ -89,7 +89,7 @@ const TestModal = ({ isOpen, onClose, patientData = null }) => {
             <div className="detail-item">
               <span className="detail-icon">✓</span>
               <span className="detail-text">
-                {patientData 
+                {patientData
                   ? `Client ${patientData.firstName} ${patientData.lastName} has authorized electronic card on file for ${patientData.name} (${patientData.species}).`
                   : 'Client has authorized electronic card on file.'
                 }

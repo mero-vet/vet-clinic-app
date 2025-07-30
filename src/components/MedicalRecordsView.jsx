@@ -7,8 +7,8 @@ const MedicalRecordsView = ({ patientData }) => {
   const [activeTab, setActiveTab] = useState('All');
   const [showNoteForm, setShowNoteForm] = useState(false);
 
-  // All medical records data
-  const allMedicalRecords = [
+  // All medical records data - converted to state so we can add new notes
+  const [allMedicalRecords, setAllMedicalRecords] = useState([
     {
       date: '07/07/2025',
       type: 'Note',
@@ -16,6 +16,146 @@ const MedicalRecordsView = ({ patientData }) => {
       provider: 'AF Alexis Franklin',
       details: 'Current Infection - Cytopoint injected given. Weight is 15.8 kg. Dose given in muscle was appropriate.',
       color: '#8B4B8A' // Purple
+    },
+    {
+      date: '05/14/2025',
+      type: 'Note',
+      description: 'Update after Surgery',
+      provider: 'A A Edrington',
+      color: '#8B4B8A'
+    },
+    {
+      date: '01/03/2025',
+      type: 'Note',
+      description: 'p is vomiting and not eating',
+      provider: 'CS Camille Singleton, LVT',
+      color: '#8B4B8A'
+    },
+    {
+      date: '12/10/2024',
+      type: 'Note',
+      description: 'Proheart12 - RIGHT, N/T, A/G',
+      provider: 'EMM Dr Betsy Marshall',
+      color: '#8B4B8A'
+    },
+    {
+      date: '06/24/2024',
+      type: 'Note',
+      description: 'Anal glands/nail trim',
+      provider: 'JR Jahaira Reyes',
+      color: '#8B4B8A'
+    },
+    {
+      date: '02/09/2024',
+      type: 'Note',
+      description: 'fecal results - NPS',
+      provider: 'JO Jessica Ols, LVT',
+      color: '#8B4B8A'
+    },
+    {
+      date: '11/28/2023',
+      type: 'Note',
+      description: 'VitusVet Connect Message - 11/28/2023 6:20:59 AM',
+      provider: 'KF Dr. Kim Fidler',
+      color: '#8B4B8A'
+    },
+    {
+      date: '11/17/2023',
+      type: 'Note',
+      description: 'Proheart 12 Inj- LEFT',
+      provider: 'MN Melody Nelson, LVT',
+      color: '#8B4B8A'
+    },
+    {
+      date: '10/23/2023',
+      type: 'Note',
+      description: 'incision check',
+      provider: 'JO Jessica Ols, LVT',
+      color: '#8B4B8A'
+    },
+    {
+      date: '09/01/2023',
+      type: 'Note',
+      description: 'Tech Appointment',
+      provider: 'HF Heather Foster',
+      color: '#8B4B8A'
+    },
+    {
+      date: '11/23/2022',
+      type: 'Note',
+      description: 'Proheart/AGE',
+      provider: 'EMM Dr Betsy Marshall',
+      color: '#8B4B8A'
+    },
+    {
+      date: '05/04/2022',
+      type: 'Note',
+      description: 'Express anal glands',
+      provider: 'CS Camille Singleton, LVT',
+      color: '#8B4B8A'
+    },
+    {
+      date: '05/02/2022',
+      type: 'Note',
+      description: 'Vomiting',
+      provider: 'EMM Dr Betsy Marshall',
+      color: '#8B4B8A'
+    },
+    {
+      date: '02/21/2022',
+      type: 'Note',
+      description: 'update on blood work - HT',
+      provider: 'EMM Dr Betsy Marshall',
+      color: '#8B4B8A'
+    },
+    {
+      date: '11/24/2021',
+      type: 'Note',
+      description: 'Proheart 12 + A/G',
+      provider: 'EMM Dr Betsy Marshall',
+      color: '#8B4B8A'
+    },
+    {
+      date: '02/17/2021',
+      type: 'Note',
+      description: 'EMOTIONAL HEALTH RECORD',
+      provider: 'CS Camille Singleton',
+      color: '#8B4B8A'
+    },
+    {
+      date: '11/25/2020',
+      type: 'Note',
+      description: 'Proheart + Express A/G',
+      provider: 'EMM Dr Betsy Marshall',
+      color: '#8B4B8A'
+    },
+    {
+      date: '05/10/2020',
+      type: 'Note',
+      description: 'Labwork',
+      provider: 'JB Jen Batkin',
+      color: '#8B4B8A'
+    },
+    {
+      date: '03/09/2020',
+      type: 'Note',
+      description: 'Labwork',
+      provider: 'JB Jen Batkin',
+      color: '#8B4B8A'
+    },
+    {
+      date: '03/03/2020',
+      type: 'Note',
+      description: 'ultrasound training',
+      provider: 'CS Camille Singleton',
+      color: '#8B4B8A'
+    },
+    {
+      date: '11/26/2019',
+      type: 'Note',
+      description: 'Anal Gland Expression -Proheart',
+      provider: 'AR Amanda Rourke',
+      color: '#8B4B8A'
     },
     {
       date: '07/03/2025',
@@ -72,100 +212,78 @@ const MedicalRecordsView = ({ patientData }) => {
       description: 'Bionet Trend',
       provider: 'EMM Dr Betsy Marshall',
       color: '#87CEEB' // Light Blue
+    },
+    {
+      definition: 'Fecal Flotation Test - Annual',
+      dueDate: '11/25/2025',
+      performed: '11/25/2024',
+      maySend: true,
+      declined: false,
+      deferred: false
+    },
+    {
+      definition: 'Proheart12',
+      dueDate: '12/10/2025',
+      performed: '12/10/2024',
+      maySend: true,
+      declined: false,
+      deferred: false
+    },
+    {
+      definition: 'Heartworm Test Annual',
+      dueDate: '1/3/2026',
+      performed: '1/3/2025',
+      maySend: true,
+      declined: false,
+      deferred: false
+    },
+    {
+      definition: 'Annual Senior Bloodwork',
+      dueDate: '1/3/2026',
+      performed: '1/3/2025',
+      maySend: true,
+      declined: false,
+      deferred: false
+    },
+    {
+      definition: 'Bordetella Vaccination',
+      dueDate: '2/4/2026',
+      performed: '2/4/2025',
+      maySend: false,
+      declined: true,
+      deferred: false
+    },
+    {
+      definition: 'Annual Physical Exam',
+      dueDate: '2/7/2026',
+      performed: '2/7/2025',
+      maySend: true,
+      declined: false,
+      deferred: false
+    },
+    {
+      definition: 'Leptospirosis Vaccination',
+      dueDate: '2/7/2026',
+      performed: '2/7/2025',
+      maySend: true,
+      declined: false,
+      deferred: false
     }
-  ];
+  ]);
 
-  // Expanded note records data for "Note" tab
-  const noteRecords = [
-    { date: '07/07/2025', type: 'Note', description: 'Cytopoint', provider: 'AF Alexis Franklin', color: '#87CEEB' },
-    { date: '05/14/2025', type: 'Note', description: 'Update after Surgery', provider: 'A A Edrington', color: '#87CEEB' },
-    { date: '01/03/2025', type: 'Note', description: 'p is vomiting and not eating', provider: 'CS Camille Singleton, LVT', color: '#87CEEB' },
-    { date: '12/10/2024', type: 'Note', description: 'Proheart12 - RIGHT, N/T, A/G', provider: 'EMM Dr Betsy Marshall', color: '#87CEEB' },
-    { date: '06/24/2024', type: 'Note', description: 'Anal glands/nail trim', provider: 'JR Jahaira Reyes', color: '#87CEEB' },
-    { date: '02/09/2024', type: 'Note', description: 'fecal results - NPS', provider: 'JO Jessica Ols, LVT', color: '#87CEEB' },
-    { date: '11/28/2023', type: 'Note', description: 'VitusVet Connect Message - 11/28/2023 6:20:59 AM', provider: 'KF Dr. Kim Fidler', color: '#87CEEB' },
-    { date: '11/17/2023', type: 'Note', description: 'Proheart 12 Inj- LEFT', provider: 'MN Melody Nelson, LVT', color: '#87CEEB' },
-    { date: '10/23/2023', type: 'Note', description: 'incision check', provider: 'JO Jessica Ols, LVT', color: '#87CEEB' },
-    { date: '09/01/2023', type: 'Note', description: 'Tech Appointment', provider: 'HF Heather Foster', color: '#87CEEB' },
-    { date: '11/23/2022', type: 'Note', description: 'Proheart/AGE', provider: 'EMM Dr Betsy Marshall', color: '#87CEEB' },
-    { date: '05/04/2022', type: 'Note', description: 'Express anal glands', provider: 'CS Camille Singleton, LVT', color: '#87CEEB' },
-    { date: '05/02/2022', type: 'Note', description: 'Vomiting', provider: 'EMM Dr Betsy Marshall', color: '#87CEEB' },
-    { date: '02/21/2022', type: 'Note', description: 'update on blood work - HT', provider: 'EMM Dr Betsy Marshall', color: '#87CEEB' },
-    { date: '11/24/2021', type: 'Note', description: 'Proheart 12 + A/G', provider: 'EMM Dr Betsy Marshall', color: '#87CEEB' },
-    { date: '02/17/2021', type: 'Note', description: 'EMOTIONAL HEALTH RECORD', provider: 'CS Camille Singleton', color: '#87CEEB' },
-    { date: '11/25/2020', type: 'Note', description: 'Proheart + Express A/G', provider: 'EMM Dr Betsy Marshall', color: '#87CEEB' },
-    { date: '05/10/2020', type: 'Note', description: 'Labwork', provider: 'JB Jen Batkin', color: '#87CEEB' },
-    { date: '03/09/2020', type: 'Note', description: 'Labwork', provider: 'JB Jen Batkin', color: '#87CEEB' },
-    { date: '03/03/2020', type: 'Note', description: 'ultrasound training', provider: 'CS Camille Singleton', color: '#87CEEB' },
-    { date: '11/26/2019', type: 'Note', description: 'Anal Gland Expression -Proheart', provider: 'AR Amanda Rourke', color: '#87CEEB' }
-  ];
 
-  const reminderData = [
-    { 
-      definition: 'Fecal Flotation Test - Annual', 
-      dueDate: '11/25/2025', 
-      performed: '11/25/2024', 
-      maySend: true, 
-      declined: false, 
-      deferred: false 
-    },
-    { 
-      definition: 'Proheart12', 
-      dueDate: '12/10/2025', 
-      performed: '12/10/2024', 
-      maySend: true, 
-      declined: false, 
-      deferred: false 
-    },
-    { 
-      definition: 'Heartworm Test Annual', 
-      dueDate: '1/3/2026', 
-      performed: '1/3/2025', 
-      maySend: true, 
-      declined: false, 
-      deferred: false 
-    },
-    { 
-      definition: 'Annual Senior Bloodwork', 
-      dueDate: '1/3/2026', 
-      performed: '1/3/2025', 
-      maySend: true, 
-      declined: false, 
-      deferred: false 
-    },
-    { 
-      definition: 'Bordetella Vaccination', 
-      dueDate: '2/4/2026', 
-      performed: '2/4/2025', 
-      maySend: false, 
-      declined: true, 
-      deferred: false 
-    },
-    { 
-      definition: 'Annual Physical Exam', 
-      dueDate: '2/7/2026', 
-      performed: '2/7/2025', 
-      maySend: true, 
-      declined: false, 
-      deferred: false 
-    },
-    { 
-      definition: 'Leptospirosis Vaccination', 
-      dueDate: '2/7/2026', 
-      performed: '2/7/2025', 
-      maySend: true, 
-      declined: false, 
-      deferred: false 
-    }
-  ];
+
 
   const tabs = ['All', 'Ctrl', 'Xray', 'DX', 'Form', 'Note', 'Image', 'Lab', 'Problem', 'SOAP', 'Surgery', 'Link', 'Case', 'Invoice', 'History', 'Trt', 'Recheck'];
 
   // Get records based on active tab
   const getFilteredRecords = () => {
-    switch(activeTab) {
+    switch (activeTab) {
       case 'Note':
-        return noteRecords;
+        // Filter notes from allMedicalRecords and sort by date (most recent first)
+        return allMedicalRecords
+          .filter(record => record.type === 'Note')
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
       case 'All':
       default:
         return allMedicalRecords;
@@ -173,7 +291,9 @@ const MedicalRecordsView = ({ patientData }) => {
   };
 
   const currentRecords = getFilteredRecords();
-  const recordCount = activeTab === 'Note' ? '23 of 23' : '200 of 597';
+  const recordCount = activeTab === 'Note' ?
+    `${currentRecords.length} of ${currentRecords.length}` :
+    '200 of 597';
 
   const handleAddItem = () => {
     setShowNoteForm(true);
@@ -181,8 +301,21 @@ const MedicalRecordsView = ({ patientData }) => {
 
   const handleSaveNote = (noteData) => {
     console.log('Saving note:', noteData);
-    // Add the new note to the records
-    setShowNoteForm(false);
+
+    // Create a new medical record entry from the note data
+    const newRecord = {
+      date: noteData.date, // Use the date from the form
+      type: 'Note',
+      description: noteData.title || noteData.content || 'New Note', // Use title if available, otherwise content or default
+      provider: noteData.providerFullName || 'Unknown Provider',
+      details: noteData.content,
+      color: '#8B4B8A' // Purple color like other notes
+    };
+
+    // Add the new note to the beginning of the records (most recent first)
+    setAllMedicalRecords(prevRecords => [newRecord, ...prevRecords]);
+
+    // Don't close the form here - let the Exit button handle that
   };
 
   const handleCloseNoteForm = () => {
@@ -265,7 +398,7 @@ const MedicalRecordsView = ({ patientData }) => {
               <span>Declined</span>
               <span>Deferred</span>
             </div>
-            {reminderData.map((reminder, index) => (
+            {allMedicalRecords.filter(record => record.definition).map((reminder, index) => (
               <div key={index} className="reminder-row">
                 <span className="reminder-def">{reminder.definition}</span>
                 <span className="due-date">{reminder.dueDate}</span>
@@ -298,8 +431,8 @@ const MedicalRecordsView = ({ patientData }) => {
         <div className="records-header">
           <div className="records-tabs">
             {tabs.map(tab => (
-              <button 
-                key={tab} 
+              <button
+                key={tab}
                 className={`records-tab ${activeTab === tab ? 'active' : ''}`}
                 onClick={() => setActiveTab(tab)}
               >
@@ -360,7 +493,7 @@ const MedicalRecordsView = ({ patientData }) => {
       </div>
 
       {/* Note Entry Form Overlay */}
-      <NoteEntryForm 
+      <NoteEntryForm
         isVisible={showNoteForm}
         onClose={handleCloseNoteForm}
         onSave={handleSaveNote}

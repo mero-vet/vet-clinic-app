@@ -2,13 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { MdClose, MdExpandMore, MdExpandLess } from 'react-icons/md';
 
 const LoginScreen = ({ onLogin }) => {
-  const [operatorName, setOperatorName] = useState('A Edrington (A)');
+  const [operatorName, setOperatorName] = useState('B Thompson (B)');
   const [password, setPassword] = useState('');
   const [applicationDate, setApplicationDate] = useState('7/26/2025');
   const [showAdvanced, setShowAdvanced] = useState(true);
   const [database, setDatabase] = useState('Impromed');
   const [business, setBusiness] = useState('Granby Veterinary Hospital');
   const [desktop, setDesktop] = useState('Betsy');
+
+  // Debug logging for dropdown values
+  useEffect(() => {
+    console.log('LoginScreen values:', {
+      operatorName,
+      database,
+      business,
+      desktop
+    });
+  }, [operatorName, database, business, desktop]);
+
+  // Add a test to see if we can force Chrome to show the value
+  useEffect(() => {
+    const selects = document.querySelectorAll('select');
+    selects.forEach((select, index) => {
+      console.log(`Select ${index} value:`, select.value, 'displayed:', select.options[select.selectedIndex]?.text);
+    });
+  });
 
   // Handle Escape key to close/cancel login
   useEffect(() => {
@@ -59,6 +77,22 @@ const LoginScreen = ({ onLogin }) => {
 
   return (
     <div className="login-overlay">
+      <style>
+        {`
+          .test-select {
+            all: unset !important;
+            color: black !important;
+            background-color: white !important;
+            border: 1px solid gray !important;
+            padding: 2px !important;
+            font-size: 11px !important;
+            font-family: inherit !important;
+            appearance: menulist !important;
+            -webkit-appearance: menulist !important;
+            -moz-appearance: menulist !important;
+          }
+        `}
+      </style>
       <div className="login-modal">
         {/* Title Bar */}
         <div className="login-title-bar">
@@ -77,10 +111,14 @@ const LoginScreen = ({ onLogin }) => {
             {/* Operator Name */}
             <div className="form-row">
               <label className="form-label">Operator Name:</label>
-              <select 
+              <select
+                key={`operator-${operatorName}`}
                 value={operatorName}
-                onChange={(e) => setOperatorName(e.target.value)}
-                className="form-select operator-select"
+                onChange={(e) => {
+                  console.log('Operator changing from', operatorName, 'to', e.target.value);
+                  setOperatorName(e.target.value);
+                }}
+                className="test-select"
               >
                 {operatorOptions.map(option => (
                   <option key={option} value={option}>{option}</option>
@@ -94,7 +132,7 @@ const LoginScreen = ({ onLogin }) => {
             {/* Password */}
             <div className="form-row">
               <label className="form-label">Password:</label>
-              <input 
+              <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -110,7 +148,7 @@ const LoginScreen = ({ onLogin }) => {
             <div className="form-row">
               <label className="form-label">Application Date:</label>
               <div className="date-input-container">
-                <input 
+                <input
                   type="text"
                   value={applicationDate}
                   onChange={(e) => setApplicationDate(e.target.value)}
@@ -129,7 +167,7 @@ const LoginScreen = ({ onLogin }) => {
 
             {/* Advanced Options Toggle */}
             <div className="advanced-toggle">
-              <button 
+              <button
                 className="toggle-btn"
                 onClick={() => setShowAdvanced(!showAdvanced)}
               >
@@ -144,10 +182,16 @@ const LoginScreen = ({ onLogin }) => {
                 {/* Database */}
                 <div className="form-row">
                   <label className="form-label">Database:</label>
-                  <select 
+                  <select
                     value={database}
                     onChange={(e) => setDatabase(e.target.value)}
-                    className="form-select"
+                    style={{
+                      color: 'black',
+                      backgroundColor: 'white',
+                      border: '1px solid gray',
+                      padding: '2px',
+                      fontSize: '11px'
+                    }}
                   >
                     <option value="Impromed">Impromed</option>
                     <option value="Backup">Backup</option>
@@ -164,10 +208,16 @@ const LoginScreen = ({ onLogin }) => {
                 {/* Business */}
                 <div className="form-row">
                   <label className="form-label">Business:</label>
-                  <select 
+                  <select
                     value={business}
                     onChange={(e) => setBusiness(e.target.value)}
-                    className="form-select"
+                    style={{
+                      color: 'black',
+                      backgroundColor: 'white',
+                      border: '1px solid gray',
+                      padding: '2px',
+                      fontSize: '11px'
+                    }}
                   >
                     {businessOptions.map(option => (
                       <option key={option} value={option}>{option}</option>
@@ -178,10 +228,16 @@ const LoginScreen = ({ onLogin }) => {
                 {/* Desktop */}
                 <div className="form-row">
                   <label className="form-label">Desktop:</label>
-                  <select 
+                  <select
                     value={desktop}
                     onChange={(e) => setDesktop(e.target.value)}
-                    className="form-select"
+                    style={{
+                      color: 'black',
+                      backgroundColor: 'white',
+                      border: '1px solid gray',
+                      padding: '2px',
+                      fontSize: '11px'
+                    }}
                   >
                     {desktopOptions.map(option => (
                       <option key={option} value={option}>{option}</option>

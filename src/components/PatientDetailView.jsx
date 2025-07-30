@@ -9,18 +9,18 @@ const PatientDetailView = () => {
 
   // Sample patient data
   const patient = {
-    id: '#6',
-    name: 'Betsy Marshall',
-    lastName: 'Marshall',
-    firstName: 'Betsy',
-    spouseName: 'Alex Edrington',
-    address: '1348 Emory Place',
-    city: 'Norfolk, VA',
-    homePhone: '( ) -',
-    workPhone: '( ) - ext:',
-    cellPhone: '(757) 635-8312',
-    email: 'betsy@ghentvet.com',
-    lastVisit: '5/16/2025',
+    id: '#3',
+    name: 'Marcus Chen',
+    lastName: 'Chen',
+    firstName: 'Marcus',
+    spouseName: 'Sarah Thompson',
+    address: '2847 Willow Creek Drive',
+    city: 'Virginia Beach, VA',
+    homePhone: '(757) 555-4892',
+    workPhone: '(757) 555-0156 ext: 204',
+    cellPhone: '(757) 442-7391',
+    email: 'marcus.chen@oceanviewtech.com',
+    lastVisit: '7/18/2025',
     photo: '/api/placeholder/80/80'
   };
 
@@ -29,7 +29,7 @@ const PatientDetailView = () => {
   ];
 
   const secondaryTabs = [
-    'Files', 'Clinic Census', 'Medical Records', 'Scheduler', 'Episodes Of Care', 
+    'Files', 'Clinic Census', 'Medical Records', 'Scheduler', 'Episodes Of Care',
     'Lab Integrations', 'Patient Processing', 'Reports'
   ];
 
@@ -37,7 +37,6 @@ const PatientDetailView = () => {
     'Accounts Receivable Reports',
     'Boarding Reports',
     'Census Reports',
-    'Client/Patient Database Reports',
     'Employee Reports',
     'Financial Reports',
     'Inventory Reports',
@@ -53,8 +52,8 @@ const PatientDetailView = () => {
   ];
 
   const handleReportToggle = (report) => {
-    setSelectedReports(prev => 
-      prev.includes(report) 
+    setSelectedReports(prev =>
+      prev.includes(report)
         ? prev.filter(r => r !== report)
         : [...prev, report]
     );
@@ -72,7 +71,7 @@ const PatientDetailView = () => {
 
     window.addEventListener('openExportSelection', handleOpenExportSelection);
     window.addEventListener('closeExportSelection', handleCloseExportSelection);
-    
+
     return () => {
       window.removeEventListener('openExportSelection', handleOpenExportSelection);
       window.removeEventListener('closeExportSelection', handleCloseExportSelection);
@@ -87,11 +86,11 @@ const PatientDetailView = () => {
           <MdPets size={40} />
         </div>
         <div className="patient-name">{patient.name} {patient.id}</div>
-        
+
         <div className="patient-details">
           <div className="detail-row total-balance">
             <span className="label">Total A/R Balance</span>
-            <span className="value">($161.00)</span>
+            <span className="value">$84.50</span>
           </div>
           <div className="detail-row">
             <span className="label">Last Name</span>
@@ -138,7 +137,7 @@ const PatientDetailView = () => {
             <span className="value"></span>
           </div>
         </div>
-        
+
         <div className="patient-banner">
           <MdPets size={24} />
           <span>{patient.name} {patient.id}</span>
@@ -163,13 +162,13 @@ const PatientDetailView = () => {
         {/* Secondary Tabs */}
         <div className="secondary-tabs">
           {secondaryTabs.map(tab => (
-            <button 
-              key={tab} 
+            <button
+              key={tab}
               className={`secondary-tab ${activeSecondaryTab === tab ? 'active' : ''}`}
               onClick={() => setActiveSecondaryTab(activeSecondaryTab === tab ? null : tab)}
             >
               {tab}
-              <span 
+              <span
                 className="close-btn"
                 onClick={(e) => {
                   e.stopPropagation();

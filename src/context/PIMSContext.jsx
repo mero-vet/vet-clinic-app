@@ -35,6 +35,12 @@ export const PIMSProvider = ({ children }) => {
                 // Only apply theme on first render or when PIMS actually changes
                 // This prevents unnecessary style recalculations
                 applyPIMSTheme(pimsConfigurations[pimsFromURL]);
+                updateDocumentTitle(pimsFromURL);
+            } else {
+                // Even if PIMS hasn't changed, ensure title is set on initial render
+                if (initialRender.current) {
+                    updateDocumentTitle(pimsFromURL);
+                }
             }
         } else {
             // If we don't have a valid PIMS in the URL, navigate to the default
@@ -52,6 +58,7 @@ export const PIMSProvider = ({ children }) => {
     useEffect(() => {
         if (pimsConfigurations[currentPIMS]) {
             applyPIMSTheme(pimsConfigurations[currentPIMS]);
+            updateDocumentTitle(currentPIMS);
         }
     }, [currentPIMS]);
 
@@ -62,6 +69,19 @@ export const PIMSProvider = ({ children }) => {
             const newPath = createPathForPIMSSwitch(location.pathname, pimsName);
             navigate(newPath);
         }
+    };
+
+    // Update document title based on PIMS
+    const updateDocumentTitle = (pimsName) => {
+        const titleMap = {
+            'cornerstone': 'Cornerstone',
+            'avimark': 'Avimark',
+            'easyvet': 'EasyVet',
+            'intravet': 'IntraVet',
+            'covetrus': 'Impromed'  // Show "Impromed" for Covetrus PIMS
+        };
+
+        document.title = titleMap[pimsName] || 'Veterinary PIMS';
     };
 
     // Apply theme variables to document root

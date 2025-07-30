@@ -4,6 +4,7 @@ import { MdExpandMore, MdExpandLess } from 'react-icons/md';
 const CovetrusDropdownMenu = ({ isOpen, onClose, triggerRef }) => {
   const [currentLevel, setCurrentLevel] = useState('main'); // 'main' or 'modules'
   const [expandedMenus, setExpandedMenus] = useState({});
+  const [hoverTimeout, setHoverTimeout] = useState(null);
   const menuRef = useRef(null);
 
   // Main dropdown menu items (first level)
@@ -339,6 +340,36 @@ const CovetrusDropdownMenu = ({ isOpen, onClose, triggerRef }) => {
     }));
   };
 
+  const handleMenuHover = (menuId) => {
+    // Clear any existing timeout
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+
+    if (menuId === 'modules') {
+      setCurrentLevel('modules');
+    }
+  };
+
+  const handleMenuLeave = () => {
+    // Set a timeout to return to main menu after a short delay
+    const timeout = setTimeout(() => {
+      setCurrentLevel('main');
+    }, 200); // 200ms delay before hiding submenu
+
+    setHoverTimeout(timeout);
+  };
+
+  // Clear timeout on component unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
+    };
+  }, [hoverTimeout]);
+
   // Reset to main level when menu opens
   useEffect(() => {
     if (isOpen) {
@@ -350,8 +381,8 @@ const CovetrusDropdownMenu = ({ isOpen, onClose, triggerRef }) => {
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target) && 
-          triggerRef.current && !triggerRef.current.contains(event.target)) {
+      if (menuRef.current && !menuRef.current.contains(event.target) &&
+        triggerRef.current && !triggerRef.current.contains(event.target)) {
         onClose();
       }
     };
@@ -391,14 +422,23 @@ const CovetrusDropdownMenu = ({ isOpen, onClose, triggerRef }) => {
     <div className="covetrus-dropdown-overlay">
       <div className="covetrus-dropdown-container" ref={menuRef}>
         {/* Main Menu */}
-        <div className="covetrus-dropdown-menu main-menu">
+        <div
+          className="covetrus-dropdown-menu main-menu"
+          onMouseEnter={() => {
+            // Clear any timeout when entering main menu
+            if (hoverTimeout) {
+              clearTimeout(hoverTimeout);
+              setHoverTimeout(null);
+            }
+          }}
+        >
           <div className="menu-header">
             <span className="menu-title">Covetrus Menu</span>
           </div>
           <div className="menu-items">
             {mainMenuItems.map((item) => (
               <div key={item.id} className="menu-item-container">
-                <div 
+                <div
                   className={`menu-item ${item.highlighted ? 'highlighted' : ''}`}
                   onClick={() => {
                     if (item.hasSubmenu) {
@@ -407,6 +447,16 @@ const CovetrusDropdownMenu = ({ isOpen, onClose, triggerRef }) => {
                       toggleSubmenu(item.id);
                     } else {
                       handleMenuClick(item.id);
+                    }
+                  }}
+                  onMouseEnter={() => {
+                    if (item.hasSubmenu) {
+                      handleMenuHover(item.id);
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (item.hasSubmenu) {
+                      handleMenuLeave();
                     }
                   }}
                 >
@@ -435,14 +485,27 @@ const CovetrusDropdownMenu = ({ isOpen, onClose, triggerRef }) => {
 
         {/* Modules Submenu (side-by-side) */}
         {currentLevel === 'modules' && (
-          <div className="covetrus-dropdown-menu submenu-panel">
+          <div
+            className="covetrus-dropdown-menu submenu-panel"
+            onMouseEnter={() => {
+              // Clear any timeout when entering submenu
+              if (hoverTimeout) {
+                clearTimeout(hoverTimeout);
+                setHoverTimeout(null);
+              }
+            }}
+            onMouseLeave={() => {
+              // Set timeout to close submenu when leaving
+              handleMenuLeave();
+            }}
+          >
             <div className="menu-header">
               <span className="menu-title">Modules</span>
             </div>
             <div className="menu-items">
               {moduleItems.map((item) => (
                 <div key={item.id} className="menu-item-container">
-                  <div 
+                  <div
                     className={`menu-item ${item.highlighted ? 'highlighted' : ''}`}
                     onClick={() => handleMenuClick(item.id)}
                   >

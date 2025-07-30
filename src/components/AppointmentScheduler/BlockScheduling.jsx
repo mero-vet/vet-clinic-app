@@ -5,7 +5,7 @@ import { useToast } from '../Toast/ToastContext';
 function BlockScheduling({ onClose }) {
   const { providers, blockTime, blockedTimes, appointmentTypes } = useScheduling();
   const toast = useToast();
-  
+
   const [formData, setFormData] = useState({
     providerId: '',
     date: '',
@@ -26,7 +26,7 @@ function BlockScheduling({ onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!formData.providerId || !formData.date || !formData.startTime || !formData.endTime) {
       toast.warning('Please fill in all required fields');
       return;
@@ -89,9 +89,9 @@ function BlockScheduling({ onClose }) {
   // Get blocked times for the selected date and provider
   const getBlockedTimesForDay = () => {
     if (!formData.date || !formData.providerId) return [];
-    
-    return blockedTimes.filter(block => 
-      block.date === formData.date && 
+
+    return blockedTimes.filter(block =>
+      block.date === formData.date &&
       block.providerId === formData.providerId
     );
   };
@@ -100,9 +100,9 @@ function BlockScheduling({ onClose }) {
 
   return (
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '20px'
       }}>
@@ -125,9 +125,9 @@ function BlockScheduling({ onClose }) {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: '1fr 1fr', 
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
           gap: '15px',
           marginBottom: '20px'
         }}>
@@ -137,6 +137,7 @@ function BlockScheduling({ onClose }) {
             <select
               value={formData.providerId}
               onChange={(e) => setFormData(prev => ({ ...prev, providerId: e.target.value }))}
+              className="note-dropdown"
               style={{ width: '100%', padding: '5px' }}
               required
             >
@@ -168,6 +169,7 @@ function BlockScheduling({ onClose }) {
             <select
               value={formData.blockType}
               onChange={(e) => setFormData(prev => ({ ...prev, blockType: e.target.value }))}
+              className="note-dropdown"
               style={{ width: '100%', padding: '5px' }}
             >
               {Object.entries(blockTypes).map(([value, type]) => (
@@ -215,9 +217,9 @@ function BlockScheduling({ onClose }) {
         </div>
 
         {/* Quick Actions */}
-        <div style={{ 
-          backgroundColor: '#f0f0f0', 
-          padding: '15px', 
+        <div style={{
+          backgroundColor: '#f0f0f0',
+          padding: '15px',
           borderRadius: '4px',
           marginBottom: '20px'
         }}>
@@ -270,7 +272,7 @@ function BlockScheduling({ onClose }) {
             <h4>Blocked Times for {formData.date}</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
               {dayBlockedTimes.map((block, index) => (
-                <div 
+                <div
                   key={index}
                   style={{
                     backgroundColor: '#f8f8f8',
@@ -333,7 +335,7 @@ function BlockScheduling({ onClose }) {
       </form>
 
       {/* Block Type Legend */}
-      <div style={{ 
+      <div style={{
         marginTop: '30px',
         padding: '15px',
         backgroundColor: '#f8f8f8',
@@ -343,9 +345,9 @@ function BlockScheduling({ onClose }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', fontSize: '13px' }}>
           {Object.entries(blockTypes).map(([key, type]) => (
             <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <div style={{ 
-                width: '20px', 
-                height: '20px', 
+              <div style={{
+                width: '20px',
+                height: '20px',
                 backgroundColor: type.color,
                 borderRadius: '4px'
               }}></div>

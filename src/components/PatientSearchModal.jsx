@@ -22,9 +22,8 @@ const PatientSearchModal = ({ isOpen, onClose, searchTerm = '' }) => {
     };
   }, [isOpen, onClose]);
 
-  // Dummy patient data
+  // Dummy patient data - reordered to put Bean-Betsy Marshall around position 11
   const allPatients = [
-    { id: 'A', accountId: 'Bean', name: 'Betsy', firstName: 'Betsy', lastName: 'Marshall', sex: 'MN', breed: 'Beagle Mix', species: 'Canine', coatColor: 'Tri-Color', clientNum: '( )' },
     { id: 'C', accountId: 'Beans', name: 'Brian', firstName: 'Brian', lastName: 'Maniscalco', sex: 'MN', breed: 'French Bulldog', species: 'Canine', coatColor: 'Fawn', clientNum: '( )' },
     { id: 'D', accountId: 'Beanie', name: 'Rachel', firstName: 'Rachel', lastName: 'Rieman', sex: 'FS', breed: 'DSH', species: 'Feline', coatColor: 'Tabby', clientNum: '( )' },
     { id: 'A', accountId: 'Bean', name: 'Justin', firstName: 'Justin', lastName: 'Padilla', sex: 'M', breed: 'Pomeranian', species: 'Canine', coatColor: 'Black', clientNum: '( )' },
@@ -36,6 +35,7 @@ const PatientSearchModal = ({ isOpen, onClose, searchTerm = '' }) => {
     { id: 'B', accountId: 'Cocoa Bean', name: 'Tiara', firstName: 'Tiara', lastName: 'Crawford', sex: 'FS', breed: 'DSH', species: 'Feline', coatColor: 'Tortie', clientNum: '(804)' },
     { id: 'C', accountId: 'Beanie', name: 'Robin', firstName: 'Robin', lastName: 'Bernath', sex: 'FS', breed: 'Terrier Mx', species: 'Canine', coatColor: 'Black/Grey', clientNum: '(757)' },
     { id: 'B', accountId: 'Jellybean', name: 'Sarah', firstName: 'Sarah', lastName: 'Hill', sex: 'FS', breed: 'DSH', species: 'Feline', coatColor: 'Calico', clientNum: '( )' },
+    { id: 'A', accountId: 'Bean', name: 'Betsy', firstName: 'Betsy', lastName: 'Marshall', sex: 'MN', breed: 'Beagle Mix', species: 'Canine', coatColor: 'Tri-Color', clientNum: '( )' },
     { id: 'A', accountId: 'Jelly Bean', name: 'Emily', firstName: 'Emily', lastName: 'Burnett', sex: 'FS', breed: 'Australian Cattle Dog', species: 'Canine', coatColor: 'Blue', clientNum: '( )' },
     { id: 'A', accountId: 'Bean', name: 'Samantha', firstName: 'Samantha', lastName: 'Gutierrez', sex: 'FS', breed: 'Chihuahua Mix', species: 'Canine', coatColor: 'Tan/White/Brown', clientNum: '( )' },
     { id: 'B', accountId: 'Beans', name: 'Emily', firstName: 'Emily', lastName: 'Bachardy', sex: 'MN', breed: 'DLH', species: 'Feline', coatColor: 'Gray/White', clientNum: '( )' },
@@ -45,7 +45,7 @@ const PatientSearchModal = ({ isOpen, onClose, searchTerm = '' }) => {
 
   useEffect(() => {
     if (searchTerm) {
-      const filtered = allPatients.filter(patient => 
+      const filtered = allPatients.filter(patient =>
         patient.accountId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -55,11 +55,11 @@ const PatientSearchModal = ({ isOpen, onClose, searchTerm = '' }) => {
       );
       setFilteredPatients(filtered);
       if (filtered.length > 0) {
-        setSelectedPatient(0); // Auto-select first patient
+        setSelectedPatient(null); // Don't auto-select any patient
       }
     } else {
       setFilteredPatients(allPatients);
-      setSelectedPatient(0);
+      setSelectedPatient(null); // Don't auto-select any patient
     }
   }, [searchTerm]);
 
@@ -73,8 +73,8 @@ const PatientSearchModal = ({ isOpen, onClose, searchTerm = '' }) => {
       console.log('Selected patient:', selectedPatientData);
       onClose();
       // Dispatch event to open client modal with selected patient data
-      window.dispatchEvent(new CustomEvent('openClientModal', { 
-        detail: selectedPatientData 
+      window.dispatchEvent(new CustomEvent('openClientModal', {
+        detail: selectedPatientData
       }));
     }
   };
@@ -125,7 +125,7 @@ const PatientSearchModal = ({ isOpen, onClose, searchTerm = '' }) => {
         <div className="search-header">
           <div className="search-info">
             <span className="patient-icon">
-              {selectedPatient !== null && filteredPatients[selectedPatient] 
+              {selectedPatient !== null && filteredPatients[selectedPatient]
                 ? (filteredPatients[selectedPatient].species === 'Canine' ? '🐕' : '🐱')
                 : '🐕'
               }
@@ -133,7 +133,7 @@ const PatientSearchModal = ({ isOpen, onClose, searchTerm = '' }) => {
             <span className="patient-name">
               {selectedPatient !== null && filteredPatients[selectedPatient]
                 ? `${filteredPatients[selectedPatient].firstName} ${filteredPatients[selectedPatient].lastName} #${selectedPatient + 1}`
-                : 'Betsy Marshall #6'
+                : 'No Patient Selected'
               }
             </span>
           </div>
@@ -168,7 +168,7 @@ const PatientSearchModal = ({ isOpen, onClose, searchTerm = '' }) => {
             </thead>
             <tbody>
               {filteredPatients.map((patient, index) => (
-                <tr 
+                <tr
                   key={index}
                   className={selectedPatient === index ? 'selected' : ''}
                   onClick={() => handleRowClick(index)}

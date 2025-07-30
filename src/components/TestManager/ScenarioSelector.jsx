@@ -16,7 +16,7 @@ const ScenarioSelector = ({ value, onChange, disabled, onAddScenario }) => {
       setError(null);
       const enabledScenarios = await ScenarioService.getEnabledScenarios();
       setScenarios(enabledScenarios);
-      
+
       // If current value is not in the list, select the first one
       if (enabledScenarios.length > 0 && !enabledScenarios.find(s => s.id === value)) {
         onChange(enabledScenarios[0].id);
@@ -58,6 +58,7 @@ const ScenarioSelector = ({ value, onChange, disabled, onAddScenario }) => {
         <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
           <select
             style={{ flex: 1 }}
+            className="note-dropdown"
             disabled={disabled}
             value={value}
             onChange={e => onChange(e.target.value)}

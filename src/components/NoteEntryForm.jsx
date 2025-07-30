@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdFormatBold, MdFormatItalic, MdFormatUnderlined, MdFormatListBulleted, MdFormatListNumbered, MdFormatAlignLeft, MdFormatAlignCenter, MdFormatAlignRight, MdImage, MdAttachFile } from 'react-icons/md';
 
 const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
-  const [providerInitials, setProviderInitials] = useState('A');
-  const [providerFullName, setProviderFullName] = useState('A Edrington');
+  const [providerInitials, setProviderInitials] = useState('');
+  const [providerFullName, setProviderFullName] = useState('');
   const [date, setDate] = useState('7/26/2025');
   const [time, setTime] = useState('3:57:09 PM');
   const [title, setTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [fontSize, setFontSize] = useState('9.75');
   const [fontFamily, setFontFamily] = useState('Arial');
+  const [saveConfirmation, setSaveConfirmation] = useState('');
 
   const providerData = [
     { initials: 'A', fullName: 'A Edrington' },
@@ -28,8 +29,8 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
     { initials: 'MW', fullName: 'Mark Williams, DVM' }
   ];
 
-  const providerInitialsList = providerData.map(p => p.initials);
-  const providerFullNamesList = providerData.map(p => p.fullName);
+  const providerInitialsList = ['', ...providerData.map(p => p.initials)];
+  const providerFullNamesList = ['-- Select Provider --', ...providerData.map(p => p.fullName)];
 
   const fontFamilies = [
     'Arial',
@@ -43,19 +44,49 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
     '8', '9', '9.75', '10', '11', '12', '14', '16', '18', '20', '24'
   ];
 
+  // Debug logging for dropdown values
+  useEffect(() => {
+    console.log('NoteEntryForm values:', {
+      providerInitials: providerInitials || '(blank)',
+      providerFullName: providerFullName || '(blank)',
+      date,
+      time,
+      fontFamily,
+      fontSize
+    });
+  }, [providerInitials, providerFullName, date, time, fontFamily, fontSize]);
+
+  // Add a test to see if we can force Chrome to show the value
+  useEffect(() => {
+    if (isVisible) {
+      const selects = document.querySelectorAll('.note-entry-form select');
+      selects.forEach((select, index) => {
+        console.log(`NoteForm Select ${index} value:`, select.value, 'displayed:', select.options[select.selectedIndex]?.text);
+      });
+    }
+  });
+
   const handleProviderInitialsChange = (initials) => {
     setProviderInitials(initials);
-    const provider = providerData.find(p => p.initials === initials);
-    if (provider) {
-      setProviderFullName(provider.fullName);
+    if (initials === '') {
+      setProviderFullName('-- Select Provider --');
+    } else {
+      const provider = providerData.find(p => p.initials === initials);
+      if (provider) {
+        setProviderFullName(provider.fullName);
+      }
     }
   };
 
   const handleProviderFullNameChange = (fullName) => {
     setProviderFullName(fullName);
-    const provider = providerData.find(p => p.fullName === fullName);
-    if (provider) {
-      setProviderInitials(provider.initials);
+    if (fullName === '-- Select Provider --') {
+      setProviderInitials('');
+    } else {
+      const provider = providerData.find(p => p.fullName === fullName);
+      if (provider) {
+        setProviderInitials(provider.initials);
+      }
     }
   };
 
@@ -71,6 +102,28 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
       fontSize
     };
     onSave(noteData);
+
+    // Show save confirmation and clear it after 3 seconds
+    setSaveConfirmation('Note saved successfully!');
+    setTimeout(() => {
+      setSaveConfirmation('');
+    }, 3000);
+  };
+
+  const handleExit = () => {
+    // Save the note first, then close
+    const noteData = {
+      providerInitials,
+      providerFullName,
+      date,
+      time,
+      title,
+      content: noteContent,
+      fontFamily,
+      fontSize
+    };
+    onSave(noteData);
+    onClose();
   };
 
   const formatText = (command, value = null) => {
@@ -81,49 +134,97 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
 
   return (
     <div className="note-entry-form">
+      <style>
+        {`
+          .test-note-select {
+            all: unset !important;
+            color: black !important;
+            background-color: white !important;
+            border: 1px solid gray !important;
+            padding: 2px !important;
+            font-size: 11px !important;
+            font-family: inherit !important;
+            appearance: menulist !important;
+            -webkit-appearance: menulist !important;
+            -moz-appearance: menulist !important;
+          }
+        `}
+      </style>
       {/* Form Header */}
       <div className="note-form-header">
         <div className="form-row">
           <div className="form-group">
             <label>Provider:</label>
             <div className="provider-dropdowns">
-              <select 
-                value={providerInitials} 
-                onChange={(e) => handleProviderInitialsChange(e.target.value)}
-                className="provider-initials-select"
+              <select
+                key={`initials-${providerInitials || 'empty'}`}
+                value={providerInitials}
+                onChange={(e) => {
+                  console.log('Provider initials changing from', providerInitials, 'to', e.target.value);
+                  handleProviderInitialsChange(e.target.value);
+                }}
+                className="test-note-select"
               >
-                {providerInitialsList.map(initials => (
-                  <option key={initials} value={initials}>{initials}</option>
+                {providerInitialsList.map((initials, index) => (
+                  <option key={initials || `blank-${index}`} value={initials}>
+                    {initials || '--'}
+                  </option>
                 ))}
               </select>
-              <select 
-                value={providerFullName} 
-                onChange={(e) => handleProviderFullNameChange(e.target.value)}
-                className="provider-fullname-select"
+              <select
+                key={`fullname-${providerFullName || 'empty'}`}
+                value={providerFullName}
+                onChange={(e) => {
+                  console.log('Provider full name changing from', providerFullName, 'to', e.target.value);
+                  handleProviderFullNameChange(e.target.value);
+                }}
+                className="test-note-select"
               >
-                {providerFullNamesList.map(fullName => (
-                  <option key={fullName} value={fullName}>{fullName}</option>
+                {providerFullNamesList.map((fullName, index) => (
+                  <option key={fullName || `blank-fullname-${index}`} value={fullName}>
+                    {fullName}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
-          
+
           <div className="form-group">
             <label>Date/Time Performed:</label>
             <div className="datetime-group">
-              <select 
+              <select
+                key={`date-${date}`}
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="date-select"
+                onChange={(e) => {
+                  console.log('Date changing from', date, 'to', e.target.value);
+                  setDate(e.target.value);
+                }}
+                style={{
+                  color: 'black',
+                  backgroundColor: 'white',
+                  border: '1px solid gray',
+                  padding: '2px',
+                  fontSize: '11px'
+                }}
               >
                 <option value="7/26/2025">7/26/2025</option>
                 <option value="7/25/2025">7/25/2025</option>
                 <option value="7/24/2025">7/24/2025</option>
               </select>
-              <select 
+              <select
+                key={`time-${time}`}
                 value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="time-select"
+                onChange={(e) => {
+                  console.log('Time changing from', time, 'to', e.target.value);
+                  setTime(e.target.value);
+                }}
+                style={{
+                  color: 'black',
+                  backgroundColor: 'white',
+                  border: '1px solid gray',
+                  padding: '2px',
+                  fontSize: '11px'
+                }}
               >
                 <option value="3:57:09 PM">3:57:09 PM</option>
                 <option value="12:00:00 PM">12:00:00 PM</option>
@@ -136,7 +237,7 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
         <div className="form-row">
           <div className="form-group title-group">
             <label>Title:</label>
-            <input 
+            <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -150,26 +251,42 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
       {/* Rich Text Editor */}
       <div className="note-editor-section">
         <div className="editor-toolbar">
-          <select 
+          <select
+            key={`font-family-${fontFamily}`}
             value={fontFamily}
             onChange={(e) => {
+              console.log('Font family changing from', fontFamily, 'to', e.target.value);
               setFontFamily(e.target.value);
               formatText('fontName', e.target.value);
             }}
-            className="font-family-select"
+            style={{
+              color: 'black',
+              backgroundColor: 'white',
+              border: '1px solid gray',
+              padding: '2px',
+              fontSize: '11px'
+            }}
           >
             {fontFamilies.map(font => (
               <option key={font} value={font}>{font}</option>
             ))}
           </select>
 
-          <select 
+          <select
+            key={`font-size-${fontSize}`}
             value={fontSize}
             onChange={(e) => {
+              console.log('Font size changing from', fontSize, 'to', e.target.value);
               setFontSize(e.target.value);
               formatText('fontSize', e.target.value);
             }}
-            className="font-size-select"
+            style={{
+              color: 'black',
+              backgroundColor: 'white',
+              border: '1px solid gray',
+              padding: '2px',
+              fontSize: '11px'
+            }}
           >
             {fontSizes.map(size => (
               <option key={size} value={size}>{size}</option>
@@ -178,7 +295,7 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
 
           <div className="toolbar-divider"></div>
 
-          <button 
+          <button
             className="format-btn"
             onClick={() => formatText('bold')}
             title="Bold"
@@ -186,7 +303,7 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
             <MdFormatBold size={16} />
           </button>
 
-          <button 
+          <button
             className="format-btn"
             onClick={() => formatText('italic')}
             title="Italic"
@@ -194,7 +311,7 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
             <MdFormatItalic size={16} />
           </button>
 
-          <button 
+          <button
             className="format-btn"
             onClick={() => formatText('underline')}
             title="Underline"
@@ -204,7 +321,7 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
 
           <div className="toolbar-divider"></div>
 
-          <button 
+          <button
             className="format-btn"
             onClick={() => formatText('insertUnorderedList')}
             title="Bullet List"
@@ -212,7 +329,7 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
             <MdFormatListBulleted size={16} />
           </button>
 
-          <button 
+          <button
             className="format-btn"
             onClick={() => formatText('insertOrderedList')}
             title="Numbered List"
@@ -222,7 +339,7 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
 
           <div className="toolbar-divider"></div>
 
-          <button 
+          <button
             className="format-btn"
             onClick={() => formatText('justifyLeft')}
             title="Align Left"
@@ -230,7 +347,7 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
             <MdFormatAlignLeft size={16} />
           </button>
 
-          <button 
+          <button
             className="format-btn"
             onClick={() => formatText('justifyCenter')}
             title="Align Center"
@@ -238,7 +355,7 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
             <MdFormatAlignCenter size={16} />
           </button>
 
-          <button 
+          <button
             className="format-btn"
             onClick={() => formatText('justifyRight')}
             title="Align Right"
@@ -264,11 +381,11 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
 
         <div className="note-content">
           <label>Note:</label>
-          <div 
+          <div
             className="rich-text-editor"
             contentEditable
             onInput={(e) => setNoteContent(e.target.innerHTML)}
-            style={{ 
+            style={{
               fontFamily: fontFamily,
               fontSize: fontSize + 'pt'
             }}
@@ -284,13 +401,23 @@ const NoteEntryForm = ({ isVisible, onClose, onSave }) => {
           <button className="bottom-tab">History</button>
           <button className="bottom-tab active">New Note</button>
         </div>
-        
+
         <div className="action-buttons">
           <button className="action-btn save-btn" onClick={handleSave}>Save</button>
           <button className="action-btn preview-btn">Preview</button>
           <button className="action-btn email-btn">Email</button>
           <button className="action-btn lock-btn">Lock</button>
-          <button className="action-btn exit-btn" onClick={onClose}>Exit</button>
+          <button className="action-btn exit-btn" onClick={handleExit}>Exit</button>
+          {saveConfirmation && (
+            <span className="save-confirmation" style={{
+              marginLeft: '15px',
+              color: 'green',
+              fontWeight: 'bold',
+              fontSize: '12px'
+            }}>
+              {saveConfirmation}
+            </span>
+          )}
         </div>
       </div>
     </div>
