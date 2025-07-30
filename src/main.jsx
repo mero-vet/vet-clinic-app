@@ -16,6 +16,7 @@ import { TestLoggerProvider } from './context/TestLoggerContext'
 import { ToastProvider } from './components/Toast/ToastContext'
 import '98.css'
 import './index.css'
+import './styles/impromedTheme.css'
 import './styles/pimsThemes.css'
 
 const root = createRoot(document.getElementById('root'))
